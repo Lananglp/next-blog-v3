@@ -1,0 +1,161 @@
+.tiptap {
+    @apply focus:outline-none;
+    :first-child {
+      @apply p-0 mt-0;
+    }
+
+    .has-focus {
+        @apply rounded-lg outline-1 outline-offset-2 outline-zinc-700;
+    }
+}
+
+.tiptap ul,
+.tiptap ol {
+    @apply ps-8 mb-0
+}
+
+.tiptap ul {
+    @apply list-disc;
+}
+.tiptap ol {
+    @apply list-decimal;
+}
+
+.tiptap ul li p,
+.tiptap ol li p {
+    @apply mb-0;
+}
+
+.tiptap h1,
+.tiptap h2,
+.tiptap h3,
+.tiptap h4,
+.tiptap h5,
+.tiptap h6,
+.tiptap p {
+    @apply mb-0 p-0;
+}
+
+.tiptap h1 {
+    @apply text-4xl;
+}
+
+.tiptap h2 {
+    @apply text-3xl;
+}
+
+.tiptap h3 {
+    @apply text-2xl;
+}
+
+.tiptap h4 {
+    @apply text-xl;
+}
+
+.tiptap h5 {
+    @apply text-lg;
+}
+
+.tiptap h6 {
+    @apply text-base;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+    @apply text-zinc-500;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+}
+
+.tiptap a {
+    @apply text-blue-400 underline;
+    cursor: pointer;
+
+    &:hover {
+        @apply text-blue-500;
+    }
+}
+
+.tiptap code {
+    @apply bg-zinc-800 text-zinc-300 rounded;
+}
+
+.tiptap pre {
+    @apply bg-zinc-800;
+    border-radius: 0.5rem;
+    color: var(--white);
+    font-family: 'JetBrainsMono', monospace;
+    margin: 1.5rem 0;
+    padding: 0.75rem 1rem;
+}
+
+.tiptap pre code {
+    background: none;
+    color: inherit;
+    font-size: 0.8rem;
+    padding: 0;
+}
+
+.tiptap blockquote {
+    @apply border-s-2 border-zinc-700 px-4 py-4;
+}
+
+.tiptap mark {
+    @apply bg-blue-900/50 text-white rounded;
+    box-decoration-break: clone;
+}
+
+.tiptap hr {
+    @apply border-zinc-700;
+}
+
+/* Table-specific styling */
+.tiptap table {
+    border-collapse: collapse;
+    margin: 0;
+    overflow: hidden;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.tiptap table td,
+.tiptap table th {
+    @apply relative border border-zinc-700 px-2 py-1;
+}
+
+.tiptap table td>*,
+.tiptap table th>* {
+    @apply mb-0;
+}
+
+.tiptap table th {
+    @apply bg-zinc-800 font-medium text-white;
+}
+
+.tiptap table .selectedCell:after {
+    @apply bg-blue-500/15;
+    content: "";
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 2;
+}
+
+.tiptap table .column-resize-handle {
+    @apply bg-blue-500/50 w-1.5 absolute z-10 inset-y-0 -right-0.5;
+    pointer-events: none;
+}
+
+.tiptap .tableWrapper {
+    margin: 1.5rem 0;
+    overflow-x: auto;
+}
+
+.tiptap.resize-cursor {
+    cursor: ew-resize;
+    cursor: col-resize;
+}
