@@ -8,7 +8,6 @@ import { Controller } from "react-hook-form";
 
 interface InputTitleProps {
     value: string;
-    onChange: (value: string) => void;
     placeholder?: string;
     className?: string;
     errors?: any;
@@ -18,7 +17,6 @@ interface InputTitleProps {
 
 export default function InputTitle({
     value,
-    onChange,
     placeholder = "Enter title...",
     className = "",
     errors,
@@ -41,8 +39,7 @@ export default function InputTitle({
             render={({ field }) => {
                 const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
                     const newValue = e.target.value.replace(/\n/g, ""); // Hapus enter
-                    field.onChange(e); // Memperbarui state internal react-hook-form
-                    onChange(newValue); // Logika custom yang Anda butuhkan
+                    field.onChange(newValue);
                 };
 
                 return (
@@ -51,7 +48,10 @@ export default function InputTitle({
                         <Textarea
                             {...field}
                             id="title"
-                            ref={textareaRef}
+                            ref={(ref) => {
+                                field.ref(ref);
+                                textareaRef.current = ref;
+                            }}
                             value={value}
                             onChange={handleChange}
                             placeholder={placeholder}
@@ -65,7 +65,7 @@ export default function InputTitle({
                         ) : (
                             <p className="mt-2 text-xs text-zinc-500">
                                 {`Title will automatically be above the post content with the `}
-                                <code className="mx-0.5 text-zinc-300 text-sm">
+                                <code className="mx-0.5 text-zinc-700 dark:text-zinc-300 text-sm">
                                     {`<`}
                                     <span className="text-red-400">{`h1`}</span>
                                     {`/>`}

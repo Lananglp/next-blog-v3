@@ -9,3 +9,30 @@ export const getImage = async (
         ...custom,
     });
 };
+
+export const postImage = async (
+    image: File,
+    custom?: AxiosRequestConfig
+): Promise<AxiosResponse<{ success: boolean; image: { id: string; url: string } }>> => {
+    if (!image) throw new Error('No image provided');
+
+    const formData = new FormData();
+    formData.append('file', image);
+
+    return await api.post('/api/upload/image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+        ...custom,
+    });
+};
+
+export const deleteImage = async (
+    imageId: string,
+    custom?: AxiosRequestConfig
+): Promise<AxiosResponse<{ success: boolean; message: string }>> => {
+    return await api.delete(`/api/images/delete`, {
+        data: { imageId }, // Kirim data dalam body request
+        withCredentials: true,
+        ...custom,
+    });
+};

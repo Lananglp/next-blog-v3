@@ -7,7 +7,6 @@ import { Controller } from "react-hook-form";
 
 interface InputSlugProps {
     value?: string;
-    onChange: (value: string) => void;
     placeholder?: string;
     title: string;
     errors?: any;
@@ -15,7 +14,7 @@ interface InputSlugProps {
     name: string;
 }
 
-function InputSlug({ value, onChange, placeholder, title, errors, control, name }: InputSlugProps) {
+function InputSlug({ value, placeholder, title, errors, control, name }: InputSlugProps) {
     return (
         <Controller
             name={name}
@@ -65,6 +64,8 @@ function InputSlug({ value, onChange, placeholder, title, errors, control, name 
                         <Input
                             id="slug"
                             {...field}
+                            type="text"
+                            ref={field.ref}
                             value={value}
                             onChange={handleInputChange}
                             placeholder={placeholder}

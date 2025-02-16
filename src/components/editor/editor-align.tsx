@@ -9,14 +9,14 @@ function EditorAlign({ editor }: { editor: any }) {
     }
 
     return (
-        <div className="flex flex-wrap gap-1">
+        <div className="flex items-center">
             <Button
                 type='button'
                 title='align left'
                 onClick={() => editor.chain().focus().setTextAlign('left').run()}
                 variant={'editorToolBar'}
                 size={'editorToolBar'}
-                className={editor.isActive({ textAlign: 'left' }) ? 'bg-zinc-700' : ''}
+                className={editor.isActive({ textAlign: 'left' }) ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <AlignLeft />
             </Button>
@@ -26,7 +26,7 @@ function EditorAlign({ editor }: { editor: any }) {
                 onClick={() => editor.chain().focus().setTextAlign('center').run()}
                 variant={'editorToolBar'}
                 size={'editorToolBar'}
-                className={editor.isActive({ textAlign: 'center' }) ? 'bg-zinc-700' : ''}
+                className={editor.isActive({ textAlign: 'center' }) ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <AlignCenter />
             </Button>
@@ -36,7 +36,7 @@ function EditorAlign({ editor }: { editor: any }) {
                 onClick={() => editor.chain().focus().setTextAlign('right').run()}
                 variant={'editorToolBar'}
                 size={'editorToolBar'}
-                className={editor.isActive({ textAlign: 'right' }) ? 'bg-zinc-700' : ''}
+                className={editor.isActive({ textAlign: 'right' }) ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <AlignRight />
             </Button>
@@ -46,7 +46,7 @@ function EditorAlign({ editor }: { editor: any }) {
                 onClick={() => editor.chain().focus().setTextAlign('justify').run()}
                 variant={'editorToolBar'}
                 size={'editorToolBar'}
-                className={editor.isActive({ textAlign: 'justify' }) ? 'bg-zinc-700' : ''}
+                className={editor.isActive({ textAlign: 'justify' }) ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <AlignJustify />
             </Button>

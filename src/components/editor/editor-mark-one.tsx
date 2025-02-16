@@ -17,7 +17,7 @@ function EditorMarkOne({ editor }: { editor: any }) {
                 disabled={!editor.can().chain().focus().toggleBold().run()}
                 variant={'editorToolBar'}
                 size={'editorToolBar'}
-                className={editor.isActive('bold') ? 'bg-zinc-700' : ''}
+                className={editor.isActive('bold') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <BoldIcon className='w-4 h-4' />
             </Button>
@@ -28,7 +28,7 @@ function EditorMarkOne({ editor }: { editor: any }) {
                 disabled={!editor.can().chain().focus().toggleItalic().run()}
                 variant={'editorToolBar'}
                 size={'editorToolBar'}
-                className={editor.isActive('italic') ? 'bg-zinc-700' : ''}
+                className={editor.isActive('italic') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <ItalicIcon className='w-4 h-4' />
             </Button>
@@ -38,7 +38,7 @@ function EditorMarkOne({ editor }: { editor: any }) {
                 onClick={() => editor.chain().focus().toggleUnderline().run()}
                 variant={'editorToolBar'}
                 size={'editorToolBar'}
-                className={editor.isActive('underline') ? 'bg-zinc-700' : ''}
+                className={editor.isActive('underline') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <UnderlineIcon className='w-4 h-4' />
             </Button>

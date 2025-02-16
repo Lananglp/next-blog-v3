@@ -1,12 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Check } from "lucide-react";
 import { Button } from "../ui/button";
+import { autoUpdate, flip, offset, shift, useFloating } from "@floating-ui/react";
+
+type OptionType = {
+    label: string;
+    type: string;
+    level?: number;
+};
 
 const EditorTextTypeDropdown = ({ editor }: { editor: any }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selected, setSelected] = useState("Heading 1");
     const dropdownRef = useRef<HTMLDivElement>(null);
-
     const options = [
         { label: "Paragraph", type: "paragraph" },
         { label: "Heading 1", type: "heading", level: 1 },
@@ -16,9 +21,16 @@ const EditorTextTypeDropdown = ({ editor }: { editor: any }) => {
         { label: "Heading 5", type: "heading", level: 5 },
         { label: "Heading 6", type: "heading", level: 6 },
     ];
+    const [selected, setSelected] = useState<string>("Paragraph");
+    const { x, y, refs, strategy } = useFloating({
+        placement: "bottom-start",
+        middleware: [offset(8), flip(), shift()],
+        whileElementsMounted: autoUpdate,
+    });
+    const { state } = editor
 
     useEffect(() => {
-        if (!editor) return;
+        if (!editor && !state) return;
 
         if (editor.isActive("paragraph")) {
             setSelected("Paragraph");
@@ -35,7 +47,7 @@ const EditorTextTypeDropdown = ({ editor }: { editor: any }) => {
         } else if (editor.isActive("heading", { level: 6 })) {
             setSelected("Heading 6");
         }
-    }, [editor]);
+    }, [editor, state]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -66,8 +78,9 @@ const EditorTextTypeDropdown = ({ editor }: { editor: any }) => {
     };
 
     return (
-        <div ref={dropdownRef} className="relative inline-block">
+        <div className="relative inline-block">
             <Button
+                ref={refs.setReference}
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 variant={'editorToolBar'}
@@ -78,11 +91,22 @@ const EditorTextTypeDropdown = ({ editor }: { editor: any }) => {
             </Button>
 
             {isOpen && (
-                <div className="absolute mt-1 w-36 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg z-10">
+                <div
+                    ref={(ref) => {
+                        refs.setFloating(ref);
+                        dropdownRef.current = ref;
+                    }}
+                    style={{
+                        position: strategy,
+                        top: y ?? 0,
+                        left: x ?? 0,
+                    }}
+                    className="mt-1 w-36 bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-md z-10"
+                >
                     {options.map((option) => (
                         <button
                             key={option.label}
-                            className={`${selected === option.label ? "bg-zinc-700" : ""} w-full text-left px-3 py-1 text-sm hover:bg-zinc-600 flex justify-between`}
+                            className={`${selected === option.label ? "bg-zinc-200 dark:bg-zinc-700" : ""} w-full text-left px-3 py-1 text-sm hover:bg-zinc-200 hover:dark:bg-zinc-700 flex justify-between`}
                             onClick={() => handleSelect(option)}
                         >
                             {option.label}

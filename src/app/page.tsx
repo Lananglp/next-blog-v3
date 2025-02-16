@@ -1,8 +1,4 @@
-import Footer from "@/components/footer";
-import Header from "@/components/header";
 import Template from "@/components/template-custom";
-import Link from "next/link";
-
 
 export default function Home() {
   return (

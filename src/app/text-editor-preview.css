@@ -1,5 +1,5 @@
-.tiptap {
-    @apply focus:outline-none bg-zinc-900 rounded-b-lg p-6 min-h-screen;
+.tiptap-preview {
+    @apply focus:outline-none;
     :first-child {
       @apply p-0 mt-0;
     }
@@ -9,58 +9,58 @@
     }
 }
 
-ul,
-ol {
+.tiptap-preview ul,
+.tiptap-preview ol {
     @apply ps-8 mb-0
 }
 
-ul {
+.tiptap-preview ul {
     @apply list-disc;
 }
-ol {
+.tiptap-preview ol {
     @apply list-decimal;
 }
 
-ul li p,
-ol li p {
+.tiptap-preview ul li p,
+.tiptap-preview ol li p {
     @apply mb-0;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
+.tiptap-preview h1,
+.tiptap-preview h2,
+.tiptap-preview h3,
+.tiptap-preview h4,
+.tiptap-preview h5,
+.tiptap-preview h6,
+.tiptap-preview p {
     @apply mb-0 p-0;
 }
 
-h1 {
+.tiptap-preview h1 {
     @apply text-4xl;
 }
 
-h2 {
+.tiptap-preview h2 {
     @apply text-3xl;
 }
 
-h3 {
+.tiptap-preview h3 {
     @apply text-2xl;
 }
 
-h4 {
+.tiptap-preview h4 {
     @apply text-xl;
 }
 
-h5 {
+.tiptap-preview h5 {
     @apply text-lg;
 }
 
-h6 {
+.tiptap-preview h6 {
     @apply text-base;
 }
 
-.tiptap p.is-editor-empty:first-child::before {
+.tiptap-preview p.is-editor-empty:first-child::before {
     @apply text-zinc-500;
     content: attr(data-placeholder);
     float: left;
@@ -68,7 +68,7 @@ h6 {
     pointer-events: none;
 }
 
-.tiptap a {
+.tiptap-preview a {
     @apply text-blue-400 underline;
     cursor: pointer;
 
@@ -77,11 +77,11 @@ h6 {
     }
 }
 
-.tiptap code {
+.tiptap-preview code {
     @apply bg-zinc-800 text-zinc-300 rounded;
 }
 
-.tiptap pre {
+.tiptap-preview pre {
     @apply bg-zinc-800;
     border-radius: 0.5rem;
     color: var(--white);
@@ -90,28 +90,28 @@ h6 {
     padding: 0.75rem 1rem;
 }
 
-.tiptap pre code {
+.tiptap-preview pre code {
     background: none;
     color: inherit;
     font-size: 0.8rem;
     padding: 0;
 }
 
-.tiptap blockquote {
-    @apply border-s-2 border-zinc-700 px-4 py-4;
+.tiptap-preview blockquote {
+    @apply border-s-2 border-zinc-800 px-4 py-4;
 }
 
-.tiptap mark {
+.tiptap-preview mark {
     @apply bg-blue-900/50 text-white rounded;
     box-decoration-break: clone;
 }
 
-.tiptap hr {
-    @apply border-zinc-700;
+.tiptap-preview hr {
+    @apply border-zinc-800;
 }
 
 /* Table-specific styling */
-.tiptap table {
+.tiptap-preview table {
     border-collapse: collapse;
     margin: 0;
     overflow: hidden;
@@ -119,21 +119,21 @@ h6 {
     width: 100%;
 }
 
-.tiptap table td,
-.tiptap table th {
-    @apply relative border border-zinc-700 px-2 py-1;
+.tiptap-preview table td,
+.tiptap-preview table th {
+    @apply relative border border-zinc-800 px-2 py-1;
 }
 
-.tiptap table td>*,
-.tiptap table th>* {
+.tiptap-preview table td>*,
+.tiptap-preview table th>* {
     @apply mb-0;
 }
 
-.tiptap table th {
-    @apply bg-zinc-800 font-medium text-white;
+.tiptap-preview table th {
+    @apply bg-zinc-900 font-medium text-white;
 }
 
-.tiptap table .selectedCell:after {
+.tiptap-preview table .selectedCell:after {
     @apply bg-blue-500/15;
     content: "";
     left: 0;
@@ -145,17 +145,27 @@ h6 {
     z-index: 2;
 }
 
-.tiptap table .column-resize-handle {
+.tiptap-preview table .column-resize-handle {
     @apply bg-blue-500/50 w-1.5 absolute z-10 inset-y-0 -right-0.5;
     pointer-events: none;
 }
 
-.tiptap .tableWrapper {
+.tiptap-preview .tableWrapper {
     margin: 1.5rem 0;
     overflow-x: auto;
 }
 
-.tiptap.resize-cursor {
+.tiptap-preview.resize-cursor {
     cursor: ew-resize;
     cursor: col-resize;
+}
+
+@media (max-width: 768px) {
+    .tiptap-preview img {
+        width: 100% !important;
+    }
+
+    .tiptap-preview figcaption {
+        width: 100% !important;
+    }
 }

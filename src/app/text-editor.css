@@ -5,7 +5,7 @@
     }
 
     .has-focus {
-        @apply rounded-lg outline-1 outline-offset-2 outline-zinc-700;
+        @apply rounded-lg outline-1 outline-offset-2 outline-zinc-800;
     }
 }
 
@@ -69,16 +69,16 @@
 }
 
 .tiptap a {
-    @apply text-blue-400 underline;
+    @apply text-blue-800 dark:text-blue-400 underline;
     cursor: pointer;
 
     &:hover {
-        @apply text-blue-500;
+        @apply text-blue-700 dark:text-blue-500;
     }
 }
 
 .tiptap code {
-    @apply bg-zinc-800 text-zinc-300 rounded;
+    @apply bg-zinc-300 dark:bg-zinc-800 text-black dark:text-zinc-300 rounded;
 }
 
 .tiptap pre {
@@ -98,7 +98,7 @@
 }
 
 .tiptap blockquote {
-    @apply border-s-2 border-zinc-700 px-4 py-4;
+    @apply border-s-2 border-zinc-800 px-4 py-4;
 }
 
 .tiptap mark {
@@ -107,7 +107,7 @@
 }
 
 .tiptap hr {
-    @apply border-zinc-700;
+    @apply border-zinc-800;
 }
 
 /* Table-specific styling */
@@ -121,7 +121,7 @@
 
 .tiptap table td,
 .tiptap table th {
-    @apply relative border border-zinc-700 px-2 py-1;
+    @apply relative border border-zinc-800 px-2 py-1;
 }
 
 .tiptap table td>*,
@@ -130,7 +130,7 @@
 }
 
 .tiptap table th {
-    @apply bg-zinc-800 font-medium text-white;
+    @apply bg-zinc-900 font-medium text-white;
 }
 
 .tiptap table .selectedCell:after {
@@ -158,4 +158,14 @@
 .tiptap.resize-cursor {
     cursor: ew-resize;
     cursor: col-resize;
+}
+
+@media (max-width: 768px) {
+    .tiptap-preview img {
+        width: 100% !important;
+    }
+
+    .tiptap-preview figcaption {
+        width: 100% !important;
+    }
 }

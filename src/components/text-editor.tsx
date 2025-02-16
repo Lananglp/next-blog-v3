@@ -1,12 +1,7 @@
+'use client'
 import { Color } from '@tiptap/extension-color'
-// import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
-// import Document from '@tiptap/extension-document'
-// import Paragraph from '@tiptap/extension-paragraph'
-// import Text from '@tiptap/extension-text'
 import Heading from '@tiptap/extension-heading'
-// import Italic from '@tiptap/extension-italic'
-// import Bold from '@tiptap/extension-bold'
 import Underline from '@tiptap/extension-underline'
 import Placeholder from '@tiptap/extension-placeholder'
 import Link from '@tiptap/extension-link'
@@ -16,20 +11,21 @@ import Typography from '@tiptap/extension-typography'
 import Highlight from '@tiptap/extension-highlight'
 import Subscript from '@tiptap/extension-subscript'
 import Superscript from '@tiptap/extension-superscript'
-import Image from '@tiptap/extension-image'
 import Table from '@tiptap/extension-table'
 import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
 import TableRow from '@tiptap/extension-table-row'
-import ImageResize from 'tiptap-extension-resize-image';
-import { BubbleMenu, EditorContent, EditorProvider, FloatingMenu, useEditor } from '@tiptap/react'
+import { EditorContent, ReactNodeViewRenderer, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { Controller } from 'react-hook-form';
 import React from 'react';
 import '@/app/text-editor.css';
-import HardBreak from '@tiptap/extension-hard-break'
 import { Label } from './ui/label'
 import EditorMenu from './editor/editor-menu'
+import EditorFloatingMenu from './editor/editor-floating-menu'
+import EditorBubbleMenu from './editor/editor-bubble-menu'
+import Image from '@tiptap/extension-image'
+import { ResizableImage } from './editor/extentions/image-resize'
 
 type EditorProps = {
     control: any;
@@ -64,48 +60,68 @@ type EditorLayoutProps = {
 
 function EditorLayout({ errors, field }: EditorLayoutProps) {
 
-    const CustomHardBreak = HardBreak.extend({
-        addKeyboardShortcuts() {
-            return {
-                Enter: ({ editor }) => {
-                    const { state } = editor.view;
-                    const { selection } = state;
-                    const { $from } = selection;
-                    const node = $from.node();
-
-                    // Cek jika kita berada dalam paragraph kosong
-                    if (node.type.name === "paragraph" && node.content.size === 0) {
-                        editor.chain().focus().deleteNode("paragraph").setHardBreak().run();
-                        return true;
-                    }
-
-                    return false; // Gunakan default Enter jika tidak dalam <p> kosong
-                },
-            };
-        },
-    });
-
     const CustomImage = Image.extend({
         addAttributes() {
             return {
                 ...this.parent?.(),
-                width: {
-                    default: "200px",
-                    parseHTML: (element) => element.getAttribute("width") || "200px",
-                    renderHTML: (attributes) => {
-                        return attributes.width ? { width: attributes.width } : {};
-                    },
-                },
-                height: {
-                    default: "200px",
-                    parseHTML: (element) => element.getAttribute("height") || "200px",
-                    renderHTML: (attributes) => {
-                        return attributes.height ? { height: attributes.height } : {};
-                    },
-                },
-            };
+                width: { default: "50%" },
+                height: { default: "auto" },
+                alt: { default: "" },
+                objectFit: { default: "cover" },
+                aspectRatio: { default: "auto" },
+                placeSelf: { default: "start" },
+            }
         },
-    });
+        renderHTML({ HTMLAttributes }) {
+            return [
+                "figure",
+                [
+                    "img",
+                    {
+                        // ...HTMLAttributes,
+                        src: HTMLAttributes.src,
+                        alt: HTMLAttributes.alt,
+                        title: HTMLAttributes.alt,
+                        style: `width: ${HTMLAttributes.width}; height: ${HTMLAttributes.height}; object-fit: ${HTMLAttributes.objectFit}; aspect-ratio: ${HTMLAttributes.aspectRatio}; place-self: ${HTMLAttributes.placeSelf};`,
+                    },
+                ],
+                HTMLAttributes.alt
+                    ? [
+                        "figcaption",
+                        {
+                            style: `width: ${HTMLAttributes.width}; place-self: ${HTMLAttributes.placeSelf}; text-align: ${HTMLAttributes.placeSelf};`,
+                            class: "text-zinc-600 dark:text-zinc-400 text-xs mt-2",
+                        },
+                        HTMLAttributes.alt,
+                    ]
+                    : "",
+            ]
+        },
+        parseHTML() {
+            return [
+                {
+                    tag: "figure",
+                    getAttrs: (element) => {
+                        const img = element.querySelector("img");
+                        return img
+                            ? {
+                                src: img.getAttribute("src"),
+                                alt: img.getAttribute("alt"),
+                                width: img.style.width,
+                                height: img.style.height,
+                                objectFit: img.style.objectFit,
+                                aspectRatio: img.style.aspectRatio,
+                                placeSelf: img.style.placeSelf
+                            }
+                            : false;
+                    },
+                },
+            ];
+        },
+        addNodeView() {
+            return ReactNodeViewRenderer(ResizableImage);
+        },
+    });     
 
     const editor = useEditor({
         immediatelyRender: false,
@@ -113,18 +129,38 @@ function EditorLayout({ errors, field }: EditorLayoutProps) {
             StarterKit.configure({
                 heading: false
             }),
-            // Document,
-            // Paragraph,
-            // Text,
             Typography,
-            // Bold,
-            // Italic,
             Underline,
             Subscript,
             Superscript,
             CustomImage,
-            ImageResize,
-            // CustomHardBreak,
+            // ImageResize,
+            // Image.extend({
+            //     addNodeView() {
+            //         return ReactNodeViewRenderer(ResizableImage)
+            //     },
+            //     addAttributes() {
+            //         return {
+            //             ...this.parent?.(),
+            //             width: {
+            //                 default: '100%',
+            //                 renderHTML: (attributes) => ({
+            //                     width: attributes.width,
+            //                 }),
+            //             },
+            //             height: {
+            //                 default: 'auto',
+            //                 renderHTML: (attributes) => ({
+            //                     height: attributes.height,
+            //                 }),
+            //             },
+            //         }
+            //     },
+            // }).configure({
+            //     HTMLAttributes: {
+            //         class: 'rounded-lg border border-border',
+            //     },
+            // }),
             Table.configure({
                 resizable: true,
             }),
@@ -134,7 +170,6 @@ function EditorLayout({ errors, field }: EditorLayoutProps) {
             Color.configure({
                 types: ['textStyle'],
             }),
-            // ListItem,
             TextStyle,
             Focus.configure({
                 className: 'outline outline-offset-2 outline-1 outline-blue-600',
@@ -150,7 +185,7 @@ function EditorLayout({ errors, field }: EditorLayoutProps) {
                 multicolor: true
             }),
             Placeholder.configure({
-                placeholder: 'Write something …',
+                placeholder: ({ editor }) => (editor.isFocused ? "" : "Write something …"),
             }),
             Link.configure({
                 openOnClick: false,
@@ -219,34 +254,21 @@ function EditorLayout({ errors, field }: EditorLayoutProps) {
         },
     });
 
-    // if (node && node.type.name === "image") {
-
     if (!editor) {
         return <div>Loading...</div>;
     }
 
-    const extensions = [StarterKit]
-
     return (
         <div>
-            {/* <EditorProvider
-                slotBefore={<MenuEditor className='' editor={editor} />}
-                extensions={extensions}
-                content={value || ''}
-            >
-
-            </EditorProvider> */}
             <Label htmlFor="content" className="inline-block mb-2"><span className="text-red-500">*</span>&nbsp;Post Content :</Label>
-            {editor &&
-                <FloatingMenu editor={editor}>
-                    <span className='text-sm text-zinc-500'>add text here...</span>
-                </FloatingMenu>
-            }
-            {editor && <EditorMenu className='sticky z-30 top-4' editor={editor} errors={errors} />}
+            <EditorBubbleMenu editor={editor} />
+            <EditorFloatingMenu editor={editor} />
+            <EditorMenu editor={editor} errors={errors} />
             <EditorContent
                 id='content'
-                className={`w-full rounded-b-lg border-x border-b p-6 min-h-96 ${errors ? 'border-red-500' : 'border-zinc-900'}`}
+                className={`w-full rounded-b-lg border-x border-b p-6 min-h-96 ${errors ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-800'}`}
                 editor={editor}
+                onClick={() => editor?.commands.focus()}
             />
             {errors && <p className="mt-2 text-red-500 text-xs">{errors?.message}</p>}
         </div>

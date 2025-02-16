@@ -2,6 +2,7 @@ import { Check, CodeIcon, LinkIcon, Strikethrough, SubscriptIcon, SuperscriptIco
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
+import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
 
 function EditorMarkSecond({ editor }: { editor: any }) {
 
@@ -18,7 +19,7 @@ function EditorMarkSecond({ editor }: { editor: any }) {
                 disabled={!editor.can().chain().focus().toggleStrike().run()}
                 variant={'editorToolBar'}
                 size={'editorToolBar'}
-                className={editor.isActive('strike') ? 'bg-zinc-700' : ''}
+                className={editor.isActive('strike') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <Strikethrough className='w-4 h-4' />
             </Button>
@@ -29,7 +30,7 @@ function EditorMarkSecond({ editor }: { editor: any }) {
                 disabled={!editor.can().chain().focus().toggleCode().run()}
                 variant={'editorToolBar'}
                 size={'editorToolBar'}
-                className={editor.isActive('code') ? 'bg-zinc-700' : ''}
+                className={editor.isActive('code') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <CodeIcon className='w-4 h-4' />
             </Button>
@@ -40,7 +41,7 @@ function EditorMarkSecond({ editor }: { editor: any }) {
                 onClick={() => editor.chain().focus().toggleHighlight().run()}
                 variant={'editorToolBar'}
                 size={'editorBlockBar'}
-                className={editor.isActive('highlight') ? 'bg-zinc-700' : ''}
+                className={editor.isActive('highlight') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 Highlight
             </Button>
@@ -50,7 +51,7 @@ function EditorMarkSecond({ editor }: { editor: any }) {
                 onClick={() => editor.chain().focus().toggleSubscript().run()}
                 variant={'editorToolBar'}
                 size={'editorToolBar'}
-                className={editor.isActive('subscript') ? 'bg-zinc-700' : ''}
+                className={editor.isActive('subscript') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <SubscriptIcon className='w-4 h-4' />
             </Button>
@@ -60,7 +61,7 @@ function EditorMarkSecond({ editor }: { editor: any }) {
                 onClick={() => editor.chain().focus().toggleSuperscript().run()}
                 variant={'editorToolBar'}
                 size={'editorToolBar'}
-                className={editor.isActive('superscript') ? 'bg-zinc-700' : ''}
+                className={editor.isActive('superscript') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <SuperscriptIcon className='w-4 h-4' />
             </Button>
@@ -72,6 +73,11 @@ const EditorSetLinkButton = ({ editor }: { editor: any }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [url, setUrl] = useState("");
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const { x, y, refs, strategy } = useFloating({
+        placement: "bottom-start",
+        middleware: [offset(8), flip(), shift()],
+        whileElementsMounted: autoUpdate,
+    });
 
     useEffect(() => {
         if (!editor) return;
@@ -107,33 +113,45 @@ const EditorSetLinkButton = ({ editor }: { editor: any }) => {
     };
 
     return (
-        <div ref={dropdownRef} className="relative inline-block">
+        <div className="relative inline-block">
             <Button
                 type='button'
+                ref={refs.setReference}
                 title='Set link'
                 onClick={() => setIsOpen(!isOpen)}
                 variant={'editorToolBar'}
                 size={'editorToolBar'}
-                className={editor.isActive('link') ? 'bg-zinc-700' : ''}
+                className={editor.isActive('link') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <LinkIcon className='w-4 h-4' />
             </Button>
 
             {isOpen && (
-                <div className="absolute mt-1 w-48 lg:w-80 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg p-2 z-10">
+                <div
+                    ref={(ref) => {
+                        refs.setFloating(ref);
+                        dropdownRef.current = ref;
+                    }}
+                    style={{
+                        position: strategy,
+                        top: y ?? 0,
+                        left: x ?? 0,
+                    }}
+                    className="mt-1 w-48 lg:w-80 bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-md shadow-lg p-2 z-10"
+                >
                     <Input
-                        type="text"
+                        type="url"
                         placeholder="Enter URL..."
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}
-                        variant={'editor'}
+                        variant={'primary'}
                         onKeyDown={(e) => e.key === "Enter" && setLink()}
                     />
                     <div className="flex justify-end mt-2 space-x-1">
-                        <Button type='button' variant={'editorBlockBar'} size={'editorBlockBar'} className="bg-zinc-700 hover:bg-zinc-600" onClick={() => setIsOpen(false)}>
+                        <Button type='button' variant={'editorBlockBar'} size={'editorBlockBar'} onClick={() => setIsOpen(false)}>
                             cancel
                         </Button>
-                        <Button type='button' variant={'editorBlockBar'} size={'editorBlockBar'} className="bg-blue-700 hover:bg-blue-600 text-white" onClick={setLink}>
+                        <Button type='button' variant={'submit'} size={'editorBlockBar'} onClick={setLink}>
                             save
                         </Button>
                     </div>

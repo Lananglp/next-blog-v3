@@ -10,7 +10,6 @@ import { Controller } from "react-hook-form";
 
 interface InputExcerptProps {
     value: string;
-    onChange: (value: string) => void;
     content: string;
     placeholder: string;
     errors?: any;
@@ -18,7 +17,7 @@ interface InputExcerptProps {
     name: string;
 }
 
-export default function InputExcerpt({ value, onChange, content, placeholder, errors, control, name }: InputExcerptProps) {
+export default function InputExcerpt({ value, content, placeholder, errors, control, name }: InputExcerptProps) {
 
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -65,7 +64,10 @@ export default function InputExcerpt({ value, onChange, content, placeholder, er
                         <Textarea
                             id="excerpt"
                             {...field}
-                            ref={textareaRef}
+                            ref={(ref) => {
+                                field.ref(ref);
+                                textareaRef.current = ref;
+                            }}
                             value={value}
                             onChange={handleChange}
                             placeholder={placeholder}

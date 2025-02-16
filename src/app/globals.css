@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-zinc-950 text-zinc-300;
-}
-
 /* :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -127,7 +123,8 @@ body {
 
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
+    /* --border: 240 3.7% 15.9%; */
+    --border: 240 4% 16%;
 
     --input: 240 3.7% 15.9%;
 
@@ -166,6 +163,27 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    /* @apply bg-background text-foreground; */
+    @apply bg-zinc-100 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300;
+  }
+
+  /* Custom styling untuk TwitterPicker */
+  .custom-color-picker {
+    @apply bg-zinc-100 dark:bg-zinc-900;
+  }
+
+  .custom-color-picker>div {
+    @apply bg-transparent
+    /* Warna latar belakang tombol */
+  }
+
+  .custom-color-picker input {
+    color: var(--background) !important;
+    /* Warna teks */
+  }
+
+  .custom-color-picker span {
+    color: var(--background) !important;
+    /* Warna label */
   }
 }

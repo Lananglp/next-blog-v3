@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 async function main() {
@@ -15,7 +16,7 @@ async function main() {
         name: "Admin User",
         email: "admin@admin.com",
         password: passwordHash,
-        role: "ADMIN",
+        role: UserRole.ADMIN,
       },
     });
     console.log("BERHASIL !!!");

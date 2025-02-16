@@ -2,10 +2,16 @@ import { useState, useRef, useEffect } from "react";
 import { Grid2X2, ChevronDown, PlusIcon, WandSparkles, Trash2, MoveLeft, MoveRight, MoveUp, MoveDown, Square, Scissors, AlignCenterHorizontal, Columns2, Rows2, TableCellsMerge } from "lucide-react";
 import { PiArrowBendUpLeftBold, PiArrowBendUpRightBold } from "react-icons/pi";
 import { Button } from "../ui/button";
+import { autoUpdate, flip, offset, shift, useFloating } from "@floating-ui/react";
 
 const EditorBlockTable = ({ editor }: { editor: any }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const { x, y, refs, strategy } = useFloating({
+        placement: "bottom-start",
+        middleware: [offset(8), flip(), shift()],
+        whileElementsMounted: autoUpdate,
+    });
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -46,36 +52,52 @@ const EditorBlockTable = ({ editor }: { editor: any }) => {
     ];
 
     return (
-        <div ref={dropdownRef} className="relative inline-block">
+        <div className="relative inline-block">
             <Button
                 type="button"
+                ref={refs.setReference}
                 title="Table Options"
                 onClick={() => setIsOpen(!isOpen)}
                 variant={'editorBlockBar'}
                 size={'editorBlockBar'}
-                className={editor.isActive('table') ? 'bg-zinc-700' : 'bg-zinc-900'}
+                className={editor.isActive('table') ? 'bg-zinc-200 dark:bg-zinc-700 text-black dark:text-white' : 'bg-zinc-100 dark:bg-zinc-900'}
             >
                 <Grid2X2 />Table<ChevronDown />
             </Button>
 
             {isOpen && (
-                <div className="absolute mt-1 w-96 lg:w-[40rem] grid grid-cols-3 gap-1 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg z-10 p-1.5">
-                    <button
+                <div
+                    ref={(ref) => {
+                        refs.setFloating(ref);
+                        dropdownRef.current = ref;
+                    }}
+                    style={{
+                        position: strategy,
+                        top: y ?? 0,
+                        left: x ?? 0,
+                    }}
+                    className="absolute mt-1 w-96 lg:w-[40rem] grid grid-cols-3 gap-1 bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 rounded-md shadow-lg z-10 p-1.5"
+                >
+                    <Button
                         type="button"
-                        className="w-full text-left px-2 py-1 text-sm hover:bg-zinc-700 disabled:hover:bg-transparent disabled:cursor-not-allowed disabled:text-zinc-500 border border-zinc-700 rounded flex items-center gap-1"
+                        variant={'editorBlockBar'}
+                        size={'xs'}
                         onClick={() => {
                             editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
                             setIsOpen(false);
                         }}
                         disabled={editor.isActive('table')}
+                        className="bg-zinc-200/50 dark:bg-zinc-900 justify-start"
                     >
                         <PlusIcon className="w-4 h-4 mb-0.5" />Insert Table
-                    </button>
+                    </Button>
                     {options.map((option, index) => (
-                        <button
+                        <Button
                             type="button"
                             key={option.label}
-                            className={`${option.type === 'delete' && 'text-red-500'} w-full text-left px-2 py-1 text-sm hover:bg-zinc-700 disabled:hover:bg-transparent disabled:cursor-not-allowed disabled:text-zinc-500 border border-zinc-700 rounded flex items-center gap-1`}
+                            variant={'editorBlockBar'}
+                            size={'xs'}
+                            className={`${option.type === 'delete' && 'text-red-500'} justify-start`}
                             onClick={() => {
                                 option.action();
                                 setIsOpen(false);
@@ -83,7 +105,7 @@ const EditorBlockTable = ({ editor }: { editor: any }) => {
                             disabled={!editor.isActive('table')}
                         >
                             {option.icon}{option.label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             )}

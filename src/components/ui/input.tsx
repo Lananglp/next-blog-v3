@@ -13,7 +13,7 @@ const inputVariants = cva(
       },
       variant: {
         default: "border-input dark:border-zinc-700 focus-visible:ring-blue-500",
-        primary: "border-zinc-900",
+        primary: "border-zinc-300 dark:border-zinc-800",
         editor: "bg-zinc-900 border border-zinc-700",
         danger: "border-red-500 focus-visible:ring-red-500",
         success: "border-green-500 focus-visible:ring-green-500",

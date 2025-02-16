@@ -6,7 +6,13 @@ import EditorTextColor from "./editor-text-color";
 import EditorTextTypeDropdown from "./editor-text-type-dropdown";
 import EditorUndoRedo from "./editor-undo-redo";
 
-const EditorMenu = ({ className, editor, errors }: { className: string; editor: any, errors?: any }) => {
+type Props = {
+    className?: string;
+    editor: any;
+    errors?: any;
+};
+
+const EditorMenu = ({ className, editor, errors }: Props) => {
 
     if (!editor) {
         return null
@@ -14,11 +20,11 @@ const EditorMenu = ({ className, editor, errors }: { className: string; editor: 
 
     return (
         <div className={className}>
-            <div className={`flex flex-col bg-zinc-950 rounded-t-lg border-x border-t ${errors ? 'border border-red-500' : 'border-zinc-900'}`}>
-                <div className="flex flex-wrap items-center gap-1 p-2 border-b border-zinc-900">
+            <div className={`flex flex-col bg-zinc-100 dark:bg-zinc-950 rounded-t-lg border-x border-t ${errors ? 'border border-red-500' : 'border-zinc-300 dark:border-zinc-800'}`}>
+                <div className="flex flex-wrap items-center gap-1 p-2 border-b border-zinc-300 dark:border-zinc-800">
                     <EditorUndoRedo editor={editor} />
-                    <EditorVerticalLine />
-                    <EditorTextColor editor={editor} />
+                    {/* <EditorVerticalLine />
+                    <EditorTextColor editor={editor} /> */}
                     <EditorVerticalLine />
                     <EditorTextTypeDropdown editor={editor} />
                     <EditorVerticalLine />
@@ -28,7 +34,7 @@ const EditorMenu = ({ className, editor, errors }: { className: string; editor: 
                     <EditorVerticalLine />
                     <EditorAlign editor={editor} />
                 </div>
-                <div className="p-2 bg-zinc-950 border-b border-zinc-900">
+                <div className="p-2 bg-zinc-100 dark:bg-zinc-950 border-b border-zinc-300 dark:border-zinc-800">
                     <EditorBlock editor={editor} />
                 </div>
             </div>
@@ -36,10 +42,10 @@ const EditorMenu = ({ className, editor, errors }: { className: string; editor: 
     )
 }
 
-const EditorVerticalLine = () => {
+export const EditorVerticalLine = () => {
     return (
         <div className='px-2 flex justify-center items-center'>
-            <div className='h-6 inline-block border-s border-zinc-700' />
+            <div className='h-6 inline-block border-s border-zinc-300 dark:border-zinc-700' />
         </div>
     )
 }

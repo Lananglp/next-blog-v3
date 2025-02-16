@@ -9,7 +9,6 @@ import { Controller } from "react-hook-form";
 
 interface InputKategoriProps {
     value: string[];
-    onChange: (categories: string[]) => void;
     placeholder?: string;
     errors?: any;
     name: string;
@@ -18,7 +17,7 @@ interface InputKategoriProps {
 
 const availableCategories = ["Gadget", "Hukum", "Alam", "Teknologi", "Kesehatan", "Olahraga", "Pendidikan"];
 
-export default function InputCategory({ value, onChange, placeholder, errors, control, name }: InputKategoriProps) {
+export default function InputCategory({ value, placeholder, errors, control, name }: InputKategoriProps) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     return (
@@ -42,10 +41,10 @@ export default function InputCategory({ value, onChange, placeholder, errors, co
                 return (
                     <div>
                         <Label htmlFor="category" className="inline-block mb-2">Post Category :</Label>
-                        <div className={`w-full border ${errors ? "border-red-500" : "border-zinc-900"} rounded-lg p-1`}>
+                        <div className={`w-full border ${errors ? "border-red-500" : "border-zinc-300 dark:border-zinc-800"} rounded-lg p-1`}>
                             <div className="flex items-center flex-wrap gap-1">
                                 {value && value.map((category, index) => (
-                                    <span key={index} className="flex items-center bg-zinc-900 rounded text-sm ps-2.5 pe-0.5 py-0.5">
+                                    <span key={index} className="flex items-center bg-zinc-200 dark:bg-zinc-900 rounded text-sm ps-2.5 pe-0.5 py-0.5">
                                         {category}
                                         <Button type="button" onClick={() => removeCategory(index)} variant={'ghost'} size={'xs'} className="ms-1 h-6 w-6">
                                             <X />

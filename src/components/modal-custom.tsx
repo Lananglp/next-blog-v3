@@ -1,5 +1,6 @@
 'use client'
 import React, { useEffect } from 'react'
+import { createPortal } from 'react-dom';
 import { Button } from './ui/button';
 import './css/modal-custom.css'
 
@@ -13,22 +14,26 @@ interface Props {
 }
 
 function Modal({ open, title, description, onClose, width, children }: Props) {
-
+    // Efek untuk menonaktifkan scroll saat modal terbuka
     useEffect(() => {
         if (open) {
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden'; // Mencegah scroll
         } else {
-            document.body.style.overflow = '';
+            document.body.style.overflow = 'auto'; // Kembalikan scroll
         }
+
+        // Cleanup saat komponen di-unmount atau modal ditutup
         return () => {
-            document.body.style.overflow = '';
-        }
+            document.body.style.overflow = 'auto';
+        };
     }, [open]);
 
-    return (
-        <div tabIndex={-1} aria-hidden="true" className={`${open ? 'flex' : 'hidden'} bg-black/50 backdrop-blur-sm fixed z-50 justify-center items-center w-full inset-0 max-h-full`}>
-            <div className={`relative w-full ${width ? width : 'max-w-2xl'} max-h-[calc(100vh-2rem)] flex flex-col`}>
-                <div className="bg-zinc-100 dark:bg-zinc-950 rounded-xl border dark:border-zinc-900 flex flex-col overflow-auto">
+    if (!open) return null; // Jika modal tidak terbuka, jangan render apa pun
+
+    return createPortal(
+        <div className="fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm z-10">
+            <div className={`relative w-full ${width ? width : 'max-w-2xl'} max-h-[calc(100vh-1rem)] flex flex-col px-4`}>
+                <div className="bg-zinc-100 dark:bg-zinc-950 rounded-xl border dark:border-zinc-800 flex flex-col overflow-auto">
                     {(title || description) &&
                         <div className="flex items-center justify-between px-4 py-2 border-b rounded-t dark:border-zinc-800">
                             <div>
@@ -50,8 +55,9 @@ function Modal({ open, title, description, onClose, width, children }: Props) {
                     </div>
                 </div>
             </div>
-        </div>
-    )
+        </div>,
+        document.body // Portal ke body agar modal tampil penuh di layar
+    );
 }
 
-export default Modal
+export default Modal;
