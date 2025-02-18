@@ -22,10 +22,10 @@ function EditorBubbleMenu({ editor }: { editor: any }) {
             editor={editor}
             tippyOptions={{
                 duration: 150,
-                placement: "bottom-start", // Menampilkan menu di bawah kursor
+                placement: "bottom-end", // Menampilkan menu di bawah kursor
                 offset: [0, 8], // [horizontal, vertical] -> Geser ke bawah 10px
             }}
-            className='bg-zinc-950 border border-zinc-900 rounded-lg p-2'
+            className='sm:w-[26.5rem] xl:w-[39.3rem] bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-lg p-2'
         >
             <div className="flex flex-wrap items-center gap-1">
                 {/* <EditorTextColor editor={editor} />
@@ -34,9 +34,9 @@ function EditorBubbleMenu({ editor }: { editor: any }) {
                 <EditorVerticalLine />
                 <EditorMarkOne editor={editor} />
                 <EditorVerticalLine />
-                <EditorMarkSecond editor={editor} />
-                <EditorVerticalLine />
                 <EditorAlign editor={editor} />
+                <EditorVerticalLine />
+                <EditorMarkSecond editor={editor} />
             </div>
         </BubbleMenu>
     )

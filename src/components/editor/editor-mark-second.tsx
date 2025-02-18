@@ -23,7 +23,7 @@ function EditorMarkSecond({ editor }: { editor: any }) {
             >
                 <Strikethrough className='w-4 h-4' />
             </Button>
-            <Button
+            {/* <Button
                 type='button'
                 title='code'
                 onClick={() => editor.chain().focus().toggleCode().run()}
@@ -33,7 +33,7 @@ function EditorMarkSecond({ editor }: { editor: any }) {
                 className={editor.isActive('code') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <CodeIcon className='w-4 h-4' />
-            </Button>
+            </Button> */}
             <EditorSetLinkButton editor={editor} />
             <Button
                 type='button'

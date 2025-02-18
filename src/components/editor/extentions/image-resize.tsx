@@ -4,16 +4,16 @@ import { NodeViewWrapper } from "@tiptap/react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { autoUpdate, flip, offset, shift, useFloating } from "@floating-ui/react"
 import { Slider } from "@/components/ui/slider"
 import EditorBlockImage from "../editor-block-image"
 import { Textarea } from "@/components/ui/textarea"
 import { AlignCenter, AlignLeft, AlignRight } from "lucide-react"
+import { initialImageWidth } from "./custom-extentions"
 
 export function ResizableImage(props: any) {
-    const [width, setWidth] = useState<string>(props.node.attrs.width || "50%");
+    const [width, setWidth] = useState<string>(props.node.attrs.width || initialImageWidth);
     // const [height, setHeight] = useState<string>(props.node.attrs.height || "auto");
     const [alt, setAlt] = useState<string>(props.node.attrs.alt || "");
     const [aspectRatio, setAspectRatio] = useState<string>(props.node.attrs.aspectRatio || "auto");
@@ -131,9 +131,9 @@ export function ResizableImage(props: any) {
                     </div>
                     <div className="grid grid-cols-12 items-center gap-2">
                         <div className="col-span-3"/>
-                        <p className="col-span-9 text-xs text-zinc-600 dark:text-zinc-400">Size is only applied to desktop displays.</p>
+                        <div className="col-span-9 text-xs text-zinc-600 dark:text-zinc-400">Size is only applied to desktop displays.</div>
                     </div>
-                    <div className="grid grid-cols-12 items-center gap-2 mb-2">
+                    <div className="grid grid-cols-12 items-center gap-2">
                         <Label htmlFor="placeSelf" className="col-span-3 text-right text-xs">Position</Label>
                         <div className="col-span-9 flex items-center gap-2">
                             <Button
@@ -142,7 +142,7 @@ export function ResizableImage(props: any) {
                                 size={'sm'}
                                 onClick={() => setPlaceSelf("start")}
                                 onBlur={saveSettings}
-                                className={`${placeSelf === "start" ? "bg-zinc-800" : ""} px-1 h-7 w-full rounded`}
+                                className={`${placeSelf === "start" ? "text-black dark:text-white bg-zinc-200 dark:bg-zinc-800" : ""} px-1 h-7 w-full rounded`}
                             >
                                 <AlignLeft />Start
                             </Button>
@@ -152,7 +152,7 @@ export function ResizableImage(props: any) {
                                 size={'sm'}
                                 onClick={() => setPlaceSelf("center")}
                                 onBlur={saveSettings}
-                                className={`${placeSelf === "center" ? "bg-zinc-800" : ""} px-1 h-7 w-full rounded`}
+                                className={`${placeSelf === "center" ? "text-black dark:text-white bg-zinc-200 dark:bg-zinc-800" : ""} px-1 h-7 w-full rounded`}
                             >
                                 <AlignCenter />Center
                             </Button>
@@ -162,7 +162,7 @@ export function ResizableImage(props: any) {
                                 size={'sm'}
                                 onClick={() => setPlaceSelf("end")}
                                 onBlur={saveSettings}
-                                className={`${placeSelf === "end" ? "bg-zinc-800" : ""} px-1 h-7 w-full rounded`}
+                                className={`${placeSelf === "end" ? "text-black dark:text-white bg-zinc-200 dark:bg-zinc-800" : ""} px-1 h-7 w-full rounded`}
                             >
                                 <AlignRight />Right
                             </Button>

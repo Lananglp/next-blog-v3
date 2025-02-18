@@ -1,5 +1,103 @@
 .tiptap-preview {
     @apply focus:outline-none;
+
+    :first-child {
+        @apply mt-0;
+    }
+
+    .has-focus {
+        @apply rounded-lg outline-1 outline-offset-2 outline-zinc-800;
+    }
+
+    @media (max-width: 768px) {
+        img {
+            width: 100% !important;
+        }
+    
+        figcaption {
+            width: 100% !important;
+        }
+    }
+
+    figure {
+        @apply mb-8;
+    }
+
+    ul,
+    ol {
+        @apply mb-8;
+        // margin: 1.25rem 1rem 1.25rem 0.4rem;
+
+        li p {
+            @apply m-0;
+        }
+    }
+
+    /* Table-specific styling */
+    table {
+        border-collapse: collapse;
+        margin: 0;
+        overflow: hidden;
+        table-layout: fixed;
+        width: 100%;
+
+        td,
+        th {
+            // border: 1px solid var(--gray-3);
+            // box-sizing: border-box;
+            min-width: 1em;
+            padding: 6px 8px;
+            position: relative;
+            vertical-align: top;
+
+            >* {
+                margin-bottom: 0;
+            }
+        }
+
+        th {
+            // background-color: var(--gray-1);
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .selectedCell:after {
+            @apply bg-blue-500/15;
+            content: "";
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            pointer-events: none;
+            position: absolute;
+            z-index: 2;
+        }
+
+        .column-resize-handle {
+            @apply bg-blue-500/50 w-1.5 absolute z-10 inset-y-0 -right-0.5;
+            pointer-events: none;
+        }
+    }
+
+    .tableWrapper {
+        margin: 1.5rem 0;
+        overflow-x: auto;
+    }
+
+    &.resize-cursor {
+        cursor: ew-resize;
+        cursor: col-resize;
+    }
+}
+
+
+
+
+
+
+
+/* .tiptap-preview {
+    @apply focus:outline-none;
     :first-child {
       @apply p-0 mt-0;
     }
@@ -7,9 +105,12 @@
     .has-focus {
         @apply rounded-lg outline-1 outline-offset-2 outline-zinc-700;
     }
-}
+} */
 
-.tiptap-preview ul,
+
+
+
+/* .tiptap-preview ul,
 .tiptap-preview ol {
     @apply ps-8 mb-0
 }
@@ -110,7 +211,6 @@
     @apply border-zinc-800;
 }
 
-/* Table-specific styling */
 .tiptap-preview table {
     border-collapse: collapse;
     margin: 0;
@@ -168,4 +268,4 @@
     .tiptap-preview figcaption {
         width: 100% !important;
     }
-}
+} */

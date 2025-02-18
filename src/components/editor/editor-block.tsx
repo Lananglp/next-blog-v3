@@ -47,7 +47,7 @@ function EditorBlock({ editor }: { editor: any }) {
             >
                 <ListOrderedIcon />{showLabel && 'Number List'}
             </Button>
-            <Button
+            {/* <Button
                 type='button'
                 title='Code Block'
                 onClick={() => editor.chain().focus().toggleCodeBlock().run()}
@@ -56,7 +56,7 @@ function EditorBlock({ editor }: { editor: any }) {
                 className={editor.isActive('codeBlock') ? 'bg-zinc-200 dark:bg-zinc-700 text-black dark:text-white' : 'bg-zinc-100 dark:bg-zinc-900'}
             >
                 <Code />Code Block
-            </Button>
+            </Button> */}
             <Button
                 type='button'
                 title='Blockquote'

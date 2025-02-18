@@ -13,15 +13,12 @@ const EditorTextTypeDropdown = ({ editor }: { editor: any }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const options = [
-        { label: "Paragraph", type: "paragraph" },
-        { label: "Heading 1", type: "heading", level: 1 },
-        { label: "Heading 2", type: "heading", level: 2 },
-        { label: "Heading 3", type: "heading", level: 3 },
-        { label: "Heading 4", type: "heading", level: 4 },
-        { label: "Heading 5", type: "heading", level: 5 },
-        { label: "Heading 6", type: "heading", level: 6 },
+        { label: "Text", type: "paragraph" },
+        { label: "Heading 1", type: "heading", level: 2 },
+        { label: "Heading 2", type: "heading", level: 3 },
+        { label: "Heading 3", type: "heading", level: 4 },
     ];
-    const [selected, setSelected] = useState<string>("Paragraph");
+    const [selected, setSelected] = useState<string>("Text");
     const { x, y, refs, strategy } = useFloating({
         placement: "bottom-start",
         middleware: [offset(8), flip(), shift()],
@@ -33,19 +30,13 @@ const EditorTextTypeDropdown = ({ editor }: { editor: any }) => {
         if (!editor && !state) return;
 
         if (editor.isActive("paragraph")) {
-            setSelected("Paragraph");
-        } else if (editor.isActive("heading", { level: 1 })) {
-            setSelected("Heading 1");
+            setSelected("Text");
         } else if (editor.isActive("heading", { level: 2 })) {
-            setSelected("Heading 2");
+            setSelected("Heading 1");
         } else if (editor.isActive("heading", { level: 3 })) {
-            setSelected("Heading 3");
+            setSelected("Heading 2");
         } else if (editor.isActive("heading", { level: 4 })) {
-            setSelected("Heading 4");
-        } else if (editor.isActive("heading", { level: 5 })) {
-            setSelected("Heading 5");
-        } else if (editor.isActive("heading", { level: 6 })) {
-            setSelected("Heading 6");
+            setSelected("Heading 3");
         }
     }, [editor, state]);
 

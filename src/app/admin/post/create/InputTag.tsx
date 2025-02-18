@@ -8,15 +8,16 @@ import { useRef, useState } from "react";
 import { Controller } from "react-hook-form";
 
 interface InputTagProps {
+    label: string;
     value: string[];
     placeholder?: string;
     className?: string;
     errors?: any;
     name: string;
-    control: any
+    control: any;
 }
 
-export default function InputTag({ value, placeholder="Enter tags...", className, errors, control, name }: InputTagProps) {
+export default function InputTag({ label, value, placeholder="Enter tags...", className, errors, control, name }: InputTagProps) {
 
     const [inputValue, setInputValue] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
@@ -48,8 +49,8 @@ export default function InputTag({ value, placeholder="Enter tags...", className
 
                 return (
                     <div>
-                        <Label htmlFor="tags" className="inline-block mb-2">Post Tags :</Label>
-                        <div onClick={handleFocus} className={`w-full flex items-center flex-wrap gap-1 border ${errors ? "border-red-500" : "border-zinc-300 dark:border-zinc-800"} rounded-lg px-1`}>
+                        <Label htmlFor={label} className="inline-block mb-2">{label} :</Label>
+                        <div onClick={handleFocus} className={`w-full flex items-center flex-wrap gap-1 border ${errors ? "border-red-500" : "border-zinc-300 dark:border-zinc-800"} rounded-lg p-1`}>
                             {value && value.map((tag, index) => (
                                 <span key={index} className="flex items-center bg-zinc-200 dark:bg-zinc-900 rounded text-sm ps-2.5 pe-0.5 py-0.5">
                                     {tag}
@@ -60,7 +61,7 @@ export default function InputTag({ value, placeholder="Enter tags...", className
                             ))}
                             <Input
                                 {...field}
-                                id="tags"
+                                id={label}
                                 ref={(ref) => {
                                     field.ref(ref);
                                     inputRef.current = ref;
@@ -70,7 +71,7 @@ export default function InputTag({ value, placeholder="Enter tags...", className
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 placeholder={placeholder}
-                                className={`px-2 py-0 w-auto border-none bg-transparent focus:outline-none ${className}`}
+                                className={`px-2 py-0 h-7 w-auto border-none bg-transparent focus:outline-none ${className}`}
                             />
                         </div>
                         {errors ? (

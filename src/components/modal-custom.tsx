@@ -11,9 +11,10 @@ interface Props {
     onClose?: () => void;
     width?: string;
     children: React.ReactNode;
+    ref?: React.Ref<HTMLDivElement>;
 }
 
-function Modal({ open, title, description, onClose, width, children }: Props) {
+function Modal({ ref, open, title, description, onClose, width, children }: Props) {
     // Efek untuk menonaktifkan scroll saat modal terbuka
     useEffect(() => {
         if (open) {
@@ -31,7 +32,7 @@ function Modal({ open, title, description, onClose, width, children }: Props) {
     if (!open) return null; // Jika modal tidak terbuka, jangan render apa pun
 
     return createPortal(
-        <div className="fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm z-10">
+        <div ref={ref} className="fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm z-10">
             <div className={`relative w-full ${width ? width : 'max-w-2xl'} max-h-[calc(100vh-1rem)] flex flex-col px-4`}>
                 <div className="bg-zinc-100 dark:bg-zinc-950 rounded-xl border dark:border-zinc-800 flex flex-col overflow-auto">
                     {(title || description) &&
