@@ -3,8 +3,15 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import ReduxProvider from "@/components/redux-provider";
 import { ThemeProvider } from "@/components/theme-provider";
-import { fontPoppins } from "@/lib/font";
+// import { fontPoppins } from "@/lib/font";
 import AuthProvider from "@/components/auth-check-provider";
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -22,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${fontPoppins.className} antialiased`}
+        className={`${poppins.className} antialiased`}
       >
         <ReduxProvider>
           <AuthProvider>
