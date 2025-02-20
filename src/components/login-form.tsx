@@ -116,7 +116,7 @@ export function LoginForm({
                   </Link>
                 </div>
                 <div className="relative">
-                  <Input {...register("password")} className={`${errors.password ? "ring-1 ring-red-500" : ""}`} id="password" type={showPassword ? "text" : "password"} />
+                  <Input autoComplete="off" {...register("password")} className={`${errors.password ? "ring-1 ring-red-500" : ""}`} id="password" type={showPassword ? "text" : "password"} />
                   <button onClick={() => setShowPassword(!showPassword)} className='absolute top-1/2 right-2 -translate-y-1/2 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-800 rounded p-1.5' type="button">{showPassword ? <PiEyeBold className='w-5 h-5'/> : <PiEyeClosedBold className='w-5 h-5'/>}</button>
                 </div>
                 {errors.password && <span className='text-red-500 text-xs mb-2'>{errors.password.message}</span>}

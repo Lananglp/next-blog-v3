@@ -3,13 +3,12 @@
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import InputTag from "./InputTag";
-import InputExcerpt from "./InputExcerpt";
-import InputSlug from "./InputSlug";
-import InputTitle from "./InputTitle";
-import InputCategory from "./InputCategory";
+import InputTag from "@/components/input/input-tag";
+import InputExcerpt from "@/components/input/input-excerpt";
+import InputSlug from "@/components/input/input-slug";
+import InputTitle from "@/components/input/input-title";
 import TextEditor from "@/components/text-editor";
-import InputStatus from "./InputStatus";
+import InputStatus from "@/components/input/input-status";
 import { Button } from "@/components/ui/button";
 import { Eye, MoveLeft, Send } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -18,7 +17,8 @@ import PostPreview from "./PostPreview";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import InputImage from "./InputImage";
+import InputImage from "@/components/input/input-image";
+import InputCategory from "@/components/input/input-category";
 
 // export type PostFormValues = {
 //     title: string;
@@ -130,7 +130,8 @@ export default function CreatePostPage() {
         return (
             <div className="max-w-3xl mx-auto pt-12 pb-24">
                 <h2 className="text-black dark:text-white text-xl font-semibold border-b border-zinc-300 dark:border-zinc-800 pb-2 mb-4">Create New Post</h2>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <img src="http://localhost:3000/api/uploads/image-2025-02-19-1739938423932.png" alt="" />
+                <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col space-y-4">
                     <div>
                         <InputImage
                             label="Post Thumbnail"
@@ -174,7 +175,6 @@ export default function CreatePostPage() {
                         title={title}
                         errors={errors.slug}
                     />
-                    {/* <input {...register("authorId")} placeholder="Author ID" className="w-full bg-transparent py-1 px-2 border border-zinc-800" /> */}
                     <InputCategory
                         value={categories}
                         name="categories"
@@ -203,7 +203,7 @@ export default function CreatePostPage() {
                             )}
                         </div>
                         {customSeo && (
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <InputTitle
                                     type="text"
                                     label="Meta Title"
@@ -276,15 +276,9 @@ export default function CreatePostPage() {
                         />
                         <div className="flex items-center gap-2">
                             <Button type="submit" variant={'submit'}><Send />Create Post</Button>
-                            <Button type="button" onClick={() => setPreview(true)} variant={'editorBlockBar'} className="flex md:hidden"><Eye />Preview</Button>
+                            <Button type="button" onClick={() => setPreview(true)} variant={'editorBlockBar'} className="flex md:hidden h-10 w-10"><Eye /></Button>
                         </div>
                     </div>
-                    {/* <input {...register("featuredImage")} placeholder="Featured Image URL" className="w-full bg-transparent py-1 px-2 border border-zinc-800" /> */}
-
-                    {/* <select {...register("commentStatus")} className="w-full bg-transparent py-1 px-2 border border-zinc-800">
-                        <option value="open">Open</option>
-                        <option value="closed">Closed</option>
-                    </select> */}
                 </form>
                 <div className="mt-4">
                     <Label className="mb-2">other settings :</Label>

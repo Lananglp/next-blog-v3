@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { stripHtml } from "./html-to-string";
+import { stripHtml } from "../../app/admin/post/create/html-to-string";
 import { RefreshCcw } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";

@@ -31,11 +31,35 @@ import { RootState } from "@/lib/redux"
 // This is sample data.
 const data = {
   appName: {
-    name: "Cylare",
+    name: process.env.NEXT_PUBLIC_APP_NAME as string,
     logo: GalleryVerticalEnd,
     description: "Admin Dashboard",
   },
   navMain: [
+    {
+      title: "Testing",
+      url: "#",
+      icon: SquareTerminal,
+      // isActive: true,
+      items: [
+        {
+          title: "home",
+          url: "/",
+        },
+        {
+          title: "login",
+          url: "/login",
+        },
+        {
+          title: "register",
+          url: "/register",
+        },
+        {
+          title: "about",
+          url: "/about",
+        },
+      ],
+    },
     {
       title: "Content",
       url: "#",

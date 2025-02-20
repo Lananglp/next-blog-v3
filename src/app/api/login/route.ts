@@ -2,9 +2,11 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import * as zod from "zod";
-import { sign } from "jsonwebtoken";
+import { SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { loginSchema } from "@/helper/schema/loginSchema";
+
+const SECRET_KEY = new TextEncoder().encode(process.env.SECRET_KEY as string);
 
 export async function POST(request: Request) {
     try {
@@ -20,30 +22,31 @@ export async function POST(request: Request) {
         }
 
         const validatePassword = await bcrypt.compare(data.password, user.password);
-        
+
         if (!validatePassword) {
             return NextResponse.json({ message: "Invalid password" }, { status: 401 });
         }
 
-        const token = sign(
-          {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image,
-            role: user.role,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
-          },
-          process.env.NEXT_PUBLIC_JWT_SECRET as string,
-          { expiresIn: "7d" }
-        );
+        const token = await new SignJWT({ id: user.id }).setProtectedHeader({ alg: "HS256" }).setExpirationTime("7d").sign(SECRET_KEY);
+        // const token = await new SignJWT({
+        //     id: user.id,
+        //     email: user.email,
+        //     name: user.name,
+        //     image: user.image,
+        //     role: user.role,
+        //     createdAt: user.createdAt,
+        //     updatedAt: user.updatedAt,
+        // })
+        //     .setProtectedHeader({ alg: "HS256" })
+        //     .setExpirationTime("7d")
+        //     .sign(SECRET_KEY);
 
-        (await cookies()).set("token", token, {
-          //   httpOnly: true,
-          //   secure: process.env.NODE_ENV === "production",
-          path: "/",
-          maxAge: 60 * 60 * 24 * 7, // 7 hari
+        (await cookies()).set(process.env["COOKIE_NAME"]!, token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7, // 7 hari
         });
 
         const UserNoPassword = {

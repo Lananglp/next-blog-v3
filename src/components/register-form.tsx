@@ -114,7 +114,7 @@ export function RegisterForm({
                             <div className="grid gap-2">
                                 <Label htmlFor="password">Password</Label>
                                 <div className="relative">
-                                    <Input {...register("password")} className={`${errors.password ? "ring-1 ring-red-500" : ""}`} id="password" type={showPassword ? "text" : "password"} placeholder="Password" />
+                                    <Input autoComplete="off" {...register("password")} className={`${errors.password ? "ring-1 ring-red-500" : ""}`} id="password" type={showPassword ? "text" : "password"} placeholder="Password" />
                                     <button onClick={() => setShowPassword(!showPassword)} className='absolute top-1/2 right-2 -translate-y-1/2 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-800 rounded p-1.5' type="button">{showPassword ? <PiEyeBold className='w-5 h-5' /> : <PiEyeClosedBold className='w-5 h-5' />}</button>
                                 </div>
                                 {errors.password && <span className='text-red-500 text-xs mb-2'>{errors.password.message}</span>}
@@ -123,13 +123,13 @@ export function RegisterForm({
                             <div className="grid gap-2">
                                 <Label htmlFor="confirmPassword">Confirm Password</Label>
                                 <div className="relative">
-                                    <Input {...register("confirmPassword")} className={`${errors.confirmPassword ? "ring-1 ring-red-500" : ""}`} id="confirmPassword" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm Password" />
+                                    <Input autoComplete="off" {...register("confirmPassword")} className={`${errors.confirmPassword ? "ring-1 ring-red-500" : ""}`} id="confirmPassword" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm Password" />
                                     <button onClick={() => setShowConfirmPassword(!showConfirmPassword)} className='absolute top-1/2 right-2 -translate-y-1/2 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-800 rounded p-1.5' type="button">{showConfirmPassword ? <PiEyeBold className='w-5 h-5' /> : <PiEyeClosedBold className='w-5 h-5' />}</button>
                                 </div>
                                 {errors.confirmPassword && <span className='text-red-500 text-xs mb-2'>{errors.confirmPassword.message}</span>}
                             </div>
                             <Button disabled={loading} type="submit" className="w-full">
-                                {loading && <LoaderCircle className="animate-spin" />}Login
+                                {loading && <LoaderCircle className="animate-spin" />}Register
                             </Button>
                         </div>
                         <div className="mt-4 text-center text-sm">

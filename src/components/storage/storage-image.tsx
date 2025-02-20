@@ -7,7 +7,7 @@ import { CropIcon, RedoIcon, RotateCcw, SaveIcon, Trash2Icon, UndoIcon, UploadIc
 import { useDropzone } from 'react-dropzone';
 import Modal from '../modal-custom';
 import Image from 'next/image';
-import InputFile from '../input-file';
+import InputFile from '../input/input-file';
 import { FaCircleExclamation } from 'react-icons/fa6';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../ui/alert-dialog';
 import { Skeleton } from '../ui/skeleton';
@@ -285,7 +285,7 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
             <Modal ref={ref} open={openModal} onClose={handleClose} title="Insert Image" description="Upload your image here" width="max-w-5xl">
                 {preview ?
                     !showCropper ? (
-                        <Image src={preview} width={1080} height={1080} alt="Preview" className="w-full h-[50vh] bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 rounded-lg object-contain mx-auto" />
+                        <Image unoptimized src={preview} width={1080} height={1080} alt="Preview" className="w-full h-[50vh] bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 rounded-lg object-contain mx-auto" />
                     ) : (
                         <div>
                             <div className='relative w-full h-[50vh] bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800'>

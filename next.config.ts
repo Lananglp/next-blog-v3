@@ -9,38 +9,20 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
-};
 
-module.exports = {
   async headers() {
     return [
       {
-        source: '/:all*(png|jpg|ico)',
+        source: "/uploads/:path*", // Terapkan aturan ini untuk semua file di /uploads/
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=0, must-revalidate',
+            key: "Cache-Control",
+            value: "no-store, must-revalidate", // Hindari caching
           },
         ],
       },
     ];
   },
-  images: {
-    remotePatterns: [
-      // {
-      //   protocol: 'https',
-      //   hostname: process.env.NEXT_PUBLIC_HOSTNAME,
-      //   port: '',
-      //   pathname: '/**',
-      // },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3000',
-        pathname: '/**',
-      },
-    ],
-  },
-}
+};
 
 export default nextConfig;

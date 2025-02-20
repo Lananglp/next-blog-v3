@@ -20,7 +20,7 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
   const { user } = useSelector((state: RootState) => state.session);
 
   useEffect(() => {
-    const token = Cookies.get("token");
+    const token = Cookies.get(process.env.COOKIE_NAME!);
 
     if (!token) {
       navigate.push("/login");

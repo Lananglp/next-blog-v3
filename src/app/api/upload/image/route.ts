@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         const bytes = await file.arrayBuffer();
         await writeFile(filePath, Buffer.from(bytes));
 
-        const imageUrl = `/uploads/image/${finalFileName}`;
+        const imageUrl = `/api/uploads/${finalFileName}`;
 
         // Simpan URL ke database
         const image = await prisma.image.create({

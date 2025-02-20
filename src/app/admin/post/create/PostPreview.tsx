@@ -29,7 +29,13 @@ function PostPreview({ value } : Props) {
             </Alert>
             <header>
                 <figure>
-                    <Image unoptimized src={value.featuredImage} alt="Featured image AI" width={768} height={432} className='aspect-video object-cover' />
+                    {value.featuredImage ? (
+                        <Image unoptimized src={value.featuredImage} alt="Featured image AI" width={768} height={432} className='aspect-video object-cover' />
+                    ) : (
+                        <div className='aspect-video bg-zinc-200 dark:bg-zinc-900/50 text-zinc-500 rounded-lg flex justify-center items-center'>
+                            Your post thumbnail will appear here.
+                        </div>
+                    )}
                     <figcaption>Gambar utama: Ilustrasi kecerdasan buatan.</figcaption>
                 </figure>
                 <h1 className='font-bold'>{value.title}</h1>

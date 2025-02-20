@@ -12,7 +12,8 @@ const api = axios.create({
 // Tambahkan interceptor untuk menyisipkan token dari cookies
 api.interceptors.request.use(
   (config) => {
-    const token = Cookies.get("token"); // Ambil token dari cookies
+    const token = Cookies.get(process.env.COOKIE_NAME as string); // Ambil token dari cookies
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -26,6 +27,7 @@ api.interceptors.request.use(
 export interface FetchingType<T = any> {
     id?: number;
     data?: T;
+    user?: T;
     custom?: AxiosRequestConfig;
 }
 

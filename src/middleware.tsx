@@ -1,26 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { verifyToken } from "./helper/jwt-helper";
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
+  const token = req.cookies.get(process.env["COOKIE_NAME"]!)?.value;
 
-    const token = req.cookies.get("token")?.value;
+  if (!token) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
 
-    if (!token) {
-        return NextResponse.redirect(new URL("/login", req.url));
-    }
-
-    try {
-        const decoded: any = jwt.decode(token);
-
-        if (!decoded) {
-            return NextResponse.redirect(new URL("/login", req.url));
-        }
-
-        return NextResponse.next();
-    } catch (error) {
-        return NextResponse.redirect(new URL("/login", req.url));
-    }
-
+  const isVerified = await verifyToken(token);
+  if (!isVerified) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
 }
 
 export const config = {
