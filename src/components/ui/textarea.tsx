@@ -8,7 +8,8 @@ const textareaVariants = cva(
     variants: {
       variant: {
         default: "",
-        primary: "border border-zinc-300 dark:border-zinc-800 rounded-lg placeholder:font-normal placeholder:text-base resize-none",
+        primary: "border-zinc-300 dark:border-zinc-800 rounded-lg placeholder:font-normal placeholder:text-base resize-none",
+        danger: "border-red-500 rounded-lg placeholder:font-normal placeholder:text-base resize-none",
         outline: "border-gray-300",
         ghost: "bg-transparent focus-visible:ring-0",
       },

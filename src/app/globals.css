@@ -199,3 +199,20 @@ body {
     /* Warna label */
   }
 }
+
+/* ====================================== componen ======================================= */
+
+.border-template {
+  @apply border-zinc-200 dark:border-zinc-800;
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

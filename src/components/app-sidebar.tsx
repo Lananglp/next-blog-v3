@@ -67,8 +67,8 @@ const data = {
       // isActive: true,
       items: [
         {
-          title: "Post",
-          url: "/admin/post",
+          title: "Posts",
+          url: "/admin/posts",
         },
       ],
     },

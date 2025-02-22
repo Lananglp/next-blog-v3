@@ -3,6 +3,7 @@ import StorageImage from '@/components/storage/storage-image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { generateUniqueUrl, validateImageURL } from '@/helper/helper';
 import { useToast } from '@/hooks/use-toast';
 import { LoaderIcon } from 'lucide-react';
 import Image from 'next/image';
@@ -108,32 +109,32 @@ function InputImage({ label, name, value, errors, control, placeholder, note, re
                     })
                 };
 
-                const validateImageURL = async (url: string) => {
-                    try {
-                        const response = await fetch(url, { method: "HEAD" });
-                        const contentType = response.headers.get("content-type");
+                // const validateImageURL = async (url: string) => {
+                //     try {
+                //         const response = await fetch(url, { method: "HEAD" });
+                //         const contentType = response.headers.get("content-type");
                         
-                        if (response.status === 404) {
-                            toast({
-                                title: 'Image not found',
-                                description: 'The URL of the image you entered was not found.',
-                            });
-                        }
+                //         if (response.status === 404) {
+                //             toast({
+                //                 title: 'Image not found',
+                //                 description: 'The URL of the image you entered was not found.',
+                //             });
+                //         }
                         
-                        return response.ok && contentType && contentType.startsWith("image/");
-                    } catch (error) {
-                        if (error) {
-                            toast({
-                                title: 'Invalid URL',
-                                description: 'Please enter a valid image URL.',
-                            });
-                        }
-                        return false;
-                    }
-                };
+                //         return response.ok && contentType && contentType.startsWith("image/");
+                //     } catch (error) {
+                //         if (error) {
+                //             toast({
+                //                 title: 'Invalid URL',
+                //                 description: 'Please enter a valid image URL.',
+                //             });
+                //         }
+                //         return false;
+                //     }
+                // };
 
                 const handleSaveUrl = async () => {
-                    const isValid = await validateImageURL(url);
+                    const isValid = await validateImageURL(url, toast);
                     if (!isValid) {
                         return;
                     }
@@ -147,7 +148,7 @@ function InputImage({ label, name, value, errors, control, placeholder, note, re
                 }
 
                 return (
-                    <>
+                    <div>
                         <Label htmlFor={label} className="inline-block mb-2">{required && <span className="text-red-500">*</span>}&nbsp;{label} :</Label>
                         <div ref={containerRef} onClick={handleClick} className='relative'>
                             {field.value !== '' ? (
@@ -158,7 +159,7 @@ function InputImage({ label, name, value, errors, control, placeholder, note, re
                                         </div>
                                     )}
                                     <div className='aspect-video h-auto md:h-64'>
-                                        <Image unoptimized src={field.value} width={768} height={432} alt='post thumbnail' className='w-full h-full object-cover' onLoad={handleImageLoading} onError={() => field.onChange('')} />
+                                        <Image priority unoptimized src={generateUniqueUrl(field.value)} width={768} height={432} alt='post thumbnail' className='w-full h-full object-cover' onLoad={handleImageLoading} onError={() => field.onChange('')} />
                                         <div className='absolute inset-0 opacity-0 hover:opacity-100 flex justify-center items-center hover:bg-zinc-900/50 hover:text-zinc-300 p-8 cursor-pointer transition duration-150'>
                                             <p>Click to change this image.</p>
                                         </div>
@@ -213,7 +214,7 @@ function InputImage({ label, name, value, errors, control, placeholder, note, re
                                 </div>
                             )}
                         </div>
-                    </>
+                    </div>
                 )
             }}
         />

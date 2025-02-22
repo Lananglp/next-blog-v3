@@ -1,9 +1,9 @@
-import React, { useCallback, useState } from 'react'
+import React, { ForwardedRef, useCallback, useState } from 'react'
 import { Button } from '../ui/button'
-import { ImageType } from '@/types/image-type';
+import { ImageType, initialImage } from '@/types/image-type';
 import { useToast } from '@/hooks/use-toast';
 import { deleteImage, getImage, postImage } from '@/app/api/function/image';
-import { CropIcon, RedoIcon, RotateCcw, SaveIcon, Trash2Icon, UndoIcon, UploadIcon } from 'lucide-react';
+import { CropIcon, ImageOffIcon, LoaderIcon, RedoIcon, RotateCcw, SaveIcon, Trash2Icon, UndoIcon, UploadIcon, XIcon } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import Modal from '../modal-custom';
 import Image from 'next/image';
@@ -16,52 +16,8 @@ import { Slider } from '../ui/slider';
 import { getCroppedImg } from '@/utils/cropImage';
 import { Label } from '../ui/label';
 import { MdCropRotate } from "react-icons/md";
-
-const listGrid = [
-    {
-        id: 1,
-        value: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-5',
-        label: 'xs',
-        width: 128,
-        height: 128,
-    },
-    {
-        id: 2,
-        value: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
-        label: 'sm',
-        width: 160,
-        height: 160,
-    },
-    {
-        id: 3,
-        value: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-        label: 'md',
-        width: 192,
-        height: 192,
-    },
-    {
-        id: 4,
-        value: 'grid-cols-1 sm:grid-cols-2',
-        label: 'lg',
-        width: 224,
-        height: 224,
-    },
-    {
-        id: 5,
-        value: 'grid-cols-1',
-        label: 'full',
-        width: 512,
-        height: 512,
-    },
-];
-
-type GridType = {
-    id: number,
-    value: string,
-    label: string,
-    width: number,
-    height: number,
-};
+import { generateUniqueUrl, validateImageURL } from '@/helper/helper';
+import ImagePreview from './image-preview';
 
 type CroppedAreaPixelsType = {
     x: number;
@@ -89,7 +45,12 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [items, setItems] = useState<ImageType[]>([]);
-    const [grid, setGrid] = useState<GridType>(listGrid[0]);
+    const [detail, setDetail] = useState<ImageType>({
+        id: '',
+        url: '',
+        createdAt: null,
+    });
+    // const [grid, setGrid] = useState<GridType>(listGrid[0]);
     const { toast } = useToast();
     const onDrop = useCallback((acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
@@ -120,6 +81,7 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
         setOpenModal(false);
         setImage(null);
         setPreview(null);
+        setDetail(initialImage);
         handleResetCrop();
         if (onClose) {
             onClose();
@@ -285,7 +247,7 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
             <Modal ref={ref} open={openModal} onClose={handleClose} title="Insert Image" description="Upload your image here" width="max-w-5xl">
                 {preview ?
                     !showCropper ? (
-                        <Image unoptimized src={preview} width={1080} height={1080} alt="Preview" className="w-full h-[50vh] bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 rounded-lg object-contain mx-auto" />
+                        <Image priority unoptimized src={preview} width={1080} height={1080} alt="Preview" className="w-full h-[50vh] bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 rounded-lg object-contain mx-auto" />
                     ) : (
                         <div>
                             <div className='relative w-full h-[50vh] bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800'>
@@ -354,6 +316,8 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
                                 </div>
                             </div>
                         </div>
+                ) : detail.id ? (
+                    <ImagePreview url={detail.url} />
                 ) : (
                     <>
                         <InputFile
@@ -368,22 +332,37 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
 
                 <div className='flex flex-wrap justify-between gap-2 items-end border-b border-zinc-300 dark:border-zinc-800 pb-3 my-4'>
                     <div className='w-full md:w-auto flex items-end gap-1'>
-                        <Button
-                            title='Upload Image'
-                            type='button'
-                            onClick={handleUpload}
-                            disabled={!image || loading || showCropper}
-                            variant={'primary'}
-                            size={'sm'}
-                            className='w-full md:w-auto'
-                        >
-                            <UploadIcon />{loading ? 'Uploading...' : 'Upload'}
-                        </Button>
+                        {!detail.id ? (
+                            <Button
+                                title='Upload Image'
+                                type='button'
+                                onClick={handleUpload}
+                                disabled={!image || loading || showCropper}
+                                variant={'primary'}
+                                size={'sm'}
+                                className='w-full md:w-auto'
+                            >
+                                <UploadIcon />{loading ? 'Uploading...' : 'Upload'}
+                            </Button>
+                        ) : (
+                            <Button
+                                title='Select this image'
+                                type='button'
+                                onClick={() => handleSelectImage(detail.url)}
+                                disabled={loading || showCropper}
+                                variant={'primary'}
+                                size={'sm'}
+                                className='w-full md:w-auto'
+                            >
+                                Select Image
+                            </Button>
+                        )}
+                        {detail.id && <Button type="button" title='close Image Preview' onClick={() => setDetail(initialImage)} disabled={loading || showCropper} variant={'editorBlockBar'} className='h-8 w-8'><XIcon /></Button>}
                         {preview && <Button type="button" title='Cancel' onClick={handleCancel} disabled={loading || showCropper} variant={'destructive'} className='h-8 w-8'><Trash2Icon /></Button>}
                         {preview && <Button type='button' title='Crop Image' onClick={() => setShowCropper(true)} disabled={loading || showCropper} variant={'editorBlockBar'} className='h-8 w-8'><CropIcon /></Button>}
                     </div>
 
-                    <div className='w-full md:w-auto flex justify-end items-center gap-2'>
+                    {/* <div className='w-full md:w-auto flex justify-end items-center gap-2'>
                         <p className='text-sm dark:text-zinc-400'>view :</p>
                         <div className='flex items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-800 p-1'>
                             <Button onClick={() => setGrid(listGrid[0])} type='button' variant={'ghost'} size={'sm'} className={`${grid.id === listGrid[0].id ? 'bg-zinc-200 hover:bg-zinc-200 dark:bg-zinc-800' : 'hover:bg-zinc-200 hover:dark:bg-zinc-900'} w-8 rounded h-7`}>xs</Button>
@@ -392,40 +371,34 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
                             <Button onClick={() => setGrid(listGrid[3])} type='button' variant={'ghost'} size={'sm'} className={`${grid.id === listGrid[3].id ? 'bg-zinc-200 hover:bg-zinc-200 dark:bg-zinc-800' : 'hover:bg-zinc-200 hover:dark:bg-zinc-900'} w-8 rounded h-7`}>lg</Button>
                             <Button onClick={() => setGrid(listGrid[4])} type='button' variant={'ghost'} size={'sm'} className={`${grid.id === listGrid[4].id ? 'bg-zinc-200 hover:bg-zinc-200 dark:bg-zinc-800' : 'hover:bg-zinc-200 hover:dark:bg-zinc-900'} w-8 rounded h-7`}>Full</Button>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
-                <div className={`grid ${grid.value} gap-4`}>
-                    {!loading ? items.length > 0 ? items.map((i, index) => (
+                <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4`}>
+                    {!loading ? items.length > 0 ? items.map((i, index) => {
+                        let isNull = false;
+                        return (
                         <div key={index}>
-                            <div className='aspect-[4/3]'>
-                                <Image title={i.url} src={i.url} alt={`Image ${index}`} width={grid.width} height={grid.height} className="bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 object-contain w-full h-full rounded-lg shadow" />
-                            </div>
+                            {!isNull ? (
+                                <div className='aspect-[4/3]'>
+                                    {/* <Image priority title={i.url} src={generateUniqueUrl(i.url)} alt={`Image ${index}`} width={244} height={183} onClick={() => setDetail(i)} onError={() => isNull = true} className="bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 object-contain w-full h-full rounded-lg shadow hover:cursor-pointer" /> */}
+                                    <Image priority title={i.url} src={i.url} alt={`Image ${index}`} width={244} height={183} onClick={() => setDetail(i)} onError={() => isNull = true} className="bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 object-contain w-full h-full rounded-lg shadow hover:cursor-pointer" />
+                                </div>
+                            ) : (
+                                <div className='aspect-[4/3]'>
+                                    <div className='relative bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 object-contain w-full h-full rounded-lg shadow'>
+                                        <div className='absolute inset-0 flex justify-center items-center'>
+                                            <ImageOffIcon className='text-zinc-500' />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             <p className='my-1.5 dark:text-zinc-400 text-xs line-clamp-2'>{i.url}</p>
                             <div className='flex items-center gap-1'>
                                 <Button onClick={() => handleSelectImage(i.url)} type="button" variant={'primary'} size={'xs'}>Select</Button>
-                                <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                        <Button type="button" variant={'destructive'} size={'xs'}><Trash2Icon /></Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <div className='aspect-[4/3]'>
-                                            <Image title={i.url} src={i.url} alt={`Image ${index}`} width={328} height={246} className="bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 object-contain w-full h-full rounded-lg shadow" />
-                                        </div>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>Are you sure you want to delete this image?</AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                                This action cannot be undone, if this image has been or is being used in a post, the image will be lost.
-                                            </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                            <AlertDialogAction onClick={() => handleDeleteImage(i.id)}>Continue</AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
+                                <DeleteImage ref={ref} item={i} index={index} onDelete={() => handleDeleteImage(i.id)} toast={toast} />
                             </div>
                         </div>
-                    )) : (
+                    )}) : (
                         <div className='col-span-full h-36 flex justify-center items-center'>
                             <p className='text-zinc-500 text-sm'>No images uploaded</p>
                         </div>
@@ -441,5 +414,94 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
         </div>
     )
 }
+
+type DeleteImageProps = {
+    ref?: ForwardedRef<HTMLDivElement>;
+    item: { id: string; url: string };
+    index: number;
+    onDelete?: () => void;
+    toast: any;
+};
+
+function DeleteImage({ ref, item, index, onDelete, toast }: DeleteImageProps) {
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [inValidUrl, setInValidUrl] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const handleOpen = () => {
+        setIsOpen(true);
+        checkUrl();
+    }
+
+    const handleClose = () => {
+        setIsOpen(false);
+    }
+
+    const checkUrl = async () => {
+        setLoading(true);
+        try {
+            const isValid = await validateImageURL(item.url, toast);
+
+            if (isValid) {
+                setInValidUrl(false);
+                setLoading(false);
+            } else {
+                setInValidUrl(true);
+                setLoading(false);
+            }
+
+        } catch (error) {
+            if (error) {
+                console.log("storage => check URL :", error);
+                setInValidUrl(true);
+                setLoading(false);
+            }
+        }
+    }
+
+    return (
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+            <AlertDialogTrigger asChild>
+                <Button type="button" onClick={handleOpen} variant={'destructive'} size={'xs'}><Trash2Icon /></Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent ref={ref}>
+                {!loading ? !inValidUrl ? (
+                    <div className='aspect-[4/3]'>
+                        {/* <Image priority title={item.url} src={generateUniqueUrl(item.url)} alt={`Image ${index + 1}`} width={328} height={246} className="bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 object-contain w-full h-full rounded-lg shadow" /> */}
+                        <Image priority title={item.url} src={item.url} alt={`Image ${index + 1}`} width={328} height={246} className="bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 object-contain w-full h-full rounded-lg shadow" />
+                    </div>
+                ) : (
+                    <div className='aspect-[4/3]'>
+                        <div className='relative bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 object-contain w-full h-full rounded-lg shadow'>
+                            <div className='absolute inset-0 flex justify-center items-center'>
+                                <ImageOffIcon className='text-zinc-500' />
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div className='aspect-[4/3]'>
+                        <div className='relative bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 object-contain w-full h-full rounded-lg shadow'>
+                            <div className='absolute inset-0 flex justify-center items-center'>
+                                <LoaderIcon className='text-zinc-500 animate-spin' />
+                            </div>
+                        </div>
+                    </div>
+                )}
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure you want to delete this image?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone, if this image has been or is being used in a post, the image will be lost.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel onClick={handleClose}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={onDelete}>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    )
+}
+
 
 export default StorageImage

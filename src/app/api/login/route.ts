@@ -27,7 +27,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: "Invalid password" }, { status: 401 });
         }
 
-        const token = await new SignJWT({ id: user.id }).setProtectedHeader({ alg: "HS256" }).setExpirationTime("7d").sign(SECRET_KEY);
+        const token = await new SignJWT({ id: user.id, role: user.role }).setProtectedHeader({ alg: "HS256" }).setExpirationTime("7d").sign(SECRET_KEY);
         // const token = await new SignJWT({
         //     id: user.id,
         //     email: user.email,

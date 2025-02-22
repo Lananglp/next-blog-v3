@@ -69,8 +69,7 @@ function InputSlug({ value, placeholder, title, errors, control, name }: InputSl
                             value={value}
                             onChange={handleInputChange}
                             placeholder={placeholder}
-                            className={errors ? "border-red-500" : ""}
-                            variant={'primary'}
+                            variant={errors ? "danger" : "primary"}
                         />
                         {errors && <p className="mt-2 text-red-500 text-xs">{errors?.message}</p>}
                     </div>

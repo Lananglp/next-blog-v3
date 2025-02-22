@@ -68,8 +68,6 @@ export function LoginForm({
         });
         if (res.data.user.role === "ADMIN") {
           navigate.push("/admin");
-        } else if (res.data.user.role === "USER") {
-          navigate.push("/");
         }
       }
     } catch (error: unknown) {

@@ -4,7 +4,7 @@ import '@/app/text-editor-preview.scss';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CircleAlert } from 'lucide-react';
 import Image from 'next/image';
-import { PostFormValues } from './page';
+import { PostFormValues } from '@/helper/schema/schema';
 
 type Props = {
     value: PostFormValues;
@@ -33,7 +33,10 @@ function PostPreview({ value } : Props) {
                         <Image unoptimized src={value.featuredImage} alt="Featured image AI" width={768} height={432} className='aspect-video object-cover' />
                     ) : (
                         <div className='aspect-video bg-zinc-200 dark:bg-zinc-900/50 text-zinc-500 rounded-lg flex justify-center items-center'>
-                            Your post thumbnail will appear here.
+                            <div className='text-center'>
+                                <div>Your post thumbnail will appear here.</div>
+                                <div className='text-xs'>Recommended: 16:9 (Landscape)</div>
+                            </div>
                         </div>
                     )}
                     <figcaption>Gambar utama: Ilustrasi kecerdasan buatan.</figcaption>

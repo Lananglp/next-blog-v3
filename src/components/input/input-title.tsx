@@ -77,9 +77,9 @@ export default function InputTitle({
                                 onChange={handleChange}
                                 placeholder={placeholder}
                                 rows={2}
-                                variant={"primary"}
+                                variant={errors ? "danger" : "primary"}
                                 size={type === "heading" ? "xl" : "default"}
-                                className={`overflow-hidden ${className} ${errors && "border-red-500"}`}
+                                className={`overflow-hidden ${className}`}
                             />
                             <span className={`${errorMessage && "text-red-500"} absolute right-2 bottom-2 text-xs`}>{!disableWordCount && `${field.value ? field.value.length : 0}/${maxWords}`}</span>
                         </div>

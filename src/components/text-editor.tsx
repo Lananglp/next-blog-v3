@@ -25,6 +25,9 @@ import EditorMenu from './editor/editor-menu'
 import EditorFloatingMenu from './editor/editor-floating-menu'
 import EditorBubbleMenu from './editor/editor-bubble-menu'
 import { CustomImage } from './editor/extentions/custom-extentions'
+import { Skeleton } from './ui/skeleton'
+import { LoaderIcon } from 'lucide-react'
+import EditorLoading from './editor/editor-loading'
 
 type EditorProps = {
     control: any;
@@ -186,23 +189,23 @@ function EditorLayout({ errors, field }: EditorLayoutProps) {
         },
     });
 
-    if (!editor) {
-        return <div>Loading...</div>;
-    }
-
     return (
         <div>
             <Label htmlFor="content" className="inline-block mb-2"><span className="text-red-500">*</span>&nbsp;Post Content :</Label>
-            <EditorBubbleMenu editor={editor} />
-            <EditorFloatingMenu editor={editor} />
-            <EditorMenu editor={editor} errors={errors} />
-            <EditorContent
-                id='content'
-                className={`rounded-b-lg border-x border-b p-6 min-h-96 ${errors ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-800'} max-w-none prose dark:prose-invert prose-th:border prose-td:border prose-th:dark:bg-zinc-900/50 prose-zinc prose-th:px-2 prose-li:mb-0 prose-headings:text-zinc-700 prose-headings:dark:text-white prose-strong:text-zinc-700 prose-strong:dark:text-white prose-a:text-zinc-700 prose-a:dark:text-white`}
-                editor={editor}
-                onClick={() => editor?.commands.focus()}
-            />
-            {errors && <p className="mt-2 text-red-500 text-xs">{errors?.message}</p>}
+            {!editor ? <EditorLoading /> : (
+                <>
+                    <EditorBubbleMenu editor={editor} />
+                    <EditorFloatingMenu editor={editor} />
+                    <EditorMenu editor={editor} errors={errors} />
+                    <EditorContent
+                        id='content'
+                        className={`rounded-b-lg border-x border-b p-6 min-h-96 ${errors ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-800'} max-w-none prose dark:prose-invert prose-th:border prose-td:border prose-th:dark:bg-zinc-900/50 prose-zinc prose-th:px-2 prose-li:mb-0 prose-headings:text-zinc-700 prose-headings:dark:text-white prose-strong:text-zinc-700 prose-strong:dark:text-white prose-a:text-zinc-700 prose-a:dark:text-white`}
+                        editor={editor}
+                        onClick={() => editor?.commands.focus()}
+                    />
+                    {errors && <p className="mt-2 text-red-500 text-xs">{errors?.message}</p>}
+                </>
+            )}
         </div>
     );
 }

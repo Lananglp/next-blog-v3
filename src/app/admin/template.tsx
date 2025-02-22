@@ -1,5 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar"
+import BatteryStatus from "@/components/battery-status"
 import { ModeToggle } from "@/components/dark-mode-button"
+import PageTitle from "@/components/page-title"
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -38,12 +40,16 @@ export default function Template({ children }: { children: React.ReactNode }) {
                             </BreadcrumbList>
                         </Breadcrumb>
                     </div>
-                    <div>
+                    <div className="flex items-center gap-2">
+                        <BatteryStatus />
                         <ModeToggle />
                     </div>
                 </header>
                 <div className="p-4 pt-0">
-                    {children}
+                    <PageTitle />
+                    <div className='grid grid-cols-1'>
+                        {children}
+                    </div>
                 </div>
             </SidebarInset>
         </SidebarProvider>

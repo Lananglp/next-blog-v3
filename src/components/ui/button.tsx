@@ -12,15 +12,15 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         primary:
-          "bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/50",
+          "bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/50 focus:border-blue-500",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 border border-destructive",
         editorToolBar:
           "hover:bg-zinc-200 hover:dark:bg-zinc-700",
         editorBlockBar:
-          "hover:bg-zinc-200 hover:dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-800",
+          "hover:bg-zinc-200 hover:dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-800 focus:border-blue-500",
         submit:
-          "bg-blue-800 hover:bg-blue-700 border border-blue-800 text-white",
+          "bg-blue-800 hover:bg-blue-700 border border-blue-800 text-white focus:border-blue-500",
         outline:
           "border border-input dark:border-zinc-700 bg-background dark:bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary:

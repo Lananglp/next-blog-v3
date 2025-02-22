@@ -1,5 +1,4 @@
 import { decodeJwt, jwtVerify } from "jose";
-import { NextApiRequest } from "next";
 
 export const verifyToken = async (token: string) => {
   try {
@@ -9,7 +8,25 @@ export const verifyToken = async (token: string) => {
     );
     return Boolean(payload);
   } catch (error) {
-    // eslint-disable-next-line
+    console.log("Error verify token: ", error);
+    return false;
+  }
+};
+
+export const verifyRoleToken = async (token: string) => {
+  try {
+    const { payload } = await jwtVerify(
+      token,
+      new TextEncoder().encode(process.env["SECRET_KEY"]!)
+    );
+
+    if (payload.role !== "ADMIN") {
+      return false;
+    }
+
+    return Boolean(payload);
+    
+  } catch (error) {
     console.log("Error verify token: ", error);
     return false;
   }

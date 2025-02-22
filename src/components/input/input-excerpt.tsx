@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { stripHtml } from "../../app/admin/post/create/html-to-string";
+import { stripHtml } from "../../app/admin/posts/create/html-to-string";
 import { RefreshCcw } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -72,8 +72,8 @@ export default function InputExcerpt({ value, content, placeholder, errors, cont
                             onChange={handleChange}
                             placeholder={placeholder}
                             rows={3}
-                            variant={'primary'}
-                            className={`overflow-hidden ${errors && "border-red-500"}`}
+                            variant={errors ? 'danger' : 'primary'}
+                            className={`overflow-hidden`}
                         />
                         {errors && <p className="mt-2 text-red-500 text-xs">{errors?.message}</p>}
                     </div>

@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react'
 import { createPortal } from 'react-dom';
 import { Button } from './ui/button';
-import './css/modal-custom.css'
 
 interface Props {
     open: boolean;
