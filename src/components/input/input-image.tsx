@@ -60,31 +60,23 @@ function InputImage({ label, name, value, errors, control, placeholder, note, re
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            // Pastikan refs ada
-            if (!dropdownRef.current || !storageImageRef.current) return;
-
-            // Cek jika klik berada di luar dropdown dan modal
-            const isClickInsideDropdown = dropdownRef.current.contains(event.target as Node);
-            const isClickInsideStorageImage = storageImageRef.current.contains(event.target as Node);
-
-            // Jika klik berada di luar dropdown dan modal, tutup dropdown
-            if (!isClickInsideDropdown && !isClickInsideStorageImage) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node) &&
+                storageImageRef.current &&
+                !storageImageRef.current.contains(event.target as Node)
+                // modalRef.current &&
+                // !modalRef.current.contains(event.target as Node)
+            ) {
                 setIsOpen(false);
             }
         };
 
-        // Tambahkan event listener saat dropdown terbuka
-        if (isOpen) {
-            document.addEventListener("mousedown", handleClickOutside);
-        } else {
-            document.removeEventListener("mousedown", handleClickOutside);
-        }
-
-        // Bersihkan listener saat komponen unmount
+        document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [isOpen]);
+    }, []);
 
     return (
         <Controller
@@ -158,15 +150,15 @@ function InputImage({ label, name, value, errors, control, placeholder, note, re
                                             <span className='text-sm'><LoaderIcon className='inline h-4 w-4 mb-0.5 me-1 animate-spin' />Loading...</span>
                                         </div>
                                     )}
-                                    <div className='aspect-video h-auto md:h-64'>
-                                        <Image priority unoptimized src={generateUniqueUrl(field.value)} width={768} height={432} alt='post thumbnail' className='w-full h-full object-cover' onLoad={handleImageLoading} onError={() => field.onChange('')} />
+                                    <div className='aspect-video h-auto max-h-52'>
+                                        <Image priority unoptimized src={generateUniqueUrl(field.value)} width={328} height={246} alt='post thumbnail' className='w-full h-full object-cover' onLoad={handleImageLoading} onError={() => field.onChange('')} />
                                         <div className='absolute inset-0 opacity-0 hover:opacity-100 flex justify-center items-center hover:bg-zinc-900/50 hover:text-zinc-300 p-8 cursor-pointer transition duration-150'>
                                             <p>Click to change this image.</p>
                                         </div>
                                     </div>
                                 </div>
                             ) : (
-                                <div className={`h-auto md:h-64 flex justify-center items-center bg-zinc-100 dark:bg-zinc-900/25 hover:bg-zinc-200/50 hover:dark:bg-zinc-900/50 text-zinc-500 hover:text-zinc-700 hover:dark:text-zinc-300 rounded-lg ${errors ? 'border border-solid border-red-500' : 'border-2 border-dashed border-zinc-300 dark:border-zinc-800'} focus:outline focus:outline-1 focus:outline-blue-500 py-20 px-8 text-center cursor-pointer transition-colors ${className}`}>
+                                <div className={`h-auto md:h-52 flex justify-center items-center bg-zinc-100 dark:bg-zinc-900/25 hover:bg-zinc-200/50 hover:dark:bg-zinc-900/50 text-zinc-500 hover:text-zinc-700 hover:dark:text-zinc-300 rounded-lg ${errors ? 'border border-solid border-red-500' : 'border-2 border-dashed border-zinc-300 dark:border-zinc-800'} focus:outline focus:outline-1 focus:outline-blue-500 py-20 px-8 text-center cursor-pointer transition-colors ${className}`}>
                                     <div>
                                         <p className='mb-1'>Click to upload an image.</p>
                                         <p className='text-xs'>Thumbnails must use an aspect ratio of 16:9 (landscape)</p>
@@ -189,7 +181,7 @@ function InputImage({ label, name, value, errors, control, placeholder, note, re
                                     onClick={(e) => e.stopPropagation()}
                                     className="floating-box absolute mt-1 break-words w-80 bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-md shadow-lg p-2 z-10"
                                 >
-                                    <StorageImage ref={storageImageRef} onSelect={(url) => handleSelectImage(url)} onClose={() => setIsOpen(false)} />
+                                    <StorageImage ref={storageImageRef} value={value} onSelect={(url) => handleSelectImage(url)} onClose={() => setIsOpen(false)} />
                                     <div className='flex items-center gap-1 my-2 px-2'>
                                         <div className='w-full border-b border-zinc-300 dark:border-zinc-800' />
                                         <div className='text-center text-zinc-500 text-sm'>or</div>

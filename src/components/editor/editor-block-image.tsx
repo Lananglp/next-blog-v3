@@ -9,9 +9,10 @@ type EditorBlockImageProps = {
     editor: any;
     blockType?: "insert" | "change";
     className?: string;
+    onOpenModalChange?: (value: boolean) => void;
 }
 
-function EditorBlockImage({ editor, blockType="insert", className }: EditorBlockImageProps) {
+function EditorBlockImage({ editor, blockType="insert", className, onOpenModalChange }: EditorBlockImageProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [url, setUrl] = useState("");
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -42,8 +43,18 @@ function EditorBlockImage({ editor, blockType="insert", className }: EditorBlock
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) && storageImageRef.current && !storageImageRef.current?.contains(event.target as Node)) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node) &&
+                storageImageRef.current &&
+                !storageImageRef.current?.contains(event.target as Node) &&
+                refs.domReference.current &&
+                !refs.domReference.current?.contains(event.target as Node)
+            ) {
                 setIsOpen(false);
+                if (onOpenModalChange) {
+                    onOpenModalChange(false);
+                }
             }
         };
 
@@ -58,6 +69,25 @@ function EditorBlockImage({ editor, blockType="insert", className }: EditorBlock
         };
     }, [isOpen]);
 
+    const toggleOpen = () => {
+        setIsOpen(!isOpen);
+        if (onOpenModalChange) {
+            onOpenModalChange(!isOpen);
+            // if (isOpen) {
+            //     onOpenModalChange(true);
+            // } else {
+            //     onOpenModalChange(false);
+            // }
+        }
+    }
+
+    const handleClose = () => {
+        setIsOpen(false);
+        if (onOpenModalChange) {
+            onOpenModalChange(false);
+        }
+    }
+
     const setLink = () => {
         if (url) {
             editor.chain().focus().setImage({ src: url }).run();
@@ -69,6 +99,10 @@ function EditorBlockImage({ editor, blockType="insert", className }: EditorBlock
         if (url) {
             editor.chain().focus().setImage({ src: url }).run();
         }
+        setIsOpen(false);
+        if (onOpenModalChange) {
+            onOpenModalChange(false);
+        }
     }
 
     return (
@@ -77,7 +111,7 @@ function EditorBlockImage({ editor, blockType="insert", className }: EditorBlock
                 type="button"
                 ref={refs.setReference}
                 title={`${blockType === 'change' ? 'Change' : 'Insert'} Image`}
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={toggleOpen}
                 variant={blockType === 'change' ? 'outline' : 'editorBlockBar'}
                 size={blockType === 'change' ? 'xs' : 'editorBlockBar'}
                 className={`${editor.isActive('image') ? blockType === 'change' ? '' : 'bg-zinc-200 dark:bg-zinc-700 text-black dark:text-white' : blockType === 'change' ? '' : 'bg-zinc-100 dark:bg-zinc-900'} ${className}`}
@@ -96,9 +130,10 @@ function EditorBlockImage({ editor, blockType="insert", className }: EditorBlock
                         top: y ?? 0,
                         left: x ?? 0,
                     }}
+                    onClick={(e) => e.stopPropagation()}
                     className="absolute mt-1 w-48 lg:w-80 bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-md shadow-lg p-2 z-10"
                 >
-                    <StorageImage ref={storageImageRef} onSelect={(url) => handleSelectImage(url)} />
+                    <StorageImage ref={storageImageRef} value={url} onSelect={(url) => handleSelectImage(url)} onClose={handleClose} />
                     <div className='flex items-center gap-1 my-2 px-2'>
                         <div className='w-full border-b border-zinc-300 dark:border-zinc-800' />
                         <div className='text-center text-zinc-500 text-sm'>or</div>
@@ -113,7 +148,7 @@ function EditorBlockImage({ editor, blockType="insert", className }: EditorBlock
                         onKeyDown={(e) => e.key === "Enter" && setLink()}
                     />
                     <div className="flex justify-end mt-2 space-x-1">
-                        <Button type='button' variant={'editorBlockBar'} size={'editorBlockBar'} onClick={() => setIsOpen(false)}>
+                        <Button type='button' variant={'editorBlockBar'} size={'editorBlockBar'} onClick={handleClose}>
                             cancel
                         </Button>
                         <Button type='button' variant={'submit'} size={'editorBlockBar'} onClick={setLink}>

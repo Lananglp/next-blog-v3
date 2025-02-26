@@ -1,7 +1,7 @@
 "use client"
 
 import { NodeViewWrapper } from "@tiptap/react"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -11,15 +11,44 @@ import EditorBlockImage from "../editor-block-image"
 import { Textarea } from "@/components/ui/textarea"
 import { AlignCenter, AlignLeft, AlignRight } from "lucide-react"
 import { initialImageWidth } from "./custom-extentions"
+import { useMedia } from "react-use"
 
 export function ResizableImage(props: any) {
     const [width, setWidth] = useState<string>(props.node.attrs.width || initialImageWidth);
     // const [height, setHeight] = useState<string>(props.node.attrs.height || "auto");
+    const isLgScreen = useMedia('(min-width: 1024px)');
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+    const [isStorageOpen, setIsStorageOpen] = useState(false);
     const [alt, setAlt] = useState<string>(props.node.attrs.alt || "");
     const [aspectRatio, setAspectRatio] = useState<string>(props.node.attrs.aspectRatio || "auto");
-    const [objectFit, setObjectFit] = useState<any>(props.node.attrs.objectFit || "cover");
+    const [objectFit, setObjectFit] = useState<any>(props.node.attrs.objectFit || "fill");
     const [placeSelf, setPlaceSelf] = useState<any>(props.node.attrs.placeSelf || "start");
     const widthOptions = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    const popoverRef = useRef<HTMLDivElement>(null);
+
+    // console.log("image-resizer:", isStorageOpen);
+    
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (
+                popoverRef.current &&
+                !popoverRef.current.contains(event.target as Node) &&
+                !isStorageOpen
+            ) {
+                setIsPopoverOpen(false);
+                props.editor.chain().focus().run();
+            }
+        }        
+
+        if (isPopoverOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isPopoverOpen, isStorageOpen]);    
 
     const handleSliderChange = (val: number[]) => {
         // Cari nilai terdekat dari array widthOptions
@@ -51,7 +80,7 @@ export function ResizableImage(props: any) {
     // console.log("state height: ", height);
 
     const { x, y, refs, strategy } = useFloating({
-        placement: "bottom-start",
+        placement: isLgScreen ? "right-start" : "bottom-start",
         middleware: [offset(8), flip(), shift()],
         whileElementsMounted: autoUpdate,
     });
@@ -88,9 +117,8 @@ export function ResizableImage(props: any) {
 
     return (
         <NodeViewWrapper>
-            <figure>
+            <figure ref={refs.setReference} onClick={() => setIsPopoverOpen(true)}>
                 <img
-                    ref={refs.setReference}
                     src={props.node.attrs.src}
                     alt={alt}
                     style={{
@@ -103,21 +131,25 @@ export function ResizableImage(props: any) {
                 />
                 <figcaption style={{ width: width, placeSelf: placeSelf, textAlign: placeSelf }} className="text-zinc-600 dark:text-zinc-400 text-xs mt-2">{alt}</figcaption>
             </figure>
-            {props.editor.isActive("image") && (
+            {isPopoverOpen && props.editor.isActive("image") && (
                 <div
-                    ref={refs.setFloating}
+                    ref={(node) => {
+                        refs.setFloating(node);
+                        popoverRef.current = node;
+                    }}
                     style={{
                         position: strategy,
                         top: y ?? 0,
                         left: x ?? 0,
                     }}
-                    className="w-96 grid grid-cols-1 gap-2 shadow-lg rounded-md bg-white dark:bg-zinc-950 border border-gray-300 dark:border-zinc-800 p-2"
+                    onClick={(e) => e.stopPropagation()}
+                    className="z-10 w-full lg:w-72 grid grid-cols-1 gap-2 shadow-lg rounded-md bg-white dark:bg-zinc-950 border border-gray-300 dark:border-zinc-800 p-2"
                 >
-                    <EditorBlockImage editor={props.editor} blockType="change" className="mb-2" />
+                    <EditorBlockImage editor={props.editor} blockType="change" className="mb-2" onOpenModalChange={(value) => setIsStorageOpen(value)} />
                     <div className="grid grid-cols-12 items-center gap-2">
                         {/* <Label htmlFor="width" className="col-span-3 text-right text-xs">Width</Label> */}
-                        <Label htmlFor="width" className="col-span-3 text-right text-xs">Size</Label>
-                        <div className="col-span-9 flex items-center gap-2">
+                        <Label htmlFor="width" className="block lg:hidden col-span-3 text-right text-xs">Size</Label>
+                        <div className="col-span-9 lg:col-span-12 flex items-center gap-2">
                             <Slider
                                 value={[parseInt(width)]}
                                 onValueChange={handleSliderChange}
@@ -130,39 +162,39 @@ export function ResizableImage(props: any) {
                         </div>
                     </div>
                     <div className="grid grid-cols-12 items-center gap-2">
-                        <div className="col-span-3"/>
-                        <div className="col-span-9 text-xs text-zinc-600 dark:text-zinc-400">Size is only applied to desktop displays.</div>
+                        <div className="block lg:hidden col-span-3"/>
+                        <div className="col-span-9 lg:col-span-12 text-xs text-zinc-600 dark:text-zinc-400">Size is only applied to desktop displays.</div>
                     </div>
                     <div className="grid grid-cols-12 items-center gap-2">
-                        <Label htmlFor="placeSelf" className="col-span-3 text-right text-xs">Position</Label>
-                        <div className="col-span-9 flex items-center gap-2">
+                        <Label htmlFor="placeSelf" className="block lg:hidden col-span-3 text-right text-xs">Position</Label>
+                        <div className="col-span-9 lg:col-span-12 flex items-center gap-2">
                             <Button
                                 type="button"
-                                variant={'editorBlockBar'}
-                                size={'sm'}
+                                variant={placeSelf === "start" ? 'primary' : 'editorBlockBar'}
+                                size={'xs'}
                                 onClick={() => setPlaceSelf("start")}
                                 onBlur={saveSettings}
-                                className={`${placeSelf === "start" ? "text-black dark:text-white bg-zinc-200 dark:bg-zinc-800" : ""} px-1 h-7 w-full rounded`}
+                                className="w-full"
                             >
                                 <AlignLeft />Start
                             </Button>
                             <Button
                                 type="button"
-                                variant={'editorBlockBar'}
-                                size={'sm'}
+                                variant={placeSelf === "center" ? 'primary' : 'editorBlockBar'}
+                                size={'xs'}
                                 onClick={() => setPlaceSelf("center")}
                                 onBlur={saveSettings}
-                                className={`${placeSelf === "center" ? "text-black dark:text-white bg-zinc-200 dark:bg-zinc-800" : ""} px-1 h-7 w-full rounded`}
+                                className="w-full"
                             >
                                 <AlignCenter />Center
                             </Button>
                             <Button
                                 type="button"
-                                variant={'editorBlockBar'}
-                                size={'sm'}
+                                variant={placeSelf === "end" ? 'primary' : 'editorBlockBar'}
+                                size={'xs'}
                                 onClick={() => setPlaceSelf("end")}
                                 onBlur={saveSettings}
-                                className={`${placeSelf === "end" ? "text-black dark:text-white bg-zinc-200 dark:bg-zinc-800" : ""} px-1 h-7 w-full rounded`}
+                                className="w-full"
                             >
                                 <AlignRight />Right
                             </Button>
@@ -185,42 +217,30 @@ export function ResizableImage(props: any) {
                         />
                     </div> */}
                     <div className="grid grid-cols-12 items-center gap-2">
-                        <Label htmlFor="aspect-ratio" className="col-span-3 text-right text-xs">
+                        <Label htmlFor="aspect-ratio" className="block lg:hidden col-span-3 text-right text-xs">
                             Aspect Ratio
                         </Label>
-                        <Select value={aspectRatio} onValueChange={setAspectRatio}>
-                            <SelectTrigger className="col-span-9 h-7">
-                                <SelectValue placeholder="Select aspect ratio" />
-                            </SelectTrigger>
-                            <SelectContent onBlur={saveSettings}>
-                                <SelectItem value="auto">auto</SelectItem>
-                                <SelectItem value="16/9">16:9</SelectItem>
-                                <SelectItem value="4/3">4:3</SelectItem>
-                                <SelectItem value="1/1">1:1</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <div className="col-span-9 lg:col-span-12 flex items-center gap-1">
+                            <Button type="button" onClick={() => setAspectRatio("auto")} onBlur={saveSettings} variant={aspectRatio === "auto" ? 'primary' : 'editorBlockBar'} size={'xs'} className="w-full">Auto</Button>
+                            <Button type="button" onClick={() => setAspectRatio("16/9")} onBlur={saveSettings} variant={aspectRatio === "16/9" ? 'primary' : 'editorBlockBar'} size={'xs'} className="w-full">16:9</Button>
+                            <Button type="button" onClick={() => setAspectRatio("4/3")} onBlur={saveSettings} variant={aspectRatio === "4/3" ? 'primary' : 'editorBlockBar'} size={'xs'} className="w-full">4:3</Button>
+                            <Button type="button" onClick={() => setAspectRatio("1/1")} onBlur={saveSettings} variant={aspectRatio === "1/1" ? 'primary' : 'editorBlockBar'} size={'xs'} className="w-full">1:1</Button>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-12 items-center gap-2">
-                        <Label htmlFor="object-fit" className="col-span-3 text-right text-xs">
+                        <Label htmlFor="object-fit" className="block lg:hidden col-span-3 text-right text-xs">
                             Object Fit
                         </Label>
-                        <Select value={objectFit} onValueChange={setObjectFit}>
-                            <SelectTrigger className="col-span-9 h-7">
-                                <SelectValue placeholder="Select object-fit" />
-                            </SelectTrigger>
-                            <SelectContent onBlur={saveSettings}>
-                                <SelectItem value="cover">Cover</SelectItem>
-                                <SelectItem value="contain">Contain</SelectItem>
-                                <SelectItem value="fill">Fill</SelectItem>
-                                <SelectItem value="none">None</SelectItem>
-                                <SelectItem value="scale-down">Scale Down</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <div className="col-span-9 lg:col-span-12 flex items-center gap-1">
+                            <Button type="button" onClick={() => setObjectFit("fill")} onBlur={saveSettings} variant={objectFit === "fill" ? 'primary' : 'editorBlockBar'} size={'xs'} className="w-full">Fill</Button>
+                            <Button type="button" onClick={() => setObjectFit("cover")} onBlur={saveSettings} variant={objectFit === "cover" ? 'primary' : 'editorBlockBar'} size={'xs'} className="w-full">Cover</Button>
+                            <Button type="button" onClick={() => setObjectFit("contain")} onBlur={saveSettings} variant={objectFit === "contain" ? 'primary' : 'editorBlockBar'} size={'xs'} className="w-full">Contain</Button>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-12 items-start gap-2">
-                        <div className="col-span-3 text-end">
+                        <div className="block lg:hidden col-span-3 text-end">
                             <Label htmlFor="alt" className="text-xs">
                                 Deskripsi
                             </Label>
@@ -230,7 +250,7 @@ export function ResizableImage(props: any) {
                             value={alt}
                             onChange={(e) => setAlt(e.target.value)}
                             rows={3}
-                            className="col-span-9"
+                            className="col-span-9 lg:col-span-12"
                             placeholder="Describe the image..."
                             variant={'primary'}
                             size={'sm'}

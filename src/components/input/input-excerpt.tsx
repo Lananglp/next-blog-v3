@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { stripHtml } from "../../app/admin/posts/create/html-to-string";
-import { RefreshCcw } from "lucide-react";
+import { CopyIcon, RefreshCcw } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -58,7 +58,7 @@ export default function InputExcerpt({ value, content, placeholder, errors, cont
                                 variant={'editorBlockBar'}
                                 size={'editorBlockBar'}
                             >
-                                <RefreshCcw />Auto Generate
+                                <CopyIcon />Copy from content
                             </Button>
                         </div>
                         <Textarea

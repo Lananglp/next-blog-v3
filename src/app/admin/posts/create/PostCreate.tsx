@@ -10,8 +10,7 @@ import TextEditor from "@/components/text-editor";
 import InputStatus from "@/components/input/input-status";
 import { Button } from "@/components/ui/button";
 import { Eye, MoveLeft, Send } from "lucide-react";
-import { useSidebar } from "@/components/ui/sidebar";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import PostPreview from "./PostPreview";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -23,9 +22,20 @@ import { setTitle } from "@/context/titleSlice";
 import { useSingleEffect } from "react-haiku";
 import { PostFormValues, postSchema } from "@/helper/schema/schema";
 import { RootState } from "@/lib/redux";
+import { postPost } from "@/app/api/function/posts";
+import { AxiosError } from "axios";
+import { responseStatus } from "@/helper/system-config";
+import { useToast } from "@/hooks/use-toast";
+import Modal from "@/components/modal-custom";
+import { useRouter } from "next/navigation";
 
 export default function PostCreate({ pageTitle }: { pageTitle: string }) {
+    const [submitModal, setSubmitModal] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const { user } = useSelector((state: RootState) => state.session);
+    const navigate = useRouter();
+    const { toast } = useToast();
+    
     const dispatch = useDispatch();
 
     const setPageTitle = () => {
@@ -54,15 +64,15 @@ export default function PostCreate({ pageTitle }: { pageTitle: string }) {
             slug: '',
             tags: [],
             categories: [],
-            status: 'draft',
-            commentStatus: 'open',
+            status: 'DRAFT',
+            commentStatus: 'OPEN',
             meta: {
                 title: '',
                 description: '',
                 keywords: [],
                 ogImage: '',
             },
-            authorId: user.id,
+            authorId: "",
         }
     });
     const title = watch('title');
@@ -78,8 +88,57 @@ export default function PostCreate({ pageTitle }: { pageTitle: string }) {
     const [toogleDevTool, setToogleDevTool] = useState<boolean>(false);
     const [customSeo, setCustomSeo] = useState<boolean>(false);
 
-    const onSubmit: SubmitHandler<PostFormValues> = (data) => {
-        console.log(data);
+    const handleClickSubmit = () => {
+        handleSubmit(onSubmit)();
+        setSubmitModal(false);
+    };
+
+    const onSubmit: SubmitHandler<PostFormValues> = async (data, event) => {
+        event?.preventDefault();
+        setLoading(true);
+
+        const formdata = new FormData();
+        formdata.append("authorId", user.id.toString());
+        formdata.append("title", data.title);
+        formdata.append("content", data.content);
+        formdata.append("excerpt", data.excerpt);
+        formdata.append("slug", data.slug);
+        formdata.append("tags", JSON.stringify(data.tags));
+        formdata.append("categories", JSON.stringify(data.categories));
+        formdata.append("status", data.status);
+        formdata.append("commentStatus", data.commentStatus);
+        formdata.append("meta", JSON.stringify({
+            title: data.meta.title ? data.meta.title : data.title,
+            description: data.meta.description ? data.meta.description : data.excerpt,
+            keywords: data.meta.keywords.length > 0 ? data.meta.keywords : data.tags,
+            ogImage: data.meta.ogImage ? data.meta.ogImage : data.featuredImage
+        }));
+        formdata.append("featuredImage", data.featuredImage);
+
+        try {
+            const res = await postPost(formdata);
+            if (res.data?.status) {
+                toast({
+                    title: res.data.status,
+                    description: res.data.message,
+                });
+                navigate.push("/admin/posts");
+            };
+        } catch (error: unknown) {
+            if (error instanceof AxiosError) {
+                console.log("AxiosError: ", error.response);
+                if (error.response?.data.status) {
+                    toast({
+                        title: "Oops...",
+                        description: `${error.response?.data.message}. (${error.response?.status.toString()})` || "an error occurred",
+                    })
+                }
+            } else {
+                console.log("Unknown error: ", error);
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (!preview) {
@@ -118,7 +177,7 @@ export default function PostCreate({ pageTitle }: { pageTitle: string }) {
                                 errors={errors.status}
                             />
                             <div className="flex items-center gap-2">
-                                <Button title="Create Post" type="submit" variant={'submit'}><Send />Create Post</Button>
+                                <Button title="Create Post" type="button" onClick={() => setSubmitModal(true)} variant={'submit'}><Send />Create Post</Button>
                                 <Button title="Preview" type="button" onClick={() => setPreview(true)} variant={'editorBlockBar'} className="h-10 w-10"><Eye /></Button>
                             </div>
                         </div>
@@ -245,7 +304,7 @@ export default function PostCreate({ pageTitle }: { pageTitle: string }) {
                             render={({ field }) => {
                                 return (
                                     <div className="flex items-center space-x-2">
-                                        <Switch checked={field.value === 'open'} onCheckedChange={(value) => field.onChange(value ? 'open' : 'closed')} id="commentStatus" />
+                                        <Switch checked={field.value === 'OPEN'} onCheckedChange={(value) => field.onChange(value ? 'open' : 'closed')} id="commentStatus" />
                                         <Label htmlFor="commentStatus">Comment</Label>
                                     </div>
                                 )
@@ -258,12 +317,56 @@ export default function PostCreate({ pageTitle }: { pageTitle: string }) {
                                 errors={errors.status}
                             />
                             <div className="flex items-center gap-2">
-                                <Button title="Create Post" type="submit" variant={'submit'}><Send />Create Post</Button>
+                                <Button title="Create Post" type="button" onClick={() => setSubmitModal(true)} variant={'submit'}><Send />Create Post</Button>
                                 <Button title="Preview" type="button" onClick={() => setPreview(true)} variant={'editorBlockBar'} className="h-10 w-10"><Eye /></Button>
                             </div>
                         </div>
                     </div>
                 </div>
+                {loading ? (
+                    <Modal open={loading} width="max-w-md">
+                        <div className="h-64 flex justify-center items-center">
+                            <div className="typewriter">
+                                <div className="slide"><i /></div>
+                                <div className="paper" />
+                                <div className="keyboard" />
+                            </div>
+                        </div>
+                    </Modal>
+                ) : (
+                    <Modal open={submitModal} title={"Ready to Publish?"} onClose={() => setSubmitModal(false)} width="max-w-md">
+                        <div className="space-y-4">
+                            <div>
+                                <p className="mb-1">The current status of your post is:</p>
+                                <h4 className="text-xl font-semibold">{getValues().status}</h4>
+                            </div>
+                            <div className="bg-zinc-200/50 dark:bg-zinc-900/50 text-sm rounded-lg px-4 leading-6 py-3">
+                                {getValues().status === 'DRAFT' && (
+                                    <p className="text-black dark:text-white font-semibold">
+                                        Your post is currently in draft mode and not yet visible to others.
+                                    </p>
+                                )}
+                                {getValues().status === 'PUBLISH' && (
+                                    <p className="text-black dark:text-white font-semibold">
+                                        Your post will be publicly visible to all users.
+                                    </p>
+                                )}
+                                {getValues().status === 'PRIVATE' && (
+                                    <p className="text-black dark:text-white font-semibold">
+                                        Your post is set to private and will only be accessible to you.
+                                    </p>
+                                )}
+                                <p className="text-zinc-500 line-clamp-2">
+                                    Please ensure that your content adheres to ethical and community guidelines. Avoid including any elements related to ethnicity, religion, race, or intergroup relations that may be deemed offensive. Always use respectful, clear, and appropriate language in accordance with applicable norms.
+                                </p>
+                            </div>
+                            <div className="flex justify-end gap-1">
+                                <Button title="Close" type="button" onClick={() => setSubmitModal(false)} variant={'primary'}><MoveLeft />back</Button>
+                                <Button title="Create Post" type="button" onClick={handleClickSubmit} variant={'submit'}><Send />{getValues().status.toUpperCase()}</Button>
+                            </div>
+                        </div>
+                    </Modal>
+                )}
             </form>
         );
     } else {

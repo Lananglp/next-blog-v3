@@ -28,6 +28,15 @@ export interface FetchingType<T = any> {
     id?: number;
     data?: T;
     user?: T;
+    item?: T;
+    status?: string;
+    message?: string;
+    pagination?: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
     custom?: AxiosRequestConfig;
 }
 

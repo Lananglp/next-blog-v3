@@ -13,8 +13,10 @@ const buttonVariants = cva(
           "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         primary:
           "bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/50 focus:border-blue-500",
+        // destructive:
+        //   "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 border border-destructive",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 border border-destructive",
+          "bg-red-900 text-white shadow-sm hover:bg-red-800",
         editorToolBar:
           "hover:bg-zinc-200 hover:dark:bg-zinc-700",
         editorBlockBar:
@@ -26,6 +28,9 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
+        danger:
+          "text-red-500 hover:bg-zinc-200 hover:dark:bg-zinc-700",
+        transparent: "hover:bg-transparent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
@@ -36,6 +41,8 @@ const buttonVariants = cva(
         sm: "h-8 rounded-md px-3 text-xs",
         lg: "h-10 rounded-md px-8",
         icon: "h-9 w-9",
+        iconSm: "h-8 w-8",
+        iconXs: "h-7 w-7",
       },
     },
     defaultVariants: {

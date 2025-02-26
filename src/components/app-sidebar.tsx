@@ -37,28 +37,19 @@ const data = {
   },
   navMain: [
     {
-      title: "Testing",
-      url: "#",
+      title: "Dashboard",
+      url: "/admin",
       icon: SquareTerminal,
-      // isActive: true,
-      items: [
-        {
-          title: "home",
-          url: "/",
-        },
-        {
-          title: "login",
-          url: "/login",
-        },
-        {
-          title: "register",
-          url: "/register",
-        },
-        {
-          title: "about",
-          url: "/about",
-        },
-      ],
+    },
+    {
+      title: "Posts",
+      url: "/admin/posts",
+      icon: SquareTerminal,
+    },
+    {
+      title: "Categories",
+      url: "/admin/categories",
+      icon: SquareTerminal,
     },
     {
       title: "Content",
@@ -126,7 +117,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

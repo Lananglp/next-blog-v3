@@ -25,9 +25,9 @@ function InputStatus({ control, name, errors }: { control: any; name: string, er
                                     <SelectValue id='status' defaultValue={field.value} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="draft">Draft</SelectItem>
-                                    <SelectItem value="publish">Publish</SelectItem>
-                                    <SelectItem value="private">Private</SelectItem>
+                                    <SelectItem value="DRAFT">Draft</SelectItem>
+                                    <SelectItem value="PUBLISH">Publish</SelectItem>
+                                    <SelectItem value="PRIVATE">Private</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

@@ -27,5 +27,9 @@ export async function middleware(req: NextRequest) {
 export const config = {
     matcher: [
         "/admin/:path*",
+        "/api/images/:path*",
+        "/api/logout/:path*",
+        "/api/posts/:path*",
+        "/api/upload/:path*",
     ],
 };

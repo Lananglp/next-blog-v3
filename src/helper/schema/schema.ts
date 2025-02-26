@@ -5,12 +5,12 @@ export const postSchema = z.object({
     content: z.string().min(30, "Content is required"),
     excerpt: z.string().min(1, "Summary is required").min(10, "Minimum 10 characters required").max(200, "The word is too long"),
     slug: z.string().min(1, "Slug is required").min(3, "Slug is required").max(150, "The word is too long"),
-    status: z.enum(["publish", "draft", "private"]),
+    status: z.enum(["PUBLISH", "DRAFT", "PRIVATE"]),
     categories: z.array(z.string()),
     tags: z.array(z.string()),
     authorId: z.string(),
-    featuredImage: z.string().min(1, "Thumbnail is required").url(),
-    commentStatus: z.enum(["open", "closed"]),
+    featuredImage: z.string().min(1, "Thumbnail is required"),
+    commentStatus: z.enum(["OPEN", "CLOSED"]),
     meta: z.object({
         title: z.string().max(100, "The word is too long"),
         description: z.string().max(200, "The word is too long"),
@@ -20,3 +20,10 @@ export const postSchema = z.object({
 });
 
 export type PostFormValues = z.infer<typeof postSchema>;
+
+export const categoriesSchema = z.object({
+    id: z.string().optional(),
+    name: z.string().min(1, { message: 'Category name is required' }),
+});
+
+export type CategoriesFormType = z.infer<typeof categoriesSchema>;

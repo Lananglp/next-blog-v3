@@ -11,7 +11,7 @@ export const CustomImage = Image.extend({
             width: { default: initialImageWidth },
             height: { default: "auto" },
             alt: { default: "" },
-            objectFit: { default: "cover" },
+            objectFit: { default: "fill" },
             aspectRatio: { default: "auto" },
             placeSelf: { default: "start" },
         }

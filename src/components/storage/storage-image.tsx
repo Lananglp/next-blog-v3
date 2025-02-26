@@ -18,6 +18,12 @@ import { Label } from '../ui/label';
 import { MdCropRotate } from "react-icons/md";
 import { generateUniqueUrl, validateImageURL } from '@/helper/helper';
 import ImagePreview from './image-preview';
+import { Input } from '../ui/input';
+
+type SourceType = {
+    storage: boolean;
+    url: boolean;
+}
 
 type CroppedAreaPixelsType = {
     x: number;
@@ -33,16 +39,25 @@ interface Flip {
 
 type Props = {
     ref?: React.RefObject<any>;
+    value?: string;
+    onOpen?: () => void;
     onSelect?: (url: string) => void;
     onClose?: () => void;
+    onOpenModalChange?: (value: boolean) => void;
 }
 
-function StorageImage({ ref, onSelect, onClose }: Props) {
+function StorageImage({ ref, value, onSelect, onClose, onOpen, onOpenModalChange }: Props) {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [showCropper, setShowCropper] = useState<boolean>(false);
+    const [imgSource, setImgSource] = useState<SourceType>({
+        storage: true,
+        url: false
+    });
+    const [url, setUrl] = useState<string>(value || '');
     const [image, setImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [isEdit, setIsEdit] = useState<boolean>(false);
+    const [isDelete, setIsDelete] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [items, setItems] = useState<ImageType[]>([]);
     const [detail, setDetail] = useState<ImageType>({
@@ -50,13 +65,12 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
         url: '',
         createdAt: null,
     });
-    // const [grid, setGrid] = useState<GridType>(listGrid[0]);
     const { toast } = useToast();
     const onDrop = useCallback((acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
         if (file) {
             setImage(file);
-            setPreview(URL.createObjectURL(file)); // Preview image sebelum upload
+            setPreview(URL.createObjectURL(file));
             setIsEdit(false);
         }
     }, []);
@@ -72,10 +86,17 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
     const [aspect, setAspect] = useState<number>(16 / 9);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<CroppedAreaPixelsType | null>(null);
     const [flip, setFlip] = useState<Flip>({ horizontal: false, vertical: false });
-
+    // console.log(value);
+    
     const handleOpen = () => {
         setOpenModal(true);
         fetchImages();
+        if (onOpen) {
+            onOpen();
+        }
+        if (onOpenModalChange) {
+            onOpenModalChange(true);
+        }
     };
     const handleClose = () => {
         setOpenModal(false);
@@ -85,6 +106,9 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
         handleResetCrop();
         if (onClose) {
             onClose();
+        }
+        if (onOpenModalChange) {
+            onOpenModalChange(false);
         }
     };
 
@@ -147,6 +171,9 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
             onSelect(url);
         }
         setOpenModal(false);
+        if (onOpenModalChange) {
+            onOpenModalChange(false);
+        }
     }
 
     const handleDeleteImage = async (id: string) => {
@@ -317,7 +344,7 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
                             </div>
                         </div>
                 ) : detail.id ? (
-                    <ImagePreview url={detail.url} />
+                    <ImagePreview isDelete={isDelete} detail={detail} alt='preview' />
                 ) : (
                     <>
                         <InputFile
@@ -332,19 +359,9 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
 
                 <div className='flex flex-wrap justify-between gap-2 items-end border-b border-zinc-300 dark:border-zinc-800 pb-3 my-4'>
                     <div className='w-full md:w-auto flex items-end gap-1'>
-                        {!detail.id ? (
-                            <Button
-                                title='Upload Image'
-                                type='button'
-                                onClick={handleUpload}
-                                disabled={!image || loading || showCropper}
-                                variant={'primary'}
-                                size={'sm'}
-                                className='w-full md:w-auto'
-                            >
-                                <UploadIcon />{loading ? 'Uploading...' : 'Upload'}
-                            </Button>
-                        ) : (
+                        {isDelete && detail.id ? (
+                            <Button type="button" title='Delete this Image' disabled={loading || showCropper} variant={'destructive'} size={'sm'}><Trash2Icon /> Yes, delete it</Button>
+                        ) : detail.id ? (
                             <Button
                                 title='Select this image'
                                 type='button'
@@ -356,12 +373,32 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
                             >
                                 Select Image
                             </Button>
+                        ) : (
+                            <Button
+                                title='Upload Image'
+                                type='button'
+                                onClick={handleUpload}
+                                disabled={!image || loading || showCropper}
+                                variant={'primary'}
+                                size={'sm'}
+                                className='w-full md:w-auto'
+                            >
+                                <UploadIcon />{loading ? 'Uploading...' : 'Upload'}
+                            </Button>
                         )}
-                        {detail.id && <Button type="button" title='close Image Preview' onClick={() => setDetail(initialImage)} disabled={loading || showCropper} variant={'editorBlockBar'} className='h-8 w-8'><XIcon /></Button>}
-                        {preview && <Button type="button" title='Cancel' onClick={handleCancel} disabled={loading || showCropper} variant={'destructive'} className='h-8 w-8'><Trash2Icon /></Button>}
-                        {preview && <Button type='button' title='Crop Image' onClick={() => setShowCropper(true)} disabled={loading || showCropper} variant={'editorBlockBar'} className='h-8 w-8'><CropIcon /></Button>}
+                        {detail.id && <Button title={isDelete ? 'Cancel' : 'Delete this Image'} type="button" onClick={() => setIsDelete(!isDelete)} variant={isDelete ? 'editorBlockBar' : 'destructive'} size={isDelete ? 'sm' : 'iconSm'}>{isDelete ? <XIcon /> : <Trash2Icon />}{isDelete && 'Cancel'}</Button>}
+                        {!isDelete && detail.id && <Button type="button" title='close Image Preview' onClick={() => setDetail(initialImage)} disabled={loading || showCropper} variant={'editorBlockBar'} size={'sm'}><XIcon />Close Preview</Button>}
+                        {preview && <Button type="button" title='Cancel' onClick={handleCancel} disabled={loading || showCropper} variant={'destructive'} size={'iconSm'}><Trash2Icon /></Button>}
+                        {preview && <Button type='button' title='Crop Image' onClick={() => setShowCropper(true)} disabled={loading || showCropper} variant={'editorBlockBar'} size={'iconSm'}><CropIcon /></Button>}
                     </div>
 
+                    {/* <div className='w-full md:w-auto flex justify-end items-center gap-2'>
+                        <p className='text-sm dark:text-zinc-400'>Source :</p>
+                        <div className='flex items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-800 p-1'>
+                            <Button type='button' onClick={() => setImgSource({ ...imgSource, storage: true, url: false })} variant={'ghost'} size={'sm'} className={`${imgSource.storage ? 'bg-zinc-200 hover:bg-zinc-200 dark:bg-zinc-800' : 'hover:bg-zinc-200 hover:dark:bg-zinc-900'} rounded h-7`}>Storage</Button>
+                            <Button type='button' onClick={() => setImgSource({ ...imgSource, storage: false, url: true })} variant={'ghost'} size={'sm'} className={`${imgSource.url ? 'bg-zinc-200 hover:bg-zinc-200 dark:bg-zinc-800' : 'hover:bg-zinc-200 hover:dark:bg-zinc-900'} rounded h-7`}>URL</Button>
+                        </div>
+                    </div> */}
                     {/* <div className='w-full md:w-auto flex justify-end items-center gap-2'>
                         <p className='text-sm dark:text-zinc-400'>view :</p>
                         <div className='flex items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-800 p-1'>
@@ -379,9 +416,10 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
                         return (
                         <div key={index}>
                             {!isNull ? (
-                                <div className='aspect-[4/3]'>
+                                <div className={`${detail.id === i.id ? 'border-blue-500' : 'border-template'} relative aspect-[4/3] border rounded-lg`}>
                                     {/* <Image priority title={i.url} src={generateUniqueUrl(i.url)} alt={`Image ${index}`} width={244} height={183} onClick={() => setDetail(i)} onError={() => isNull = true} className="bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 object-contain w-full h-full rounded-lg shadow hover:cursor-pointer" /> */}
-                                    <Image priority title={i.url} src={i.url} alt={`Image ${index}`} width={244} height={183} onClick={() => setDetail(i)} onError={() => isNull = true} className="bg-zinc-200/50 dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 object-contain w-full h-full rounded-lg shadow hover:cursor-pointer" />
+                                    <Image priority title={i.url} src={i.url} alt={`Image ${index}`} width={244} height={183} onClick={() => setDetail(i)} onError={() => isNull = true} className="bg-zinc-200/50 dark:bg-zinc-900/50 object-contain w-full h-full rounded-lg shadow hover:cursor-pointer" />
+                                    {detail.id === i.id && <span className='absolute start-2 bottom-2 text-xs'>Selected</span>}
                                 </div>
                             ) : (
                                 <div className='aspect-[4/3]'>
@@ -393,10 +431,10 @@ function StorageImage({ ref, onSelect, onClose }: Props) {
                                 </div>
                             )}
                             <p className='my-1.5 dark:text-zinc-400 text-xs line-clamp-2'>{i.url}</p>
-                            <div className='flex items-center gap-1'>
+                            {/* <div className='flex items-center gap-1'>
                                 <Button onClick={() => handleSelectImage(i.url)} type="button" variant={'primary'} size={'xs'}>Select</Button>
                                 <DeleteImage ref={ref} item={i} index={index} onDelete={() => handleDeleteImage(i.id)} toast={toast} />
-                            </div>
+                            </div> */}
                         </div>
                     )}) : (
                         <div className='col-span-full h-36 flex justify-center items-center'>

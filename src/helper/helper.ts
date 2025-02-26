@@ -1,3 +1,14 @@
+import moment from "moment";
+import 'moment/locale/id';
+
+export const formatDateTime = (date: string) => {
+    return moment(date).locale('id').format('dddd, DD MMMM YYYY HH:mm');
+}
+
+export const formatDate = (date: string) => {
+    return moment(date).locale('id').format('dddd, DD MMMM YYYY');
+}
+
 export const generateUniqueUrl = (url: string) => `${url}?t=${new Date().getTime()}`;
 
 export const validateImageURL = async (url: string, toast: any ) => {

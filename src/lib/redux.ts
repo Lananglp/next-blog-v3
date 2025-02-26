@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import sessionReducer from "@/context/sessionSlice";
 import postPreviewReducer from "@/context/postPreviewSlice";
 import titleReducer from "@/context/titleSlice";
+import modalReducer from "@/context/modalSlice";
 import { useDispatch } from "react-redux";
 
 export const redux = configureStore({
@@ -9,6 +10,7 @@ export const redux = configureStore({
     session: sessionReducer,
     postPreview: postPreviewReducer,
     pageTitle: titleReducer,
+    modal: modalReducer,
   },
 });
   

@@ -14,14 +14,38 @@ datasource db {
 }
 
 model Post {
-  id          String    @id @default(uuid())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  title       String    @db.VarChar(255)
-  content     String?
-  published   Boolean   @default(false)
-  author      User      @relation(fields: [authorId], references: [id])
-  authorId    String
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  title          String
+  content        String
+  excerpt        String
+  slug           String   @unique
+  status         PostStatus
+  categories     PostCategory[]
+  tags           String[]
+  author         User      @relation(fields: [authorId], references: [id])
+  authorId       String
+  featuredImage  String
+  commentStatus  CommentStatus
+  meta           Json
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String   @unique
+  posts     PostCategory[]
+}
+
+model PostCategory { 
+  postId     String
+  categoryId String
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([postId, categoryId])
 }
 
 model Profile {
@@ -44,13 +68,24 @@ model User {
   updatedAt   DateTime  @updatedAt
 }
 
+model Image {
+  id          String    @id @default(uuid())
+  url         String
+  createdAt   DateTime  @default(now())
+}
+
 enum UserRole {
   ADMIN
   USER
 }
 
-model Image {
-  id          String    @id @default(uuid())
-  url         String
-  createdAt   DateTime  @default(now())
+enum PostStatus {
+  PUBLISH
+  DRAFT
+  PRIVATE
+}
+
+enum CommentStatus {
+  OPEN
+  CLOSED
 }
