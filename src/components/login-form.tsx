@@ -69,10 +69,11 @@ export function LoginForm({
         const checkRole = await authCheckRole(res.data.user.role);
         
         if (checkRole.status === 200 && res.data.user.role === "ADMIN") {
-          // setTimeout(() => {
-          //   window.location.href = "/admin";
-          // }, 1000)
-          navigate.push("/admin");
+          setTimeout(() => {
+            setLoading(false);
+            window.location.href = "/admin";
+          }, 1000)
+          // navigate.push("/admin");
         }
       }
     } catch (error: unknown) {
@@ -86,7 +87,6 @@ export function LoginForm({
       } else {
         console.log("Unknown error:", error);
       }
-    } finally {
       setLoading(false);
     }
   }
