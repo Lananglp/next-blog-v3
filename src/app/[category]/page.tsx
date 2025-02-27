@@ -8,7 +8,7 @@ interface CategoryPageProps {
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-    const { category } = await params;
+    const category = (await params).category;
 
     // console.log("Category:", category);
     // console.log("Slug:", slug);

@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/navigation-menu"
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
 
 function Header() {
     const { user, isLogin } = useSelector((state: RootState) => state.session);
@@ -73,19 +75,47 @@ function Header() {
                             <ModeToggle />
                             {isLogin ? (
                                 <div className="flex items-center gap-2">
-                                    <div className="flex items-center">
-                                        <span className="hidden md:inline-block mr-2 text-sm font-medium text-zinc-800 dark:text-white">
-                                            {user.email || "Unknown"}
-                                        </span>
-                                        <Image
-                                            unoptimized
-                                            width={64}
-                                            height={64}
-                                            className="w-8 h-8 rounded-full"
-                                            src="https://flowbite.com/docs/images/people/profile-picture-3.jpg"
-                                            alt="User Photo"
-                                        />
-                                    </div>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <div className="flex items-center">
+                                                <span className="hidden md:inline-block mr-2 text-sm font-medium text-zinc-800 dark:text-white cursor-pointer">
+                                                    {user.email || "Unknown"}
+                                                </span>
+                                                <Image
+                                                    unoptimized
+                                                    width={64}
+                                                    height={64}
+                                                    className="w-8 h-8 rounded-full cursor-pointer"
+                                                    src="https://flowbite.com/docs/images/people/profile-picture-3.jpg"
+                                                    alt="User Photo"
+                                                />
+                                            </div>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent>
+                                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem>Profile</DropdownMenuItem>
+                                            <DropdownMenuItem asChild>
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger className="w-full text-start text-sm font-medium text-red-500 hover:dark:bg-zinc-800 rounded px-2 py-1.5">
+                                                        logout
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader className="py-12">
+                                                            <AlertDialogTitle className="text-black dark:text-white text-2xl text-center">Are you sure you want to log out?</AlertDialogTitle>
+                                                            <AlertDialogDescription className="text-center">
+                                                                You will log out from {user.email}
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel className="w-full">Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction onClick={handleSignOut} className="w-full">Log out</AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                     <Sheet>
                                         <SheetTrigger asChild>
                                             <Button type="button" variant={'ghost'} size={'icon'} className="flex xl:hidden"><MenuIcon /></Button>

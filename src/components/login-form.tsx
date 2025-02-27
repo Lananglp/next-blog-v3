@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
 import { loginSchema } from "@/helper/schema/loginSchema"
 import { useToast } from "@/hooks/use-toast"
-import { login } from "@/app/api/function/auth"
+import { authCheckRole, login } from "@/app/api/function/auth"
 import { AxiosError } from "axios"
 import Link from "next/link"
 import { PiEyeBold, PiEyeClosedBold } from "react-icons/pi";
@@ -66,7 +66,12 @@ export function LoginForm({
           title: "Welcome!",
           description: res.data.message,
         });
-        if (res.data.user.role === "ADMIN") {
+        const checkRole = await authCheckRole(res.data.user.role);
+        
+        if (checkRole.status === 200 && res.data.user.role === "ADMIN") {
+          // setTimeout(() => {
+          //   window.location.href = "/admin";
+          // }, 1000)
           navigate.push("/admin");
         }
       }

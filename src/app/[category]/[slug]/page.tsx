@@ -8,7 +8,8 @@ interface PostPageProps {
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-    const { category, slug } = await params;
+    const category = (await params).category;
+    const slug = (await params).slug;
 
     // console.log("Category:", category);
     // console.log("Slug:", slug);
