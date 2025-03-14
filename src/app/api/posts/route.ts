@@ -46,8 +46,13 @@ export async function GET(req: Request) {
             },
         });
 
+        const formattedPosts = posts.map(post => ({
+            ...post,
+            categories: post.categories.map(cat => cat.category) // Flatten category layer
+        }));
+
         return NextResponse.json({
-            items: posts,
+            items: formattedPosts,
             pagination: page && limit ? {
                 total: totalPosts,
                 page,

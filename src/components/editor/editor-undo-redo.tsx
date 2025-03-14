@@ -1,8 +1,9 @@
 import React from 'react'
 import { PiArrowBendUpLeftBold, PiArrowBendUpRightBold } from 'react-icons/pi'
 import { Button } from '../ui/button'
+import { Editor } from '@tiptap/react'
 
-function EditorUndoRedo({ editor }: { editor: any }) {
+function EditorUndoRedo({ editor }: { editor: Editor }) {
 
     if (!editor) {
         return null

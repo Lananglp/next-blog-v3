@@ -4,38 +4,72 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req: Request) {
     try {
-        const { name } = await req.json();
+        const { categories } = await req.json();
 
-        if (!name || typeof name !== "string") {
-            return NextResponse.json({ status: responseStatus.warning, message: "Category name is required" }, { status: 400 });
+        if (!Array.isArray(categories) || categories.length === 0) {
+            return NextResponse.json({
+                status: responseStatus.warning,
+                message: "Categories array is required"
+            }, { status: 400 });
         }
 
-        // Normalisasi nama kategori menjadi huruf kecil
-        const normalizedCategoryName = name.toLowerCase();
+        const results = {
+            success: [] as any[],
+            duplicates: [] as string[],
+        };
 
-        // Cek apakah kategori sudah ada (case-insensitive)
-        const existingCategory = await prisma.category.findFirst({
-            where: {
-                name: {
-                    equals: normalizedCategoryName,
-                    mode: "insensitive", // Pastikan pencarian tidak case-sensitive
+        // Process each category
+        for (const item of categories) {
+            const { name } = item;
+            if (!name || typeof name !== "string") continue;
+
+            // Normalize category name to lowercase
+            const normalizedCategoryName = name.toLowerCase();
+
+            // Check if category exists (case-insensitive)
+            const existingCategory = await prisma.category.findFirst({
+                where: {
+                    name: {
+                        equals: normalizedCategoryName,
+                        mode: "insensitive",
+                    },
                 },
-            },
-        });
+            });
 
-        if (existingCategory) {
-            return NextResponse.json({ status: responseStatus.warning, message: "Categories already exist" }, { status: 409 });
+            if (existingCategory) {
+                results.duplicates.push(name);
+                continue;
+            }
+
+            // Create new category
+            const newCategory = await prisma.category.create({
+                data: { name },
+            });
+            results.success.push(newCategory);
         }
 
-        // Buat kategori baru dengan nama yang tetap sesuai input
-        const newCategory = await prisma.category.create({
-            data: { name },
-        });
+        // Prepare response message
+        let message = "";
+        if (results.success.length > 0) {
+            message += `Successfully created ${results.success.length} categories. `;
+        }
+        if (results.duplicates.length > 0) {
+            message += `${results.duplicates.length} categories already exist: ${results.duplicates.join(", ")}`;
+        }
 
-        return NextResponse.json({ status: responseStatus.success, message: "Category created successfully", category: newCategory }, { status: 201 });
+        return NextResponse.json({
+            status: results.success.length > 0 ? responseStatus.success : responseStatus.warning,
+            message: message || "No valid categories provided",
+            categories: results.success
+        }, {
+            status: results.success.length > 0 ? 201 : 400
+        });
 
     } catch (error) {
-        console.error("Failed to create category:", error);
-        return NextResponse.json({ status: responseStatus.error, message: error }, { status: 500 });
+        console.error("Failed to create categories:", error);
+        return NextResponse.json({
+            status: responseStatus.error,
+            message: error
+        }, { status: 500 });
     }
 }

@@ -3,33 +3,11 @@ import { Grid2X2, ChevronDown, PlusIcon, WandSparkles, Trash2, MoveLeft, MoveRig
 import { PiArrowBendUpLeftBold, PiArrowBendUpRightBold } from "react-icons/pi";
 import { Button } from "../ui/button";
 import { autoUpdate, flip, offset, shift, useFloating } from "@floating-ui/react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Editor } from '@tiptap/react'
 
-const EditorBlockTable = ({ editor }: { editor: any }) => {
+const EditorBlockTable = ({ editor }: { editor: Editor }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-    const { x, y, refs, strategy } = useFloating({
-        placement: "bottom-start",
-        middleware: [offset(8), flip(), shift()],
-        whileElementsMounted: autoUpdate,
-    });
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-
-        if (isOpen) {
-            document.addEventListener("mousedown", handleClickOutside);
-        } else {
-            document.removeEventListener("mousedown", handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [isOpen]);
 
     const options = [
         { label: "Fix Tables", type: 'option', icon: <WandSparkles className="w-4 h-4 mb-0.5" />, action: () => editor.chain().focus().fixTables().run() },
@@ -52,32 +30,22 @@ const EditorBlockTable = ({ editor }: { editor: any }) => {
     ];
 
     return (
-        <div className="relative inline-block">
-            <Button
-                type="button"
-                ref={refs.setReference}
-                title="Table Options"
-                onClick={() => setIsOpen(!isOpen)}
-                variant={'editorBlockBar'}
-                size={'editorBlockBar'}
-                className={editor.isActive('table') ? 'bg-zinc-200 dark:bg-zinc-700 text-black dark:text-white' : 'bg-zinc-100 dark:bg-zinc-900'}
-            >
-                <Grid2X2 />Table<ChevronDown />
-            </Button>
-
-            {isOpen && (
-                <div
-                    ref={(ref) => {
-                        refs.setFloating(ref);
-                        dropdownRef.current = ref;
-                    }}
-                    style={{
-                        position: strategy,
-                        top: y ?? 0,
-                        left: x ?? 0,
-                    }}
-                    className="absolute mt-1 w-96 lg:w-[40rem] grid grid-cols-3 gap-1 bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 rounded-md shadow-lg z-10 p-1.5"
+        <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenuTrigger asChild>
+                <Button
+                    type="button"
+                    title="Table Options"
+                    variant={'editorBlockBar'}
+                    size={'editorBlockBar'}
+                    className={editor.isActive('table') ? 'bg-zinc-200 dark:bg-zinc-700 text-black dark:text-white' : 'bg-zinc-100 dark:bg-zinc-900'}
                 >
+                    <Grid2X2 />Table<ChevronDown />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className='w-96 lg:w-[40rem]'>
+                <DropdownMenuLabel>Insert Table</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="grid grid-cols-3 gap-1 p-2">
                     <Button
                         type="button"
                         variant={'editorBlockBar'}
@@ -108,8 +76,8 @@ const EditorBlockTable = ({ editor }: { editor: any }) => {
                         </Button>
                     ))}
                 </div>
-            )}
-        </div>
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 };
 

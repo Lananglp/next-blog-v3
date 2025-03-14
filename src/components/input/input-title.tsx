@@ -7,6 +7,7 @@ import { Controller } from "react-hook-form";
 
 interface InputTitleProps {
     type: 'heading' | 'text';
+    size?: 'sm' | 'default' | 'lg' | 'xl';
     label: string;
     value: string;
     placeholder?: string;
@@ -22,6 +23,7 @@ interface InputTitleProps {
 
 export default function InputTitle({
     type,
+    size='default',
     label,
     value,
     placeholder = "Enter title...",
@@ -30,9 +32,9 @@ export default function InputTitle({
     control,
     name,
     note,
-    maxWords=100,
-    disableWordCount=false,
-    required=false
+    maxWords = 100,
+    disableWordCount = false,
+    required = false
 }: InputTitleProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [errorMessage, setErrorMessage] = useState<string>("");
@@ -78,10 +80,10 @@ export default function InputTitle({
                                 placeholder={placeholder}
                                 rows={2}
                                 variant={errors ? "danger" : "primary"}
-                                size={type === "heading" ? "xl" : "default"}
+                                size={size ? size : type === "heading" ? "xl" : "default"}
                                 className={`overflow-hidden ${className}`}
                             />
-                            <span className={`${errorMessage && "text-red-500"} absolute right-2 bottom-2 text-xs`}>{!disableWordCount && `${field.value ? field.value.length : 0}/${maxWords}`}</span>
+                            <span className={`${errorMessage && "text-red-500"} absolute right-2 -top-6 text-xs`}>{!disableWordCount && `${field.value ? field.value.length : 0}/${maxWords}`}</span>
                         </div>
                         {errors ? (
                             <p className="mt-2 text-red-500 text-xs">{errors?.message}</p>

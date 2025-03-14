@@ -8,15 +8,17 @@ interface CategoryPageProps {
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-    const category = (await params).category;
+    const category = decodeURIComponent((await params).category);
+    const categoryName = category.replace(/-/g, " ");
 
     // console.log("Category:", category);
     // console.log("Slug:", slug);
 
+
     const data = await prisma.category.findFirst({
         where: {
             name: {
-                equals: category.toLowerCase(),
+                equals: categoryName,
                 mode: "insensitive",
             },
         },

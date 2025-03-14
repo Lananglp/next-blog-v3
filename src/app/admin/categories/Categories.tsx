@@ -19,6 +19,7 @@ import { AxiosError } from 'axios';
 import { responseStatus } from '@/helper/system-config';
 import { deleteCategories } from '@/app/api/function/categories';
 import CategoriesEdit from './category-edit';
+import { AnimatePresence, motion } from 'motion/react';
 
 function Categories() {
 
@@ -109,48 +110,52 @@ function Categories() {
                     </div>
                 </div>
             </div>
-            <div className='grid grid-cols-12 gap-2'>
-                {breakpoint && selectedCategories.length > 0 && (
-                    <div className={`col-span-3 `}>
-                        <div className='sticky top-[11rem] min-h-[calc(100vh-12.1rem)] flex flex-col bg-zinc-100 dark:bg-zinc-950/50 border border-template rounded-lg'>
-                            <div className='sticky top-0 bg-zinc-100 dark:bg-zinc-950 flex justify-between items-center border-b border-template gap-1 p-2'>
-                                <p className='p-2 text-sm'>{selectedCategories.length} selected</p>
-                                <Button type='button' onClick={() => setSelectedCategories([])} variant={'transparent'} size={'iconSm'}><XIcon /></Button>
+            <div className='grid grid-cols-12 gap-4'>
+                <AnimatePresence mode='wait'>
+                    {breakpoint && selectedCategories.length > 0 && (
+                        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2, ease: 'easeInOut' }} className="col-span-12 lg:col-span-3">
+                            <div className='sticky top-[11rem] min-h-[calc(100vh-12.1rem)] flex flex-col bg-zinc-100 dark:bg-zinc-950/50 border border-template rounded-lg'>
+                                <div className='sticky top-0 bg-zinc-100 dark:bg-zinc-950 rounded-t-lg flex justify-between items-center border-b border-template gap-1 p-2'>
+                                    <p className='p-2 text-sm'>{selectedCategories.length} selected</p>
+                                    <Button type='button' onClick={() => setSelectedCategories([])} variant={'transparent'} size={'iconSm'}><XIcon /></Button>
+                                </div>
+                                <div className="flex-grow max-h-[calc(100vh-19rem)] overflow-y-auto">
+                                    {selectedCategories.map((category, index) => (
+                                        <div
+                                            key={category.id}
+                                            className={`flex justify-between items-center border-b border-template p-2
+                                                ${hoveredId === category.id && selectedCategories.some((item) => item.id === category.id) ? 'bg-zinc-200/75 dark:bg-zinc-800' : ''}`}
+                                            onMouseEnter={() => setHoveredId(category.id)}
+                                            onMouseLeave={() => setHoveredId(null)}
+                                        >
+                                            <p className='w-full text-sm line-clamp-2 ps-2'>{index + 1}.&nbsp;{category.name}</p>
+                                            <Button type='button' onClick={() => toggleSelection(category.id, category.name || '')} variant={'transparent'} size={'iconSm'}>
+                                                <XIcon />
+                                            </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className='sticky bottom-0 flex items-center gap-2 p-2'>
+                                    <CategoriesEdit selected={selectedCategories} reload={reload} disabled={selectedCategories.length > 1} onSuccess={() => setSelectedCategories([])} />
+                                    <AlertDelete totalSelected={selectedCategories.length} onConfirm={handleDeleteSelectedCategories} disabled={selectedCategories.length === 0} className="w-full" />
+                                </div>
                             </div>
-                            <div className="flex-grow max-h-[calc(100vh-19rem)] overflow-y-auto">
-                                {selectedCategories.map((category, index) => (
-                                    <div
-                                        key={category.id}
-                                        className={`flex justify-between items-center border-b border-template p-2
-                                            ${hoveredId === category.id && selectedCategories.some((item) => item.id === category.id) ? 'bg-zinc-200/75 dark:bg-zinc-800' : ''}`}
-                                        onMouseEnter={() => setHoveredId(category.id)}
-                                        onMouseLeave={() => setHoveredId(null)}
-                                    >
-                                        <p className='w-full text-sm line-clamp-2 ps-2'>{index + 1}.&nbsp;{category.name}</p>
-                                        <Button type='button' onClick={() => toggleSelection(category.id, category.name || '')} variant={'transparent'} size={'iconSm'}>
-                                            <XIcon />
-                                        </Button>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className='sticky bottom-0 flex items-center gap-2 p-2'>
-                                <CategoriesEdit selected={selectedCategories} reload={reload} disabled={selectedCategories.length > 1} onSuccess={() => setSelectedCategories([])} />
-                                <AlertDelete totalSelected={selectedCategories.length} onConfirm={handleDeleteSelectedCategories} disabled={selectedCategories.length === 0} className="w-full" />
-                            </div>
-                        </div>
-                    </div>
-                )}
-                <div className={`${breakpoint && selectedCategories.length > 0 ? 'col-span-9' : 'col-span-12'} space-y-4`}>
-                    {!breakpoint && selectedCategories.length > 0 && (
-                        <div className='sticky top-4 z-10 flex flex-wrap lg:flex-nowrap justify-between items-center gap-2 bg-zinc-200 dark:bg-zinc-900 border border-template rounded-lg px-4 py-2'>
-                            <p className='text-sm'>{selectedCategories.length} selected</p>
-                            <div className='flex items-center gap-1'>
-                                <CategoriesEdit selected={selectedCategories} reload={reload} disabled={selectedCategories.length > 1} onSuccess={() => setSelectedCategories([])} />
-                                <AlertDelete totalSelected={selectedCategories.length} onConfirm={handleDeleteSelectedCategories} disabled={selectedCategories.length === 0} />
-                                <Button type='button' onClick={() => setSelectedCategories([])} variant={'transparent'} size={'iconSm'} className='ms-2'><XIcon /></Button>
-                            </div>
-                        </div>
+                        </motion.div>
                     )}
+                </AnimatePresence>
+                <div className={`${breakpoint && selectedCategories.length > 0 ? 'col-span-12 lg:col-span-9' : 'col-span-12'} space-y-4`}>
+                    <AnimatePresence mode='wait'>
+                        {!breakpoint && selectedCategories.length > 0 && (
+                            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2, ease: 'easeInOut' }} className='sticky top-4 z-10 flex flex-wrap lg:flex-nowrap justify-between items-center gap-2 bg-zinc-200 dark:bg-zinc-900 border border-template rounded-lg px-4 py-2'>
+                                <p className='text-sm'>{selectedCategories.length} selected</p>
+                                <div className='flex items-center gap-1'>
+                                    <CategoriesEdit selected={selectedCategories} reload={reload} disabled={selectedCategories.length > 1} onSuccess={() => setSelectedCategories([])} />
+                                    <AlertDelete totalSelected={selectedCategories.length} onConfirm={handleDeleteSelectedCategories} disabled={selectedCategories.length === 0} />
+                                    <Button type='button' onClick={() => setSelectedCategories([])} variant={'transparent'} size={'iconSm'} className='ms-2'><XIcon /></Button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                     <Pagination currentPage={page} totalData={categories?.pagination?.total || 0} dataPerPage={limit} onPageChange={(value) => handlePageChange(value)} />
                     <div className="overflow-x-auto focus:outline focus:outline-1 focus:outline-blue-500">
                         <table className='w-full'>
@@ -209,7 +214,7 @@ function Categories() {
                                                     No data found
                                                 </td>
                                             </tr>
-                                    ) : (
+                                        ) : (
                                         <tr>
                                             <td colSpan={5} className='p-4 animate-pulse bg-zinc-200/50 dark:bg-zinc-900/50 border-b border-template text-center text-sm font-medium text-zinc-500 dark:text-zinc-400'>
                                                 <Loader className='inline h-4 w-4 mb-0.5 me-1 animate-spin' />Loading...

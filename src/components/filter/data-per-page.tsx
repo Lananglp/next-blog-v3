@@ -7,12 +7,12 @@ type ItemType = {
 }[];
 
 const defaultItem: ItemType = [
-    {number: '10', text: '10 Data'},
-    {number: '25', text: '10 Data'},
-    {number: '50', text: '10 Data'},
-    {number: '100', text: '10 Data'},
-    {number: '250', text: '10 Data'},
-    {number: '500', text: '10 Data'},
+    { number: '10', text: '10 Data' },
+    { number: '25', text: '25 Data' },
+    { number: '50', text: '50 Data' },
+    { number: '100', text: '100 Data' },
+    { number: '250', text: '250 Data' },
+    { number: '500', text: '500 Data' },
 ];
 
 type Props = {

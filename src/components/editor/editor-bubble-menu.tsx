@@ -7,8 +7,9 @@ import EditorTextTypeDropdown from './editor-text-type-dropdown'
 import EditorMarkOne from './editor-mark-one'
 import EditorMarkSecond from './editor-mark-second'
 import EditorAlign from './editor-align'
+import { Editor } from '@tiptap/react'
 
-function EditorBubbleMenu({ editor }: { editor: any }) {
+function EditorBubbleMenu({ editor }: { editor: Editor }) {
 
     if (!editor) {
         return null

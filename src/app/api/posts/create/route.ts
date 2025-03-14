@@ -49,6 +49,7 @@ export async function POST(req: Request) {
                     connect: { id: validatedData.authorId },
                 },
                 featuredImage: validatedData.featuredImage,
+                altText: validatedData.altText,
                 commentStatus: validatedData.commentStatus,
                 meta: validatedData.meta,
             },

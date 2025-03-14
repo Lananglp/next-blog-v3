@@ -14,7 +14,7 @@ function PageTitle() {
 
     return (
         <div className="flex items-center gap-2 border-b border-zinc-300 dark:border-zinc-800 pb-2 mb-4">
-            {pathname !== '/' && <Button type="button" onClick={() => navigate.back()} variant={'ghost'} size={'icon'}><MoveLeftIcon /></Button>}
+            {pathname !== '/admin' && <Button type="button" onClick={() => navigate.back()} variant={'ghost'} size={'icon'}><MoveLeftIcon /></Button>}
             <h2 className="text-black dark:text-white text-xl font-semibold">{title}</h2>
         </div>
     )

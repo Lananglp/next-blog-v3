@@ -1,29 +1,33 @@
 'use client'
 import { postCategory } from '@/app/api/function/categories';
-import Modal from '@/components/modal-custom';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CategoriesFormType, categoriesSchema } from '@/helper/schema/schema';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
-import { Loader, PenLine, SendIcon } from 'lucide-react';
+import { Loader, PenLine, SendIcon, Plus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { AnimatePresence } from "motion/react"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { responseStatus } from '@/helper/system-config';
+import { CategoryCreateFormType, categoryCreateSchema } from '@/helper/schema/schema';
 
 function CategoriesCreate({ reload, onSuccess, disabled }: { reload: () => void, onSuccess?: () => void, disabled?: boolean }) {
-
   const [modal, setModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { toast } = useToast();
-  const { register, handleSubmit, watch, reset, getValues, formState: { errors } } = useForm<CategoriesFormType>({
-    resolver: zodResolver(categoriesSchema),
+
+  const { register, handleSubmit, control, reset, formState: { errors }, setError } = useForm<CategoryCreateFormType>({
+    resolver: zodResolver(categoryCreateSchema),
     defaultValues: {
-      name: '',
+      categories: [{ name: '' }]
     }
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "categories"
   });
 
   const handleOpen = () => {
@@ -48,15 +52,27 @@ function CategoriesCreate({ reload, onSuccess, disabled }: { reload: () => void,
     handleSubmit(onSubmit)();
   };
 
-  const onSubmit: SubmitHandler<CategoriesFormType> = async (data, event) => {
+  const onSubmit: SubmitHandler<CategoryCreateFormType> = async (data, event) => {
     event?.preventDefault();
     setLoading(true);
 
-    const formdata = new FormData();
-    formdata.append("name", data.name);
-
     try {
-      const res = await postCategory(formdata);
+      // Filter out empty categories and prepare data
+      const categoriesToSubmit = data.categories
+        .filter((category: { name: string }) => category.name.trim())
+        .map((category: { name: string }) => ({ name: category.name.trim() }));
+
+      if (categoriesToSubmit.length === 0) {
+        toast({
+          title: responseStatus.warning,
+          description: "Please enter at least one category name",
+        });
+        setError('categories', { message: 'Please enter at least one category name' });
+        return;
+      }
+
+      // Send all categories in a single request
+      const res = await postCategory(categoriesToSubmit);
       if (res.data?.status) {
         toast({
           title: res.data.status,
@@ -67,15 +83,16 @@ function CategoriesCreate({ reload, onSuccess, disabled }: { reload: () => void,
         if (onSuccess) {
           onSuccess();
         }
-      };
+      }
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         console.log("AxiosError: ", error.response);
         if (error.response?.data.status) {
           toast({
-            title: "Oops...",
-            description: `${error.response?.data.message}. (${error.response?.status.toString()})` || "an error occurred",
-          })
+            title: responseStatus.error,
+            description: `${error.response?.data.message.toString()}. (${error.response?.status.toString()})` || "an error occurred",
+          });
+          setError('categories', { message: error.response?.data.message.toString() });
         }
       } else {
         console.log("Unknown error: ", error);
@@ -89,21 +106,58 @@ function CategoriesCreate({ reload, onSuccess, disabled }: { reload: () => void,
     <>
       <AlertDialog open={modal} onOpenChange={(value) => handleStateOpen(value)}>
         <AlertDialogTrigger asChild>
-          <Button type='button' onClick={handleOpen} variant={'primary'} disabled={disabled} className='w-full'><PenLine />Create new category</Button>
+          <Button type='button' onClick={handleOpen} variant={'primary'} disabled={disabled} className='w-full'><PenLine />Create new categories</Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader className='border-b border-template pb-4'>
-            <AlertDialogTitle>Create new category</AlertDialogTitle>
+            <AlertDialogTitle>Create new categories</AlertDialogTitle>
             <AlertDialogDescription>
-              Create a new category
+              Create multiple categories at once
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <div className='flex flex-col gap-4'>
-            <div>
-              <Label htmlFor='name' variant={'primary'}><span className="text-red-500">*</span>&nbsp;Category name</Label>
-              <Input onKeyDown={(e) => e.key === 'Enter' && handleClickSubmit()} {...register('name')} id='name' variant={errors.name ? 'danger' : 'primary'} placeholder='Enter category name' />
-              {errors.name && <p className="mt-2 text-red-500 text-xs">{errors.name?.message}</p>}
+          <div className='flex flex-col'>
+            <Label variant={'primary'}>
+              <span className="text-red-500">*</span>&nbsp;Category name
+            </Label>
+            <div className={`flex flex-col gap-2 max-h-[50vh] ${fields.length > 1 && 'overflow-y-auto p-1.5'}`}>
+              {fields.map((field, index) => (
+                <div key={field.id} className="flex gap-2 items-center">
+                  <Input
+                    {...register(`categories.${index}.name`)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleClickSubmit()}
+                    id={`categories.${index}.name`}
+                    variant={errors?.categories?.[index]?.name ? 'danger' : 'primary'}
+                    placeholder={fields.length > 1 ? `Category ${index + 1}` : 'Enter category name'}
+                  />
+                  {errors?.categories?.[index]?.name && (
+                    <p className="mt-2 text-red-500 text-xs">{errors?.categories?.[index]?.name?.message}</p>
+                  )}
+                  {fields.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="danger"
+                      size='iconSm'
+                      onClick={() => remove(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
             </div>
+
+            <Button
+              type="button"
+              className="bg-transparent hover:bg-transparent text-zinc-700 dark:text-zinc-300 hover:text-black hover:dark:text-white border-dashed border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 hover:dark:border-zinc-500 mb-4 mt-2"
+              onClick={() => append({ name: '' })}
+            >
+              <Plus />Add More
+            </Button>
+
+            {errors?.categories && (
+              <p className="text-red-500 text-xs">{errors?.categories?.message}</p>
+            )}
+
             <div className='flex justify-end items-center gap-1'>
               <Button type='button' onClick={handleClose} variant={'primary'}>Close</Button>
               <Button type='submit' onClick={handleClickSubmit} disabled={loading} variant={'submit'}>
@@ -112,34 +166,8 @@ function CategoriesCreate({ reload, onSuccess, disabled }: { reload: () => void,
               </Button>
             </div>
           </div>
-          {/* <AlertDialogFooter> */}
-            {/* <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction type='button' onClick={handleClickSubmit} disabled={loading}>
-              {loading ? <Loader className="animate-spin" /> : <SendIcon />}
-              {loading ? 'Saving...' : 'Save'}
-            </AlertDialogAction> */}
-          {/* </AlertDialogFooter> */}
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* <AnimatePresence>
-        {modal && <Modal enableTransition open={modal} onClose={handleClose} title='Create new category' width='max-w-md'>
-          <div className='flex flex-col gap-4'>
-            <div>
-              <Label htmlFor='name' variant={'primary'}><span className="text-red-500">*</span>&nbsp;Category name</Label>
-              <Input {...register('name')} id='name' variant={errors.name ? 'danger' : 'primary'} placeholder='Enter category name' />
-              {errors.name && <p className="mt-2 text-red-500 text-xs">{errors.name?.message}</p>}
-            </div>
-            <div className='flex justify-end items-center gap-1'>
-              <Button type='button' onClick={handleClose} variant={'primary'}>Close</Button>
-              <Button type='button' onClick={handleClickSubmit} disabled={loading} variant={'submit'}>
-                {loading ? <Loader className="animate-spin" /> : <SendIcon />}
-                {loading ? 'Saving...' : 'Save'}
-              </Button>
-            </div>
-          </div>
-        </Modal>}
-      </AnimatePresence> */}
     </>
   )
 }

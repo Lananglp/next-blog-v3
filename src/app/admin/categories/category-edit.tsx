@@ -1,10 +1,9 @@
 'use client'
 import { patchCategory, } from '@/app/api/function/categories';
-import Modal from '@/components/modal-custom';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CategoriesFormType, categoriesSchema } from '@/helper/schema/schema';
+import { CategoryEditFormType, categoryEditSchema } from '@/helper/schema/schema';
 import { useToast } from '@/hooks/use-toast';
 import { SelectedType } from '@/types/all-type';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,6 +11,7 @@ import { AxiosError } from 'axios';
 import { EditIcon, Loader, SendIcon } from 'lucide-react';
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 type Props = {
     selected: SelectedType,
@@ -25,8 +25,8 @@ function CategoriesEdit({ selected, reload, disabled, onSuccess }: Props) {
     const [modal, setModal] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const { toast } = useToast();
-    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<CategoriesFormType>({
-        resolver: zodResolver(categoriesSchema),
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<CategoryEditFormType>({
+        resolver: zodResolver(categoryEditSchema),
         defaultValues: {
             id: '',
             name: '',
@@ -44,11 +44,16 @@ function CategoriesEdit({ selected, reload, disabled, onSuccess }: Props) {
         setModal(false);
     }
 
+    const handleStateOpen = (state: boolean) => {
+        if (state) handleOpen();
+        else handleClose();
+    };
+
     const handleClickSubmit = () => {
         handleSubmit(onSubmit)();
     };
 
-    const onSubmit: SubmitHandler<CategoriesFormType> = async (data, event) => {
+    const onSubmit: SubmitHandler<CategoryEditFormType> = async (data, event) => {
         event?.preventDefault();
         setLoading(true);
 
@@ -87,10 +92,17 @@ function CategoriesEdit({ selected, reload, disabled, onSuccess }: Props) {
     };
 
     return (
-        <>
-            <Button type='button' onClick={handleOpen} disabled={disabled} variant={'primary'} size={'sm'} className='w-full'><EditIcon />Edit</Button>
-
-            <Modal open={modal} onClose={handleClose} title='Create new category' width='max-w-md'>
+        <AlertDialog open={modal} onOpenChange={(value) => handleStateOpen(value)}>
+            <AlertDialogTrigger asChild>
+                <Button type='button' disabled={disabled} variant={'primary'} size={'sm'} className='w-full'><EditIcon />Edit</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader className='border-b border-template pb-4'>
+                    <AlertDialogTitle>Edit category</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
                 <div className='flex flex-col gap-4'>
                     <div>
                         <Label htmlFor='name' variant={'primary'}><span className="text-red-500">*</span>&nbsp;Category name</Label>
@@ -105,8 +117,8 @@ function CategoriesEdit({ selected, reload, disabled, onSuccess }: Props) {
                         </Button>
                     </div>
                 </div>
-            </Modal>
-        </>
+            </AlertDialogContent>
+        </AlertDialog>
     )
 }
 

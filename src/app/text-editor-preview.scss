@@ -88,6 +88,26 @@
         cursor: ew-resize;
         cursor: col-resize;
     }
+
+    code {
+        @apply bg-zinc-200 dark:bg-zinc-900 text-black dark:text-white rounded-md px-2 py-1;
+    }
+
+    pre {
+        @apply bg-zinc-200 dark:bg-zinc-900 rounded-md;
+        font-family: 'JetBrainsMono', monospace;
+        margin: 1.5rem 0;
+        padding: 0.75rem 1rem;
+
+        code {
+            @apply text-black dark:text-white;
+        }
+    }
+
+    mark {
+        @apply bg-blue-300 dark:bg-blue-900/50 text-black dark:text-white;
+        box-decoration-break: clone;
+    }
 }
 
 

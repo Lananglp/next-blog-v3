@@ -4,3 +4,10 @@ export type CategoriesType = {
     createdAt: Date;
     updatedAt: Date;
 };
+
+export const initialCategory = {
+    id: "",
+    name: "",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+};

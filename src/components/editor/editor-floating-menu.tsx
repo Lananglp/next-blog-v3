@@ -1,8 +1,8 @@
 import React from 'react'
 import EditorBlock from './editor-block'
-import { FloatingMenu } from '@tiptap/react'
+import { Editor, FloatingMenu } from '@tiptap/react'
 
-function EditorFloatingMenu({ editor }: { editor: any }) {
+function EditorFloatingMenu({ editor }: { editor: Editor }) {
 
     if (!editor) {
         return null

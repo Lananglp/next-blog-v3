@@ -30,6 +30,9 @@ import { useToast } from "@/hooks/use-toast"
 import { AxiosError } from "axios"
 import { responseStatus } from "@/helper/system-config"
 import { SelectedType } from "@/types/all-type"
+import { CategoriesType } from "@/types/category-type"
+import { PostType } from "@/types/post-type"
+import { AnimatePresence, motion } from "motion/react"
 
 function Posts() {
 
@@ -124,8 +127,40 @@ function Posts() {
                     </div>
                 </div>
             </div>
-            <div className='grid grid-cols-12 gap-2'>
-                {breakpoint && selectedPosts.length > 0 && (
+            <div className='grid grid-cols-12 gap-4'>
+                <AnimatePresence mode='wait'>
+                    {breakpoint && selectedPosts.length > 0 && (
+                        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2, ease: 'easeInOut' }} className="col-span-12 lg:col-span-3">
+                            <div className='sticky top-[11rem] min-h-[calc(100vh-12.1rem)] flex flex-col bg-zinc-100 dark:bg-zinc-950/50 border border-template rounded-lg'>
+                                <div className='sticky top-0 bg-zinc-100 dark:bg-zinc-950 rounded-t-lg flex justify-between items-center border-b border-template gap-1 p-2'>
+                                    <p className='p-2 text-sm'>{selectedPosts.length} selected</p>
+                                    <Button type='button' onClick={() => setSelectedPosts([])} variant={'transparent'} size={'iconSm'}><XIcon /></Button>
+                                </div>
+                                <div className="flex-grow max-h-[calc(100vh-19rem)] overflow-y-auto">
+                                    {selectedPosts.map((category, index) => (
+                                        <div
+                                            key={category.id}
+                                            className={`flex justify-between items-center border-b border-template p-2
+                                                ${hoveredId === category.id && selectedPosts.some((item) => item.id === category.id) ? 'bg-zinc-200/75 dark:bg-zinc-800' : ''}`}
+                                            onMouseEnter={() => setHoveredId(category.id)}
+                                            onMouseLeave={() => setHoveredId(null)}
+                                        >
+                                            <p className='w-full text-sm line-clamp-2 ps-2'>{index + 1}.&nbsp;{category.title}</p>
+                                            <Button type='button' onClick={() => toggleSelection(category.id, category.title || '')} variant={'transparent'} size={'iconSm'}>
+                                                <XIcon />
+                                            </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className='sticky bottom-0 flex items-center gap-2 p-2'>
+                                    {/* <CategoriesEdit selected={selectedPosts} reload={reload} disabled={selectedPosts.length > 1} onSuccess={() => setSelectedCategories([])} /> */}
+                                    <AlertDelete totalSelected={selectedPosts.length} onConfirm={handleDeleteSelectedPosts} disabled={selectedPosts.length === 0} className="w-full" />
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                {/* {breakpoint && selectedPosts.length > 0 && (
                     <div className={`col-span-3 `}>
                         <div className='sticky top-[11rem] min-h-[calc(100vh-12.1rem)] flex flex-col bg-zinc-100 dark:bg-zinc-950/50 border border-template rounded-lg'>
                             <div className='sticky top-0 bg-zinc-100 dark:bg-zinc-950 flex justify-between items-center border-b border-template gap-1 p-2'>
@@ -154,9 +189,21 @@ function Posts() {
                             </div>
                         </div>
                     </div>
-                )}
-                <div className={`${breakpoint && selectedPosts.length > 0 ? 'col-span-9' : 'col-span-12'} space-y-4`}>
-                    {!breakpoint && selectedPosts.length > 0 && (
+                )} */}
+                <div className={`${breakpoint && selectedPosts.length > 0 ? 'col-span-12 lg:col-span-9' : 'col-span-12'} space-y-4`}>
+                    <AnimatePresence mode='wait'>
+                        {!breakpoint && selectedPosts.length > 0 && (
+                            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2, ease: 'easeInOut' }} className='sticky top-4 z-10 flex flex-wrap lg:flex-nowrap justify-between items-center gap-2 bg-zinc-200 dark:bg-zinc-900 border border-template rounded-lg px-4 py-2'>
+                                <p className='text-sm'>{selectedPosts.length} selected</p>
+                                <div className='flex items-center gap-1'>
+                                    {/* <CategoriesEdit selected={selectedPosts} reload={reload} disabled={selectedPosts.length > 1} onSuccess={() => setSelectedCategories([])} /> */}
+                                    <AlertDelete totalSelected={selectedPosts.length} onConfirm={handleDeleteSelectedPosts} disabled={selectedPosts.length === 0} />
+                                    <Button type='button' onClick={() => setSelectedPosts([])} variant={'transparent'} size={'iconSm'} className='ms-2'><XIcon /></Button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                    {/* {!breakpoint && selectedPosts.length > 0 && (
                         <div className='sticky top-4 z-10 flex flex-wrap lg:flex-nowrap justify-between items-center gap-2 bg-zinc-200 dark:bg-zinc-900 border border-template rounded-lg px-4 py-2'>
                             <p className='text-sm'>{selectedPosts.length} selected</p>
                             <div className='flex items-center gap-1'>
@@ -165,9 +212,9 @@ function Posts() {
                                 <Button type='button' onClick={() => setSelectedPosts([])} variant={'transparent'} size={'iconSm'}><XIcon /></Button>
                             </div>
                         </div>
-                    )}
+                    )} */}
                     <Pagination currentPage={page} totalData={posts?.pagination?.total || 0} dataPerPage={limit} onPageChange={(value) => handlePageChange(value)} />
-                    <div className="overflow-x-auto focus:outline focus:outline-1 focus:outline-blue-500">
+                    <div className="w-full overflow-x-auto focus:outline focus:outline-1 focus:outline-blue-500">
                         <table className='w-full'>
                             <thead>
                                 <tr>
@@ -215,7 +262,7 @@ function Posts() {
                                                     {post?.featuredImage && <Thumbnail key={post?.id} url={post?.featuredImage} />}
                                                 </td>
                                                 <td className='p-4 border-b border-template text-start'>
-                                                    <div className='line-clamp-3'>
+                                                    <div className='line-clamp-3 text-black dark:text-white'>
                                                         {post?.title}
                                                     </div>
                                                 </td>
@@ -231,10 +278,10 @@ function Posts() {
                                                 </td>
                                                 <td className='p-4 border-b border-template text-start'>
                                                     <div className='line-clamp-3 flex flex-wrap flex- items-center gap-1'>
-                                                        {/* {post?.categories?.slice(0, 5).map((category: string, index: number) => {
+                                                        {post.categories.length > 0 && post?.categories?.slice(0, 5).map((category: CategoriesType, index: number) => {
                                                             return (
                                                                 <div key={index} className='bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-100 px-2 py-1 rounded-md text-xs font-medium'>
-                                                                    {category}
+                                                                    {category.name}
                                                                 </div>
                                                             )
                                                         })}
@@ -242,11 +289,11 @@ function Posts() {
                                                             <div className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
                                                                 +{post.categories.length - 5}
                                                             </div>
-                                                        )} */}
+                                                        )}
                                                     </div>
                                                 </td>
                                                 <td className='p-4 border-b border-template text-start'>
-                                                    {/* <PostLink origin={origin} post={post} /> */}
+                                                    {post.categories.length > 0 && <PostLink origin={origin} post={post} />}
                                                 </td>
                                                 <td className='p-4 border-b border-template text-start text-nowrap text-sm text-zinc-500'>{post?.createdAt ? formatDateTime(post?.createdAt.toString()) : ''}</td>
                                                 <td className='p-4 border-b border-template text-start text-nowrap text-sm text-zinc-500'>{post?.updatedAt !== post?.createdAt ? formatDateTime(post?.updatedAt.toString()) : '-'}</td>
@@ -295,16 +342,17 @@ const Thumbnail = ({ url }: { url: any }) => {
     );
 };
 
-const PostLink = ({ origin, post }: { origin: string | undefined, post: any }) => {
+const PostLink = ({ origin, post }: { origin: string | undefined, post: PostType }) => {
 
     const clipboard = useClipboard({ timeout: 2000 });
+    const postUrl = `${origin}/${post?.categories[0].name.split(' ').join('-').toLowerCase()}/${post.slug}`
 
     return (
         <div className='group flex items-center gap-1'>
             <div className='max-w-80 truncate text-nowrap text-sm'>
-                <Link href={`${origin}/${post?.categories[0]}/${post.slug}`}><LinkIcon className='inline h-4 w-4 mb-0.5 me-2' />{origin}/{post?.categories[0]}/{post.slug}</Link>
+                <Link target="_blank" href={postUrl}><LinkIcon className='inline h-4 w-4 mb-0.5 me-2' />{postUrl}</Link>
             </div>
-            <Button type='button' onClick={() => clipboard.copy(`${origin}/${post?.categories[0]}/${post.slug}`)} className='group-hover:opacity-100 opacity-0' variant={'transparent'} size={'iconXs'}>{clipboard.copied ? <CheckIcon /> : <CopyIcon />}</Button>
+            <Button type='button' onClick={() => clipboard.copy(postUrl)} className='group-hover:opacity-100 opacity-0' variant={'transparent'} size={'iconXs'}>{clipboard.copied ? <CheckIcon /> : <CopyIcon />}</Button>
         </div>
     );
 };

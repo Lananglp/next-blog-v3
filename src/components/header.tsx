@@ -1,16 +1,9 @@
 "use client";
 
-import { RootState } from "@/lib/redux";
 import Link from "next/link";
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { handleLogout } from "@/context/sessionSlice";
-import { logout } from "@/app/api/function/auth";
-import { AxiosError } from "axios";
-import { useToast } from "@/hooks/use-toast";
-import Image from "next/image";
+import React, { useEffect, useMemo, useState } from "react";
 import { ModeToggle } from "./dark-mode-button";
-import { BoxIcon, CircleAlert, MenuIcon } from "lucide-react";
+import { BoxIcon, CircleAlert, MenuIcon, SquarePenIcon } from "lucide-react";
 import { cn } from "@/lib/utils"
 import {
     NavigationMenu,
@@ -22,15 +15,48 @@ import {
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { Button } from "./ui/button";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
+import { Separator } from "./ui/separator";
+import { Skeleton } from "./ui/skeleton";
+import { useRouter } from "next/navigation";
+import { useWindowScroll } from "react-use";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/lib/redux";
+import { logout } from "@/app/api/function/auth";
+import { useToast } from "@/hooks/use-toast";
+import { handleLogout } from "@/context/sessionSlice";
+import { AxiosError } from "axios";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import Image from "next/image";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 
 function Header() {
-    const { user, isLogin } = useSelector((state: RootState) => state.session);
     const appName = process.env.NEXT_PUBLIC_APP_NAME;
     const dispatch = useDispatch();
     const { toast } = useToast();
+    const navigate = useRouter();
+    const { y } = useWindowScroll();
+    const [scrollYForPadding, setScrollYForPadding] = useState(0);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
+    const { isLogin, user } = useSelector((state: RootState) => state.session);
+
+    useEffect(() => {
+        setIsMounted(true); // Set setelah render pertama selesai
+    }, []);
+
+    useEffect(() => {
+        const scrollY = Math.round(y);
+        const scrollYbagiDelapan = Math.round(scrollY / 8);
+
+        // Tetapkan nilai padding dan boolean status scroll
+        setScrollYForPadding(scrollYbagiDelapan >= 16 ? 16 : scrollYbagiDelapan);
+        setIsScrolled(scrollYbagiDelapan >= 8);
+    }, [y]);
+    // const ScrollYForOpacity = useMemo(() => {
+    //     return Math.min(scrollYbagiDelapan / 16, 1);
+    // }, [scrollYbagiDelapan]);
 
     const handleSignOut = async () => {
         try {
@@ -52,27 +78,40 @@ function Header() {
         }
     };
 
+    if (!isMounted) return null;
+
     return (
-        <header className="sticky top-4 z-50 px-4">
-            <nav className="relative max-w-screen-2xl mx-auto group backdrop-blur-sm bg-white dark:bg-zinc-900/50 rounded-2xl shadow-lg hover:shadow-blue-700/5 transition duration-500 mt-4">
-                <div className="border border-zinc-200 dark:border-zinc-900 rounded-2xl px-4 py-2.5">
-                    <div className="absolute inset-x-0 bottom-0 overflow-hidden rounded-2xl">
-                        <div className={`w-3/4 mx-auto h-[1px] bg-transparent bg-gradient-to-r from-transparent via-zinc-200/30 to-transparent transition duration-500`} />
+        <header className="sticky z-50" style={{ top: `${scrollYForPadding}px`, paddingLeft: `${scrollYForPadding}px`, paddingRight: `${scrollYForPadding}px` }}>
+            <div className="absolute inset-0 pointer-events-none border-b border-template" style={{ opacity: isScrolled ? 0 : 1 }}/>
+            <nav className={`relative max-w-screen-2xl mx-auto group rounded-2xl transition duration-500 ${isScrolled && 'backdrop-blur-sm bg-white dark:bg-zinc-900/50 shadow-lg'}`}>
+                <div className={`border ${isScrolled ? 'border-zinc-200 dark:border-zinc-900' : 'border-transparent'} rounded-2xl px-4 py-2.5`}>
+                    <div className={`${isScrolled ? 'opacity-100' : 'opacity-0'} absolute inset-x-0 bottom-0 overflow-hidden rounded-2xl transition duration-500`}>
+                        <div className={`w-3/4 mx-auto h-[1px] bg-transparent bg-gradient-to-r from-transparent via-zinc-200/30 to-transparent`} />
                     </div>
                     <div className="flex flex-wrap justify-between items-center">
-                        <div className="flex items-center divide-x divide-zinc-200 dark:divide-zinc-700">
+                        <div className="flex items-center">
                             <Link href="/" className="flex items-center gap-2 pe-4">
-                                <div className="inline-block text-blue-500">
+                                <div className="inline-block text-orange-500">
                                     <BoxIcon className="h-7 w-7 mb-0.5" />
                                 </div>
                                 <span className="text-lg font-medium whitespace-nowrap dark:text-white">
                                     {appName}
                                 </span>
                             </Link>
+                            <Separator orientation="vertical" className="h-7" />
                             <NavMenu />
                         </div>
                         <div className="flex items-center gap-2">
                             <ModeToggle />
+                            <Button onClick={() => navigate.push("/admin")} variant={'primary'} size={'sm'}><SquarePenIcon />Manage your contents</Button>
+                            <Separator orientation="vertical" className="h-7 mx-3" />
+                            {/* <div className="flex items-center gap-2">
+                                <Skeleton className="w-36 h-6" />
+                                <Skeleton className="w-7 h-7 rounded-full" />
+                            </div> */}
+                            {/* <SignedIn>
+                                <ProfileButton />
+                            </SignedIn> */}
                             {isLogin ? (
                                 <div className="flex items-center gap-2">
                                     <DropdownMenu>
@@ -81,14 +120,18 @@ function Header() {
                                                 <span className="hidden md:inline-block mr-2 text-sm font-medium text-zinc-800 dark:text-white cursor-pointer">
                                                     {user.email || "Unknown"}
                                                 </span>
-                                                <Image
+                                                <Avatar className="h-8 w-8">
+                                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                                    <AvatarFallback>CN</AvatarFallback>
+                                                </Avatar>
+                                                {/* <Image
                                                     unoptimized
                                                     width={64}
                                                     height={64}
                                                     className="w-8 h-8 rounded-full cursor-pointer"
                                                     src="https://flowbite.com/docs/images/people/profile-picture-3.jpg"
                                                     alt="User Photo"
-                                                />
+                                                /> */}
                                             </div>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent>
@@ -156,6 +199,22 @@ function Header() {
                                     </Link>
                                 </>
                             )}
+                            {/* <div className="space-x-1">
+                                <Button
+                                    type="button"
+                                    variant={'primary'}
+                                    size={'sm'}
+                                >
+                                    Sign In
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant={'submit'}
+                                    size={'sm'}
+                                >
+                                    Sign Up
+                                </Button>
+                            </div> */}
                         </div>
                     </div>
                 </div>
@@ -169,42 +228,42 @@ export default Header;
 
 const components: { title: string; href: string; description: string }[] = [
     {
-      title: "Alert Dialog",
-      href: "/docs/primitives/alert-dialog",
-      description:
-        "A modal dialog that interrupts the user with important content and expects a response.",
+        title: "Alert Dialog",
+        href: "/docs/primitives/alert-dialog",
+        description:
+            "A modal dialog that interrupts the user with important content and expects a response.",
     },
     {
-      title: "Hover Card",
-      href: "/docs/primitives/hover-card",
-      description:
-        "For sighted users to preview content available behind a link.",
+        title: "Hover Card",
+        href: "/docs/primitives/hover-card",
+        description:
+            "For sighted users to preview content available behind a link.",
     },
     {
-      title: "Progress",
-      href: "/docs/primitives/progress",
-      description:
-        "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+        title: "Progress",
+        href: "/docs/primitives/progress",
+        description:
+            "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
     },
     {
-      title: "Scroll-area",
-      href: "/docs/primitives/scroll-area",
-      description: "Visually or semantically separates content.",
+        title: "Scroll-area",
+        href: "/docs/primitives/scroll-area",
+        description: "Visually or semantically separates content.",
     },
     {
-      title: "Tabs",
-      href: "/docs/primitives/tabs",
-      description:
-        "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+        title: "Tabs",
+        href: "/docs/primitives/tabs",
+        description:
+            "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
     },
     {
-      title: "Tooltip",
-      href: "/docs/primitives/tooltip",
-      description:
-        "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+        title: "Tooltip",
+        href: "/docs/primitives/tooltip",
+        description:
+            "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
     },
-  ]
-   
+]
+
 export function NavMenu() {
     return (
         <NavigationMenu className="hidden xl:flex">
@@ -259,30 +318,9 @@ export function NavMenu() {
                     </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                    <Link href="/admin" legacyBehavior passHref>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            Admin
-                        </NavigationMenuLink>
-                    </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
                     <Link href="/about" legacyBehavior passHref>
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                             About
-                        </NavigationMenuLink>
-                    </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <Link href="/login" legacyBehavior passHref>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            Login
-                        </NavigationMenuLink>
-                    </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <Link href="/register" legacyBehavior passHref>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            Register
                         </NavigationMenuLink>
                     </Link>
                 </NavigationMenuItem>

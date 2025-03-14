@@ -1,12 +1,13 @@
 import React from 'react'
 import Header from './header'
 import Footer from './footer'
+import BreadcrumbCustom from './breadcrumb-custom'
 
-function Template({ children }: { children: React.ReactNode }) {
+function Template({ children, container }: { children: React.ReactNode, container?: boolean }) {
   return (
     <div className="flex flex-col min-h-svh h-screen">
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <svg className="absolute opacity-20 top-0 left-[max(50%,25rem)] h-[64rem] w-[128rem] -translate-x-1/2 stroke-zinc-500 dark:stroke-zinc-400 [mask-image:radial-gradient(64rem_64rem_at_top,white,transparent)]" aria-hidden="true">
+        <svg className="absolute opacity-10 top-0 left-[max(50%,25rem)] h-[64rem] w-[128rem] -translate-x-1/2 stroke-zinc-500 dark:stroke-zinc-400 [mask-image:radial-gradient(64rem_64rem_at_top,white,transparent)]" aria-hidden="true">
           <defs>
             <pattern id="e813992c-7d03-4cc4-a2bd-151760b470a0" width={200} height={200} x="50%" y={-1} patternUnits="userSpaceOnUse">
               <path d="M100 200V.5M.5 .5H200" fill="none" />
@@ -20,7 +21,10 @@ function Template({ children }: { children: React.ReactNode }) {
       </div>
       <div className="flex-grow">
         <Header />
-        {children}
+        <div className='mt-8 px-4 max-w-7xl mx-auto'>
+          <BreadcrumbCustom className='mb-4' />
+          {children}
+        </div>
       </div>
       <Footer />
     </div>

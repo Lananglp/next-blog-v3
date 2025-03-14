@@ -5,13 +5,17 @@ import {
   AudioWaveform,
   BookOpen,
   Bot,
+  CircleGaugeIcon,
   Command,
   Frame,
   GalleryVerticalEnd,
+  HashIcon,
   Map,
+  PencilRulerIcon,
   PieChart,
   Settings2,
   SquareTerminal,
+  UsersRoundIcon,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -33,23 +37,28 @@ const data = {
   appName: {
     name: process.env.NEXT_PUBLIC_APP_NAME as string,
     logo: GalleryVerticalEnd,
-    description: "Admin Dashboard",
+    description: "Version 0.1.0",
   },
   navMain: [
     {
       title: "Dashboard",
       url: "/admin",
-      icon: SquareTerminal,
+      icon: CircleGaugeIcon,
     },
     {
       title: "Posts",
       url: "/admin/posts",
-      icon: SquareTerminal,
+      icon: PencilRulerIcon,
     },
     {
       title: "Categories",
       url: "/admin/categories",
-      icon: SquareTerminal,
+      icon: HashIcon,
+    },
+    {
+      title: "Users Accounts",
+      url: "/admin/users",
+      icon: UsersRoundIcon,
     },
     {
       title: "Content",

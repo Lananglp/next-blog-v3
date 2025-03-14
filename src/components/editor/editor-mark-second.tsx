@@ -3,8 +3,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import { Editor } from '@tiptap/react'
 
-function EditorMarkSecond({ editor }: { editor: any }) {
+function EditorMarkSecond({ editor }: { editor: Editor }) {
 
     if (!editor) {
         return null
@@ -23,7 +25,7 @@ function EditorMarkSecond({ editor }: { editor: any }) {
             >
                 <Strikethrough className='w-4 h-4' />
             </Button>
-            {/* <Button
+            <Button
                 type='button'
                 title='code'
                 onClick={() => editor.chain().focus().toggleCode().run()}
@@ -33,7 +35,7 @@ function EditorMarkSecond({ editor }: { editor: any }) {
                 className={editor.isActive('code') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
             >
                 <CodeIcon className='w-4 h-4' />
-            </Button> */}
+            </Button>
             <EditorSetLinkButton editor={editor} />
             <Button
                 type='button'
@@ -72,36 +74,12 @@ function EditorMarkSecond({ editor }: { editor: any }) {
 const EditorSetLinkButton = ({ editor }: { editor: any }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [url, setUrl] = useState("");
-    const dropdownRef = useRef<HTMLDivElement>(null);
-    const { x, y, refs, strategy } = useFloating({
-        placement: "bottom-start",
-        middleware: [offset(8), flip(), shift()],
-        whileElementsMounted: autoUpdate,
-    });
 
     useEffect(() => {
         if (!editor) return;
         const currentLink = editor.getAttributes("link").href || "";
         setUrl(currentLink);
     }, [editor, isOpen]);
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-
-        if (isOpen) {
-            document.addEventListener("mousedown", handleClickOutside);
-        } else {
-            document.removeEventListener("mousedown", handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [isOpen]);
 
     const setLink = () => {
         if (url) {
@@ -113,32 +91,22 @@ const EditorSetLinkButton = ({ editor }: { editor: any }) => {
     };
 
     return (
-        <div className="relative inline-block">
-            <Button
-                type='button'
-                ref={refs.setReference}
-                title='Set link'
-                onClick={() => setIsOpen(!isOpen)}
-                variant={'editorToolBar'}
-                size={'editorToolBar'}
-                className={editor.isActive('link') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
-            >
-                <LinkIcon className='w-4 h-4' />
-            </Button>
-
-            {isOpen && (
-                <div
-                    ref={(ref) => {
-                        refs.setFloating(ref);
-                        dropdownRef.current = ref;
-                    }}
-                    style={{
-                        position: strategy,
-                        top: y ?? 0,
-                        left: x ?? 0,
-                    }}
-                    className="mt-1 w-48 lg:w-80 bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-md shadow-lg p-2 z-10"
+        <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenuTrigger asChild>
+                <Button
+                    type='button'
+                    title='Set link'
+                    variant={'editorToolBar'}
+                    size={'editorToolBar'}
+                    className={editor.isActive('link') ? 'bg-zinc-200 dark:bg-zinc-700' : ''}
                 >
+                    <LinkIcon />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className='w-80'>
+                <DropdownMenuLabel>Set link</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className='p-2'>
                     <Input
                         type="url"
                         placeholder="Enter URL..."
@@ -148,16 +116,12 @@ const EditorSetLinkButton = ({ editor }: { editor: any }) => {
                         onKeyDown={(e) => e.key === "Enter" && setLink()}
                     />
                     <div className="flex justify-end mt-2 space-x-1">
-                        <Button type='button' variant={'editorBlockBar'} size={'editorBlockBar'} onClick={() => setIsOpen(false)}>
-                            cancel
-                        </Button>
-                        <Button type='button' variant={'submit'} size={'editorBlockBar'} onClick={setLink}>
-                            save
-                        </Button>
+                        <Button type='button' variant={'editorBlockBar'} size={'sm'} onClick={() => setIsOpen(false)}>cancel</Button>
+                        <Button type='button' variant={'submit'} size={'sm'} onClick={setLink}>save</Button>
                     </div>
                 </div>
-            )}
-        </div>
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 };
 

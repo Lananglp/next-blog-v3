@@ -1,65 +1,51 @@
-import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
-import prisma from '@/lib/prisma'; // Pastikan prisma client sudah dibuat
+import { NextResponse } from "next/server";
+import ImageKit from "imagekit";
+import prisma from "@/lib/prisma"; // Pastikan prisma client sudah dibuat
+import { imagekit } from "@/lib/imagekit";
 
 export async function POST(req: Request) {
     try {
         const formData = await req.formData();
-        const file = formData.get('file') as File;
+        const file = formData.get("file") as File;
 
         if (!file) {
-            return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+            return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
         }
 
-        // Validasi file gambar berdasarkan ekstensi
-        const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        // Validasi ekstensi gambar
+        const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
         const originalName = file.name.toLowerCase();
-        const extension = originalName.split('.').pop() || '';
+        const extension = originalName.split(".").pop() || "";
 
         if (!allowedExtensions.includes(extension)) {
-            return NextResponse.json({ error: 'Invalid file type' }, { status: 400 });
+            return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
         }
 
-        // Buat nama file baru: lowercase, spasi jadi "-", tambahkan timestamp
-        const sanitizedFileName = originalName
-            .replace(/\s+/g, '-') // Ganti spasi dengan "-"
-            .replace(/[^a-z0-9.-]/g, '') // Hapus karakter aneh kecuali "-"
-            .replace(/\.+/g, '.') // Hindari banyak titik
-            .replace(/^-+|-+$/g, '') // Hapus tanda "-" di awal/akhir
-            .replace(/\.{2,}/g, '.') // Hindari dua titik atau lebih
-            .replace(new RegExp(`.${extension}$`), ''); // Hapus ekstensi
+        // Konversi file ke Base64
+        const buffer = Buffer.from(await file.arrayBuffer());
+        const base64File = `data:${file.type};base64,${buffer.toString("base64")}`;
 
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0'); // 01-12
-        const day = String(now.getDate()).padStart(2, '0'); // 01-31
-        const time = String(now.getTime()); // Timestamp unik
-        
-        const finalFileName = `image-${year}-${month}-${day}-${time}.${extension}`;
-        // const finalFileName = `${sanitizedFileName}-${now}.${extension}`;
+        // Buat nama file unik
+        const timestamp = Date.now();
+        const sanitizedFileName = originalName.replace(/\s+/g, "-").replace(/[^a-z0-9.-]/g, "");
+        // const finalFileName = `image-${timestamp}-${sanitizedFileName}`;
+        const finalFileName = `image-${sanitizedFileName}`;
 
-        // Path penyimpanan
-        const uploadDir = path.join(process.cwd(), 'public/uploads/image');
-        const filePath = path.join(uploadDir, finalFileName);
+        // Upload ke ImageKit
+        const uploadResponse = await imagekit.upload({
+            file: base64File,
+            fileName: finalFileName,
+            folder: "/uploads",
+        });
 
-        // Buat folder jika belum ada
-        await mkdir(uploadDir, { recursive: true });
-
-        // Simpan file ke server
-        const bytes = await file.arrayBuffer();
-        await writeFile(filePath, Buffer.from(bytes));
-
-        const imageUrl = `/api/uploads/${finalFileName}`;
-
-        // Simpan URL ke database
+        // Simpan URL gambar ke database
         const image = await prisma.image.create({
-            data: { url: imageUrl },
+            data: { url: uploadResponse.url },
         });
 
         return NextResponse.json({ success: true, image });
-    } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    } catch (error: any) {
+        console.error("Image upload error:", error);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

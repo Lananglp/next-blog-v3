@@ -1,4 +1,3 @@
-import { PostFormValues } from "@/helper/schema/schema";
 import { JsonValue } from "@prisma/client/runtime/library";
 
 export type PostType = {
@@ -13,19 +12,18 @@ export type PostType = {
     content: string;
     excerpt: string;
     slug: string;
-    status: "PUBLISH" | "DRAFT" | "PRIVATE";
+    status: "PUBLISH" | "DRAFT" | "PRIVATE" | string;
     categories: {
-        category: {
-            id: string;
-            name: string;
-            createdAt: Date;
-            updatedAt: Date;        
-        }
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
     }[];
     tags: string[];
     authorId: string;
     featuredImage: string;
-    commentStatus: "OPEN" | "CLOSED";
+    altText: string | null;
+    commentStatus: "OPEN" | "CLOSED" | string;
     meta: JsonValue | {
         title: string;
         description: string;
@@ -34,4 +32,33 @@ export type PostType = {
     };
     createdAt: Date;
     updatedAt: Date;
+};
+
+export const initialPost = {
+    id: "",
+    title: "",
+    content: "",
+    excerpt: "",
+    slug: "",
+    status: "PUBLISH",
+    categories: [],
+    tags: [],
+    authorId: "",
+    featuredImage: "",
+    altText: "",
+    commentStatus: "OPEN",
+    author: {
+        id: "",
+        name: "",
+        email: "",
+        image: "",
+    },
+    meta: {
+        title: "",
+        description: "",
+        keywords: "",
+        ogImage: "",
+    },
+    createdAt: new Date(),
+    updatedAt: new Date(),
 };

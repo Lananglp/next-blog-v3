@@ -19,7 +19,8 @@ function PostPreview({ value } : Props) {
     }    
 
     return (
-        <div className='py-12 max-w-3xl mx-auto prose dark:prose-invert prose-th:border prose-td:border prose-th:dark:bg-zinc-900/50 prose-zinc prose-th:px-2 prose-li:mb-0 prose-headings:text-zinc-700 prose-headings:dark:text-white prose-strong:text-zinc-700 prose-strong:dark:text-white prose-a:text-zinc-700 prose-a:dark:text-white'>
+        // <div className='py-12 max-w-3xl mx-auto prose dark:prose-invert prose-th:border prose-td:border prose-th:dark:bg-zinc-900/50 prose-zinc prose-th:px-2 prose-li:mb-0 prose-headings:text-zinc-700 prose-headings:dark:text-white prose-strong:text-zinc-700 prose-strong:dark:text-white prose-a:text-zinc-700 prose-a:dark:text-white'>
+        <div className='py-12 max-w-3xl mx-auto prose dark:prose-invert prose-custom'>
             <Alert className='sticky top-4 z-10 bg-zinc-100 dark:bg-zinc-950'>
                 <CircleAlert className="h-4 w-4" />
                 <AlertTitle>Preview Mode</AlertTitle>
@@ -39,7 +40,7 @@ function PostPreview({ value } : Props) {
                             </div>
                         </div>
                     )}
-                    <figcaption>Gambar utama: Ilustrasi kecerdasan buatan.</figcaption>
+                    {value.altText && <figcaption className='text-zinc-600 dark:text-zinc-400 text-xs mt-2'>{value.altText}</figcaption>}
                 </figure>
                 <h1 className='font-bold'>{value.title}</h1>
                 <p><em>Ditulis oleh <strong>Admin TechNews</strong> | Dipublikasikan pada <time dateTime="2025-02-17">17 Februari 2025</time></em></p>

@@ -20,17 +20,17 @@ import { AxiosError } from "axios";
 import { useToast } from "@/hooks/use-toast";
 import { CategoriesType } from "@/types/category-type";
 import { Input } from "../ui/input";
-import { CategoriesFormType, categoriesSchema } from "@/helper/schema/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence } from "motion/react"
+import { CategoryEditFormType, categoryEditSchema } from "@/helper/schema/schema";
 
 const itemDataPerPage = [
-    {number: '16', text: '16 Data'},
-    {number: '32', text: '32 Data'},
-    {number: '64', text: '64 Data'},
-    {number: '128', text: '128 Data'},
-    {number: '256', text: '256 Data'},
-    {number: '512', text: '512 Data'},
+    { number: '16', text: '16 Data' },
+    { number: '32', text: '32 Data' },
+    { number: '64', text: '64 Data' },
+    { number: '128', text: '128 Data' },
+    { number: '256', text: '256 Data' },
+    { number: '512', text: '512 Data' },
 ];
 
 interface InputKategoriProps {
@@ -192,7 +192,7 @@ export default function InputCategory({ value, placeholder, errors, control, nam
                                                             field={field}
                                                             onClick={() => toggleSelectedCategory(item.name)}
                                                             loading={loading}
-                                                            onConfirm={() =>handleDeleteCategory(item)}
+                                                            onConfirm={() => handleDeleteCategory(item)}
                                                             reload={reload}
                                                         />
                                                     )
@@ -234,8 +234,8 @@ function LoopComponent({ index, item, field, onClick, loading, onConfirm, reload
     const itemRef = useRef<HTMLDivElement>(null);
     const [isEdit, setIsEdit] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<CategoriesFormType>({
-        resolver: zodResolver(categoriesSchema),
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<CategoryEditFormType>({
+        resolver: zodResolver(categoryEditSchema),
         defaultValues: {
             id: '',
             name: '',
@@ -257,7 +257,7 @@ function LoopComponent({ index, item, field, onClick, loading, onConfirm, reload
         handleSubmit(onSubmit)();
     };
 
-    const onSubmit: SubmitHandler<CategoriesFormType> = async (data, event) => {
+    const onSubmit: SubmitHandler<CategoryEditFormType> = async (data, event) => {
         event?.preventDefault();
         setIsSubmitting(true);
 

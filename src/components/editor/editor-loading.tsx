@@ -24,7 +24,7 @@ function EditorLoading() {
                     </div>
                 </div>
             </div>
-            <div className='p-2 bg-zinc-100 dark:bg-zinc-950 border-b border-template'>
+            <div className='p-2 bg-zinc-100 dark:bg-zinc-950 border-b border-template rounded-b-lg'>
                 <div className='flex flex-wrap items-center gap-1'>
                     <div className='flex items-center gap-1'>
                         <Skeleton className='h-7 w-7' />

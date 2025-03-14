@@ -20,8 +20,13 @@ export const showCategory = async (id?: string): Promise<AxiosResponse<Categorie
     return await api.get<CategoriesType>(`/api/categories?${params.toString()}`, { withCredentials: true });
 };
 
-export const postCategory = async (data: FormData): Promise<AxiosResponse<FetchingType>> => {
-    return await api.post<FetchingType>(`/api/categories/create`, data, { withCredentials: true, });
+export const postCategory = async (data: { name: string }[] | { name: string }): Promise<AxiosResponse<FetchingType>> => {
+    const categories = Array.isArray(data) ? data : [data];
+    return await api.post<FetchingType>(`/api/categories/create`, { categories }, {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
 };
 
 export const patchCategory = async (data: FormData): Promise<AxiosResponse<FetchingType>> => {

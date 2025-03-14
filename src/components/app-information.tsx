@@ -30,9 +30,9 @@ export function AppInformation({
             <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
               <app.logo className="size-4" />
             </div>
-            <div className="flex flex-col gap-0.5 leading-none text-nowrap">
-              <span className="font-semibold">{app.name}</span>
-              <span className="">{app.description}</span>
+            <div className="flex flex-col gap-1.5 leading-none text-nowrap">
+              <span className="font-semibold text-black dark:text-white">{app.name}</span>
+              <span className="text-[11px]">{app.description}</span>
             </div>
           </Link>
         </SidebarMenuButton>

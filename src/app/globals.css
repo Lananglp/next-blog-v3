@@ -493,10 +493,17 @@ body {
 
 /* ====================================== componen ======================================= */
 
+.bg-template {
+  @apply bg-zinc-100 dark:bg-zinc-950;
+}
+
 .border-template {
   @apply border-zinc-200 dark:border-zinc-800;
 }
 
+.prose-custom {
+  @apply prose-th:border prose-td:border prose-th:dark:bg-zinc-900/50 prose-zinc prose-th:px-2 prose-li:mb-0 prose-headings:text-zinc-700 prose-headings:dark:text-white prose-strong:text-zinc-700 prose-strong:dark:text-white prose-a:text-blue-700 prose-a:underline-offset-2 prose-pre:dark:bg-zinc-900/50 prose-pre:bg-zinc-50 dark:prose-pre:bg-zinc-900/50 prose-pre:dark:text-zinc-50 prose-pre:text-zinc-900 dark:prose-pre:text-zinc-50 prose-code:text-red-500;
+}
 
 
 @layer base {

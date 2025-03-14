@@ -27,6 +27,7 @@ model Post {
   author         User      @relation(fields: [authorId], references: [id])
   authorId       String
   featuredImage  String
+  altText        String?   
   commentStatus  CommentStatus
   meta           Json
 }

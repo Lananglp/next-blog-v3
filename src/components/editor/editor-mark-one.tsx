@@ -1,8 +1,9 @@
 import { BoldIcon, ItalicIcon, UnderlineIcon } from 'lucide-react'
 import React from 'react'
 import { Button } from '../ui/button'
+import { Editor } from '@tiptap/react'
 
-function EditorMarkOne({ editor }: { editor: any }) {
+function EditorMarkOne({ editor }: { editor: Editor }) {
 
     if (!editor) {
         return null

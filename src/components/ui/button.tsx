@@ -5,31 +5,31 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 border border-transparent whitespace-nowrap rounded-md text-sm font-medium transition-colors outline-none focus-visible:ring-none focus-visible:ring-ring outline-none focus-visible:outline-none focus-visible:border-blue-500 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 border border-transparent whitespace-nowrap rounded-md text-sm font-medium transition-colors outline-none focus-visible:ring-none focus-visible:ring-ring outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
           "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         primary:
-          "bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/50 focus:border-blue-500",
+          "bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/50",
         // destructive:
         //   "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 border border-destructive",
         destructive:
           "bg-red-900 text-white shadow-sm hover:bg-red-800",
         editorToolBar:
-          "hover:bg-zinc-200 hover:dark:bg-zinc-700",
+          "hover:bg-zinc-200/50 hover:dark:bg-zinc-800/50",
         editorBlockBar:
-          "hover:bg-zinc-200 hover:dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-800 focus:border-blue-500",
+          "hover:bg-zinc-200 hover:dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-800",
         submit:
-          "bg-blue-800 hover:bg-blue-700 border border-blue-800 text-white focus:border-blue-500",
+          "bg-blue-800 hover:bg-blue-700 border border-blue-800 text-white",
         outline:
           "border border-input dark:border-zinc-700 bg-background dark:bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         danger:
-          "text-red-500 hover:bg-zinc-200 hover:dark:bg-zinc-700",
+          "text-red-500 hover:bg-zinc-200/50 hover:dark:bg-zinc-800/50",
         transparent: "hover:bg-transparent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
@@ -54,7 +54,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean
 }
 

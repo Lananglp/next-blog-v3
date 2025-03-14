@@ -3,8 +3,9 @@ import React from 'react'
 import EditorBlockTable from './editor-block-table';
 import EditorBlockImage from './editor-block-image';
 import { Button } from '../ui/button';
+import { Editor } from '@tiptap/react'
 
-function EditorBlock({ editor }: { editor: any }) {
+function EditorBlock({ editor }: { editor: Editor }) {
 
     const showLabel = false;
 
@@ -47,7 +48,7 @@ function EditorBlock({ editor }: { editor: any }) {
             >
                 <ListOrderedIcon />{showLabel && 'Number List'}
             </Button>
-            {/* <Button
+            <Button
                 type='button'
                 title='Code Block'
                 onClick={() => editor.chain().focus().toggleCodeBlock().run()}
@@ -56,7 +57,7 @@ function EditorBlock({ editor }: { editor: any }) {
                 className={editor.isActive('codeBlock') ? 'bg-zinc-200 dark:bg-zinc-700 text-black dark:text-white' : 'bg-zinc-100 dark:bg-zinc-900'}
             >
                 <Code />Code Block
-            </Button> */}
+            </Button>
             <Button
                 type='button'
                 title='Blockquote'
