@@ -1,9 +1,10 @@
 import { initialUser, UserType } from "@/types/userType";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState: { user: UserType; isLogin: boolean } = {
+const initialState: { user: UserType; isLogin: boolean, isLoading: boolean } = {
     user: initialUser,
-    isLogin: false
+    isLogin: false,
+    isLoading: true,
 };
 
 const sessionSlice = createSlice({
@@ -33,6 +34,11 @@ const sessionSlice = createSlice({
             //     };
             // }
             state.isLogin = true;
+            state.isLoading = false;
+        },
+
+        setSessionLoading: (state, action) => {
+            state.isLoading = action.payload;
         },
 
         handleLogout: (state) => {
@@ -42,5 +48,5 @@ const sessionSlice = createSlice({
     },
 });
 
-export const { setSession, handleLogout } = sessionSlice.actions;
+export const { setSessionLoading, setSession, handleLogout } = sessionSlice.actions;
 export default sessionSlice.reducer;

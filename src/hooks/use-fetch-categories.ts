@@ -15,8 +15,8 @@ export const useFetchCategories = (id?: string, page?: number, limit?: number, s
             const res = await getCategories(id, page, limit, search);
             setCategories(res.data);
         } catch (err) {
-            setError("Error fetching posts");
-            console.error("Error fetching posts:", err);
+            setError("Error fetching categories");
+            console.error("Error fetching categories:", err);
         } finally {
             setLoading(false);
         }

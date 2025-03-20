@@ -153,7 +153,7 @@ function Posts() {
                                     ))}
                                 </div>
                                 <div className='sticky bottom-0 flex items-center gap-2 p-2'>
-                                    {/* <CategoriesEdit selected={selectedPosts} reload={reload} disabled={selectedPosts.length > 1} onSuccess={() => setSelectedCategories([])} /> */}
+                                    <Button type='button' onClick={() => navigate.push(`/admin/posts/edit/${selectedPosts[0].id}`)} disabled={selectedPosts.length > 1} variant={'primary'} size={'sm'} className='w-full'><EditIcon />Edit</Button>
                                     <AlertDelete totalSelected={selectedPosts.length} onConfirm={handleDeleteSelectedPosts} disabled={selectedPosts.length === 0} className="w-full" />
                                 </div>
                             </div>
@@ -196,7 +196,7 @@ function Posts() {
                             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2, ease: 'easeInOut' }} className='sticky top-4 z-10 flex flex-wrap lg:flex-nowrap justify-between items-center gap-2 bg-zinc-200 dark:bg-zinc-900 border border-template rounded-lg px-4 py-2'>
                                 <p className='text-sm'>{selectedPosts.length} selected</p>
                                 <div className='flex items-center gap-1'>
-                                    {/* <CategoriesEdit selected={selectedPosts} reload={reload} disabled={selectedPosts.length > 1} onSuccess={() => setSelectedCategories([])} /> */}
+                                    <Button type='button' onClick={() => navigate.push(`/admin/posts/edit/${selectedPosts[0].id}`)} disabled={selectedPosts.length > 1} variant={'primary'} size={'sm'}><EditIcon />Edit</Button>
                                     <AlertDelete totalSelected={selectedPosts.length} onConfirm={handleDeleteSelectedPosts} disabled={selectedPosts.length === 0} />
                                     <Button type='button' onClick={() => setSelectedPosts([])} variant={'transparent'} size={'iconSm'} className='ms-2'><XIcon /></Button>
                                 </div>
@@ -228,10 +228,10 @@ function Posts() {
                                         </div>
                                     </th>
                                     <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-center'>No</th>
+                                    <th className='max-w-64 px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Author</th>
                                     <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-center'>Thumbnail</th>
                                     <th className='min-w-96 px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Title</th>
                                     <th className='min-w-96 px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Summary</th>
-                                    <th className='min-w-64 px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Author</th>
                                     <th className='min-w-72 px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Category</th>
                                     <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Link</th>
                                     <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Created At</th>
@@ -258,6 +258,11 @@ function Posts() {
                                                     </div>
                                                 </td>
                                                 <td className='p-4 border-b border-template text-center'>{(page - 1) * limit + index + 1}</td>
+                                                <td className='p-4 border-b border-template text-start'>
+                                                    <div className='line-clamp-1 text-sm font-medium text-black dark:text-white text-nowrap'>
+                                                        <UserRoundIcon className='inline h-4 w-4 mb-0.5 me-1' />{post?.author?.name}
+                                                    </div>
+                                                </td>
                                                 <td className='p-1 border-b border-template text-center'>
                                                     {post?.featuredImage && <Thumbnail key={post?.id} url={post?.featuredImage} />}
                                                 </td>
@@ -269,11 +274,6 @@ function Posts() {
                                                 <td className='p-4 border-b border-template text-start'>
                                                     <div className='line-clamp-2 text-sm'>
                                                         {post?.excerpt}
-                                                    </div>
-                                                </td>
-                                                <td className='p-4 border-b border-template text-start'>
-                                                    <div className='line-clamp-3 text-sm font-medium text-black dark:text-white'>
-                                                        <UserRoundIcon className='inline h-4 w-4 mb-0.5 me-1' />{post?.author?.name}
                                                     </div>
                                                 </td>
                                                 <td className='p-4 border-b border-template text-start'>

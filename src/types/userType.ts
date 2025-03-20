@@ -4,15 +4,10 @@ export interface UserType {
   name: string;
   image?: string;
   role: string;
-//   posts?: {
-//     id: string;
-//   }[];
-//   profile?: {
-//     id: string;
-//   };
   createdAt: string;
   updatedAt: string;
 }
+
 export const initialUser: UserType = {
   id: "",
   email: "",
@@ -22,6 +17,22 @@ export const initialUser: UserType = {
   createdAt: "",
   updatedAt: "",
 }
+
+// export interface UserType {
+//   id: string;
+//   email: string;
+//   name: string;
+//   image?: string;
+//   role: string;
+//   posts?: {
+//     id: string;
+//   }[];
+//   profile?: {
+//     id: string;
+//   };
+//   createdAt: string;
+//   updatedAt: string;
+// }
 
 // export type FormUserType = {
 //     userId: string;

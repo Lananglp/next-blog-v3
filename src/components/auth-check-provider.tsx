@@ -1,7 +1,7 @@
 "use client";
 
 import { authCheck } from "@/app/api/function/auth";
-import { setSession } from "@/context/sessionSlice";
+import { setSession, setSessionLoading } from "@/context/sessionSlice";
 import { responseStatus } from "@/helper/system-config";
 import { AxiosError } from "axios";
 import { useEffect } from "react";
@@ -28,6 +28,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 } else {
                     console.log("Unknown error:", error);
                 }
+                dispatch(setSessionLoading(false));
             }
         };
 

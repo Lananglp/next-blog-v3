@@ -7,6 +7,18 @@ export type PostType = {
         name: string;
         email: string;
         image: string | null;
+        followers: {
+            followerId: string;
+            follower: {
+                name: string;
+            }
+        }[];
+        following: {
+            followedId: string;
+            followed: {
+                name: string;
+            }
+        }[];
     }
     title: string;
     content: string;
@@ -22,14 +34,18 @@ export type PostType = {
     tags: string[];
     authorId: string;
     featuredImage: string;
-    altText: string | null;
+    altText: string | null | undefined;
     commentStatus: "OPEN" | "CLOSED" | string;
-    meta: JsonValue | {
+    meta: {
         title: string;
         description: string;
-        keywords: string;
+        keywords: string[];
         ogImage: string;
     };
+    metaTitle: string | null | undefined;
+    metaDescription: string | null | undefined;
+    metaKeywords: string[];
+    metaImage: string | null | undefined;
     createdAt: Date;
     updatedAt: Date;
 };
@@ -52,13 +68,19 @@ export const initialPost = {
         name: "",
         email: "",
         image: "",
+        followers: [],
+        following: [],
     },
     meta: {
         title: "",
         description: "",
-        keywords: "",
+        keywords: [],
         ogImage: "",
     },
+    metaTitle: "",
+    metaDescription: "",
+    metaKeywords: [],
+    metaImage: "",
     createdAt: new Date(),
     updatedAt: new Date(),
 };

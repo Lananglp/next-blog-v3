@@ -7,8 +7,12 @@ import { Controller } from "react-hook-form";
 import { useMedia } from "react-use";
 import { Button } from "../ui/button";
 import { LoaderCircle, Send } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/redux";
+import { LoginModal } from "../modal-login";
 
 interface InputCommentProps {
+    ref: React.RefObject<HTMLTextAreaElement | null>;
     value: string;
     placeholder?: string;
     className?: string;
@@ -16,12 +20,13 @@ interface InputCommentProps {
     control: any;
     name: string;
     required?: boolean;
-    isLoading?: boolean;
+    loading?: boolean;
     onSubmit?: () => void;
     onHeightChange?: (height: number) => void;
 }
 
 export default function InputComment({
+    ref,
     value,
     placeholder = "write a comment...",
     className = "",
@@ -31,10 +36,11 @@ export default function InputComment({
     required = false,
     onSubmit,
     onHeightChange,
-    isLoading,
+    loading,
 }: InputCommentProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const isMobile = useMedia('(max-width: 1024px)');
+    const { isLogin, isLoading } = useSelector((state: RootState) => state.session);
     // const [textareaHeight, setTextareaHeight] = useState<number>(0);
 
     const adjustTextareaHeight = () => {
@@ -46,6 +52,11 @@ export default function InputComment({
             // setTextareaHeight(newHeight);
             if (onHeightChange) onHeightChange(newHeight);
         }
+    };
+
+    const setRefs = (el: HTMLTextAreaElement | null) => {
+        ref.current = el;
+        textareaRef.current = el;
     };
 
     useEffect(() => {
@@ -75,7 +86,7 @@ export default function InputComment({
                     <div>
                         <div className={`relative overflow-hidden ${className}`}>
                             <Textarea
-                                ref={textareaRef}
+                                ref={setRefs}
                                 value={value}
                                 onChange={handleChange}
                                 variant={'primary'}
@@ -90,19 +101,31 @@ export default function InputComment({
                                     }
                                 }}
                             />
-                            <Button
-                                type="button"
-                                disabled={isLoading}
-                                onClick={handleSubmit}
-                                variant={'submit'}
-                                className="absolute bottom-2.5 right-2.5 rounded-full w-10 h-10 hover:scale-105 transition duration-200"
-                            >
-                                {isLoading ? (
-                                    <LoaderCircle className="animate-spin" />
-                                ) : (
-                                    <Send />
-                                )}
-                            </Button>
+                            {isLogin && !isLoading ? (
+                                <Button
+                                    type="button"
+                                    disabled={loading}
+                                    onClick={handleSubmit}
+                                    variant={'submit'}
+                                    className="absolute bottom-2.5 right-2.5 rounded-full w-10 h-10 hover:scale-105 transition duration-200"
+                                >
+                                    {loading ? (
+                                        <LoaderCircle className="animate-spin" />
+                                    ) : (
+                                        <Send />
+                                    )}
+                                </Button>
+                            ) : (
+                                <LoginModal>
+                                    <Button
+                                        type="button"
+                                        variant={'submit'}
+                                        className="absolute bottom-2.5 right-2.5 rounded-full w-10 h-10 hover:scale-105 transition duration-200"
+                                    >
+                                        <Send />
+                                    </Button>
+                                </LoginModal>
+                            )}
                         </div>
                         {errors && (
                             <p className="mt-2 text-red-500 text-xs">{errors?.message}</p>

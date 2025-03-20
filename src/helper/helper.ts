@@ -1,15 +1,20 @@
 import moment from "moment";
-import 'moment/locale/id';
+// import 'moment/locale/id';
 
 export const formatDateTime = (date: string) => {
-    return moment(date).locale('id').format('dddd, DD MMMM YYYY HH:mm');
+    return moment(date).locale('en').format('dddd, DD MMMM YYYY HH:mm');
 }
 
 export const formatDate = (date: string) => {
-    return moment(date).locale('id').format('dddd, DD MMMM YYYY');
+    return moment(date).locale('en').format('dddd, DD MMMM YYYY');
 }
 
-export const generateUniqueUrl = (url: string) => `${url}?t=${new Date().getTime()}`;
+export const generateUniqueUrl = (url: string) => {
+    if (typeof window !== 'undefined') {
+        return `${url}?t=${new Date().getTime()}`;
+    }
+    return url;
+};
 
 export const validateImageURL = async (url: string, toast: any ) => {
     try {
@@ -34,3 +39,12 @@ export const validateImageURL = async (url: string, toast: any ) => {
         return false;
     }
 };
+
+export const formatTimeAgo = (created_at: string | Date): string => {
+    return moment(created_at).locale('en').fromNow();
+};
+
+export const decodeCategory = (category: string, slug: string) => {
+    const origin = process.env.NEXT_PUBLIC_API_URL;
+    return `${origin}/${category.split(' ').join('-').toLowerCase()}/${slug}`
+}

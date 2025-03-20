@@ -28,8 +28,11 @@ export const config = {
     matcher: [
         "/admin/:path*",
         "/api/images/:path*",
-        "/api/logout/:path*",
-        "/api/posts/:path*",
+        // "/api/logout/:path*",
+        "/api/posts/route.ts",
+        "/api/posts/create/:path*",
+        "/api/posts/edit/:path*",
+        "/api/posts/delete/:path*",
         "/api/upload/:path*",
     ],
 };

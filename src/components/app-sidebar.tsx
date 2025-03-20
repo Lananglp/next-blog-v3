@@ -15,6 +15,7 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  UserRoundPenIcon,
   UsersRoundIcon,
 } from "lucide-react"
 
@@ -59,6 +60,11 @@ const data = {
       title: "Users Accounts",
       url: "/admin/users",
       icon: UsersRoundIcon,
+    },
+    {
+      title: "Your Profile",
+      url: "/admin/profile",
+      icon: UserRoundPenIcon,
     },
     {
       title: "Content",
@@ -117,7 +123,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
-  const { user } = useSelector((state: RootState) => state.session);
+  const { isLogin, user } = useSelector((state: RootState) => state.session);
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -129,7 +135,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser user={user} isLogin={isLogin} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

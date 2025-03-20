@@ -14,22 +14,27 @@ datasource db {
 }
 
 model Post {
-  id             String   @id @default(uuid())
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  title          String
-  content        String
-  excerpt        String
-  slug           String   @unique
-  status         PostStatus
-  categories     PostCategory[]
-  tags           String[]
-  author         User      @relation(fields: [authorId], references: [id])
-  authorId       String
-  featuredImage  String
-  altText        String?   
-  commentStatus  CommentStatus
-  meta           Json
+  id                String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  title             String
+  content           String
+  excerpt           String
+  slug              String   @unique
+  status            PostStatus
+  categories        PostCategory[]
+  tags              String[]
+  comments          Comment[]
+  author            User      @relation(fields: [authorId], references: [id])
+  authorId          String
+  featuredImage     String
+  altText           String?   
+  commentStatus     CommentStatus
+  meta              Json
+  metaTitle         String?
+  metaDescription   String?
+  metaKeywords      String[]
+  metaImage         String?
 }
 
 model Category {
@@ -57,22 +62,75 @@ model Profile {
 }
 
 model User {
-  id          String    @id @default(uuid())
-  email       String    @unique
-  name        String
-  password    String
-  image       String?
-  role        UserRole  @default(USER)
-  posts       Post[]
-  profile     Profile?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                String        @id @default(uuid())
+  email             String        @unique
+  name              String
+  password          String
+  image             String?
+  imageId           String?
+  imageProvider     ImageProvider @default(DEFAULT)
+  role              UserRole      @default(USER)
+  posts             Post[]
+  comments          Comment[]     // Tambahkan ini agar user bisa memiliki komentar
+  commentLike       CommentLike[]        // Tambahkan ini agar user bisa menyukai komentar
+  profile           Profile?
+  // Relasi untuk followers (pengguna yang mengikuti user ini)
+  followers         Follow[]      @relation("Followers")
+  // Relasi untuk following (pengguna yang diikuti oleh user ini)
+  following         Follow[]      @relation("Following")
+  receivedReplies   Comment[]     @relation("ReplyToUser")
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 }
 
 model Image {
-  id          String    @id @default(uuid())
+  id          String          @id @default(uuid())
   url         String
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime        @default(now())
+}
+
+model Follow {
+  id            String        @id @default(uuid())
+  followerId    String
+  followedId    String
+  createdAt     DateTime      @default(now())
+  follower      User          @relation("Following", fields: [followerId], references: [id])
+  followed      User          @relation("Followers", fields: [followedId], references: [id])
+
+  @@unique([followerId, followedId]) // Mencegah duplikat follow
+}
+
+model Comment {
+  id              String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  content         String
+  post            Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId          String
+  author          User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId        String
+  parent          Comment? @relation("ParentChild", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId        String?
+  replies         Comment[] @relation("ParentChild")
+  likes           CommentLike[]
+  replyToUser     User? @relation("ReplyToUser", fields: [replyToUserId], references: [id])
+  replyToUserId   String?
+}
+
+model CommentLike {
+  id        String   @id @default(uuid())
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId]) // Satu user hanya bisa like satu kali per komentar
+}
+
+enum ImageProvider {
+  DEFAULT
+  OTHER
 }
 
 enum UserRole {

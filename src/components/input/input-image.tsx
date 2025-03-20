@@ -74,14 +74,14 @@ function InputImage({ label, name, value, errors, control, placeholder, note, re
                         <Label htmlFor={label} className="inline-block mb-2">{required && <span className="text-red-500">*</span>}&nbsp;{label} :</Label>
                         <div className='relative group'>
                             {field.value !== '' ? (
-                                <div className={`relative flex justify-center items-center bg-zinc-100 dark:bg-zinc-900/25 rounded-lg border-2 ${errors ? 'border-solid border-red-500' : 'border-dashed border-zinc-300 dark:border-zinc-800'}`}>
+                                <div className={`min-h-52 relative flex justify-center items-center bg-zinc-100 dark:bg-zinc-900/25 rounded-lg border-2 ${errors ? 'border-solid border-red-500' : 'border-dashed border-zinc-300 dark:border-zinc-800'}`}>
                                     {imgLoading && (
                                         <div className="absolute inset-0 flex items-end bg-zinc-900/50 p-3">
                                             <span className='text-sm'><LoaderIcon className='inline h-4 w-4 mb-0.5 me-1 animate-spin' />Loading...</span>
                                         </div>
                                     )}
                                     <div className='aspect-video h-auto max-h-52'>
-                                        <Image priority unoptimized src={generateUniqueUrl(field.value)} width={328} height={246} alt='post thumbnail' className='w-full h-full object-cover' onLoad={handleImageLoading} onError={() => field.onChange('')} />
+                                        <Image priority unoptimized src={field.value} width={328} height={246} alt='post thumbnail' className='w-full h-full object-cover' onLoad={handleImageLoading} onError={() => field.onChange('')} />
                                         {/* <div className='absolute inset-0 opacity-0 hover:opacity-100 flex justify-center items-center hover:bg-zinc-900/50 hover:text-zinc-300 p-8 cursor-pointer transition duration-150'>
                                             <p>Click to change this image.</p>
                                         </div> */}

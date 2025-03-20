@@ -87,11 +87,12 @@ export default function ImagePreview({ urlEndpoint, isDetail, isDelete, detail, 
                         <div>
                             <TransformComponent contentStyle={{ width: breakpoint ? "calc(64rem - 4.9rem)" : "auto", height: "24rem", display: "flex", justifyContent: "center", alignItems: "center" }}>
                                 <Image
+                                    priority
                                     src={detail.url}
                                     alt={alt || "Preview"}
                                     // lqip={{ active: true, quality: 20 }}
-                                    width={704}
-                                    height={384}
+                                    width={608}
+                                    height={342}
                                     quality={60}
                                     // transformation={[
                                     //     {

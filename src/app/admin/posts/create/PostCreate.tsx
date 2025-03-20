@@ -11,7 +11,7 @@ import InputStatus from "@/components/input/input-status";
 import { Button } from "@/components/ui/button";
 import { Eye, MoveLeft, Send } from "lucide-react";
 import { useState } from "react";
-import PostPreview from "./PostPreview";
+import PostPreview from "../PostPreview";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";

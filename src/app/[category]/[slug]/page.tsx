@@ -103,6 +103,26 @@ export default async function PostPage({ params }: PostPageProps) {
                     name: true,
                     email: true,
                     image: true,
+                    followers: {
+                        select: {
+                            follower: {
+                                select: {
+                                    name: true
+                                }
+                            },
+                            followerId: true,
+                        }
+                    },
+                    following: {
+                        select: {
+                            followed: {
+                                select: {
+                                    name: true
+                                }
+                            },
+                            followedId: true,
+                        }
+                    }
                 },
             },
             categories: {
@@ -116,6 +136,12 @@ export default async function PostPage({ params }: PostPageProps) {
     const formattedPost: PostType = {
         ...post || initialPost,
         categories: post?.categories.map((cat) => cat.category) || [],
+        meta: {
+            title: (post?.meta as any)?.title || "",
+            description: (post?.meta as any)?.description || "",
+            keywords: (post?.meta as any)?.keywords || [],
+            ogImage: (post?.meta as any)?.ogImage || "",
+        },
     };
 
     if (!post) {
