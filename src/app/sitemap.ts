@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://yourdefaultdomain.com";
     const staticPages = ["/", "/about", "/login", "/register"];
+    
 
     // Ambil semua post dengan kategori
     const posts = await prisma.post.findMany({
