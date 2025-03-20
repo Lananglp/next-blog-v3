@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 // import { fontPoppins } from "@/lib/font";
 import AuthProvider from "@/components/auth-check-provider";
 import { Poppins } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react"
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body
         className={`${poppins.className} antialiased`}
       >
+        <Analytics />
         <ReduxProvider>
           <AuthProvider>
             <ThemeProvider
