@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 import { ModeToggle } from "./dark-mode-button";
-import { BoxIcon, CircleAlert, MenuIcon, SquarePenIcon } from "lucide-react";
+import { ArrowUpRight, BoxIcon, CircleAlert, CornerDownRight, EllipsisVerticalIcon, MenuIcon, SquarePenIcon } from "lucide-react";
 import { cn } from "@/lib/utils"
 import {
     NavigationMenu,
@@ -81,123 +81,163 @@ function Header() {
     // if (!isMounted) return null;
 
     return (
-        <header className="sticky z-50" style={{ top: `${scrollYForPadding}px`, paddingLeft: `${scrollYForPadding}px`, paddingRight: `${scrollYForPadding}px` }}>
-            <div className="absolute inset-0 pointer-events-none border-b border-template" style={{ opacity: isScrolled ? 0 : 1 }}/>
-            <nav className={`relative max-w-screen-2xl mx-auto group rounded-2xl transition duration-500 ${isScrolled && 'backdrop-blur-sm bg-white dark:bg-zinc-900/50 shadow-lg'}`}>
-                <div className={`border ${isScrolled ? 'border-zinc-200 dark:border-zinc-900' : 'border-transparent'} rounded-2xl px-4 py-2.5`}>
-                    <div className={`${isScrolled ? 'opacity-100' : 'opacity-0'} absolute inset-x-0 bottom-0 overflow-hidden rounded-2xl transition duration-500`}>
+        // <header className="sticky z-50" style={{ top: `${scrollYForPadding}px`, paddingLeft: `${scrollYForPadding}px`, paddingRight: `${scrollYForPadding}px` }}>
+        <header className="sticky z-50 top-0">
+            <div className="absolute inset-0 pointer-events-none" style={{ opacity: isScrolled ? 0 : 1 }}/>
+            {/* <nav className={`relative max-w-screen-2xl mx-auto group rounded-2xl transition duration-500 ${isScrolled && 'backdrop-blur-sm bg-white dark:bg-zinc-900/50 shadow-lg'}`}> */}
+            <nav className={`relative max-w-screen-2xl mx-auto group transition duration-500 backdrop-blur-sm bg-white dark:bg-zinc-950/85 border-b border-template`}>
+                {/* <div className={`border ${isScrolled ? 'border-zinc-200 dark:border-zinc-900' : 'border-transparent'} rounded-2xl px-2.5 md:px-4 py-2.5`}> */}
+                <div className={`px-2.5 md:px-4 py-2.5`}>
+                    {/* <div className={`${isScrolled ? 'opacity-100' : 'opacity-0'} absolute inset-x-0 bottom-0 overflow-hidden rounded-2xl transition duration-500`}>
                         <div className={`w-3/4 mx-auto h-[1px] bg-transparent bg-gradient-to-r from-transparent via-zinc-200/30 to-transparent`} />
-                    </div>
+                    </div> */}
                     <div className="flex flex-wrap justify-between items-center">
                         <div className="flex items-center">
                             <Link href="/" className="flex items-center gap-2 pe-4">
                                 <div className="inline-block">
                                     <Image src='/images/logo/logo.webp' alt={appName || "Logo"} width={28} height={28} />
                                 </div>
-                                <span className="text-lg font-medium whitespace-nowrap dark:text-white">
+                                <span className="md:text-lg font-medium whitespace-nowrap dark:text-white">
                                     {appName}
                                 </span>
                             </Link>
-                            <Separator orientation="vertical" className="h-7" />
+                            <Separator orientation="vertical" className="hidden md:block h-7" />
                             {/* <NavMenu /> */}
-                            <div className="flex flex-wrap gap-4 px-4">
+                            <div className="hidden md:flex flex-wrap gap-4 px-4">
                                 <Link href='/posts' className="hover:text-black hover:dark:text-white text-sm transition-colors duration-150">Browse articles</Link>
                                 <Link href='/about' className="hover:text-black hover:dark:text-white text-sm transition-colors duration-150">About</Link>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
                             <ModeToggle />
-                            {isLogin && !isLoading && user.role === 'ADMIN' && <Button onClick={() => navigate.push("/admin")} variant={'editorBlockBar'} size={'sm'}><SquarePenIcon /><span className="hidden md:inline">Manage your contents</span></Button>}
+                            {isLogin && !isLoading && user.role === 'ADMIN' && <Button onClick={() => navigate.push("/admin")} variant={'editorBlockBar'} size={'sm'}><SquarePenIcon /><span className="hidden lg:inline">Manage your contents</span></Button>}
                             <Separator orientation="vertical" className="h-7 mx-3" />
-                            {!isLoading ? isLogin ? (
-                                <div className="flex items-center gap-2">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <div className="flex items-center">
-                                                <span className="hidden md:inline-block mr-2 text-sm font-medium text-zinc-800 dark:text-white cursor-pointer">
-                                                    {user.email || "Unknown"}
-                                                </span>
+                            <div className="hidden md:block">
+                                {!isLoading ? isLogin ? (
+                                    <div className="flex items-center gap-2">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <div className="flex items-center">
+                                                    <span className="hidden md:inline-block mr-2 text-sm font-medium text-zinc-800 dark:text-white cursor-pointer">
+                                                        {user.email || "Unknown"}
+                                                    </span>
+                                                    <Avatar className="h-8 w-8 cursor-pointer">
+                                                        <AvatarImage src={user.image} alt="@shadcn" />
+                                                        <AvatarFallback>CN</AvatarFallback>
+                                                    </Avatar>
+                                                </div>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem>Profile</DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger className="w-full text-start text-sm font-medium text-red-500 hover:dark:bg-zinc-800 rounded px-2 py-1.5">
+                                                            logout
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent>
+                                                            <AlertDialogHeader className="py-12">
+                                                                <AlertDialogTitle className="text-black dark:text-white text-2xl text-center">Are you sure you want to log out?</AlertDialogTitle>
+                                                                <AlertDialogDescription className="text-center">
+                                                                    You will log out from {user.email}
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel className="w-full">Cancel</AlertDialogCancel>
+                                                                <AlertDialogAction onClick={handleSignOut} className="w-full">Log out</AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <Button onClick={() => navigate.push('/login')} variant={'editorBlockBar'} size={'sm'}>Sign In</Button>
+                                        <Button onClick={() => navigate.push('/login')} variant={'submit'} size={'sm'}>Sign Up</Button>
+                                    </>
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <Skeleton className="w-36 h-6" />
+                                        <Skeleton className="w-7 h-7 rounded-full" />
+                                    </div>
+                                )}
+                            </div>
+                            <Sheet>
+                                <SheetTrigger asChild>
+                                    <Button type="button" variant={'ghost'} size={'icon'} className="flex xl:hidden"><EllipsisVerticalIcon /></Button>
+                                </SheetTrigger>
+                                <SheetContent className="flex flex-col gap-4">
+                                    <SheetHeader>
+                                        <SheetTitle className="text-start">Menu</SheetTitle>
+                                        <SheetDescription className="hidden"></SheetDescription>
+                                    </SheetHeader>
+                                    <div className="flex-grow space-y-4">
+                                        {!isLoading ? isLogin ? (
+                                            <div onClick={() => navigate.push('/login')} className="p-2 flex items-center gap-2 hover:bg-zinc-200 hover:dark:bg-zinc-900 border border-template rounded-lg transition-colors duration-150 cursor-pointer">
                                                 <Avatar className="h-8 w-8 cursor-pointer">
                                                     <AvatarImage src={user.image} alt="@shadcn" />
                                                     <AvatarFallback>CN</AvatarFallback>
                                                 </Avatar>
-                                                {/* <Image
-                                                    unoptimized
-                                                    width={64}
-                                                    height={64}
-                                                    className="w-8 h-8 rounded-full cursor-pointer"
-                                                    src="https://flowbite.com/docs/images/people/profile-picture-3.jpg"
-                                                    alt="User Photo"
-                                                /> */}
+                                                <div>
+                                                    <p className="line-clamp-1 text-black dark:text-white text-sm">{user.name || "Unknown"}</p>
+                                                    <p className="line-clamp-1 text-[10px]">{user.email || "---"}</p>
+                                                </div>
                                             </div>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent>
-                                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem>Profile</DropdownMenuItem>
-                                            <DropdownMenuItem asChild>
-                                                <AlertDialog>
-                                                    <AlertDialogTrigger className="w-full text-start text-sm font-medium text-red-500 hover:dark:bg-zinc-800 rounded px-2 py-1.5">
-                                                        logout
-                                                    </AlertDialogTrigger>
-                                                    <AlertDialogContent>
-                                                        <AlertDialogHeader className="py-12">
-                                                            <AlertDialogTitle className="text-black dark:text-white text-2xl text-center">Are you sure you want to log out?</AlertDialogTitle>
-                                                            <AlertDialogDescription className="text-center">
-                                                                You will log out from {user.email}
-                                                            </AlertDialogDescription>
-                                                        </AlertDialogHeader>
-                                                        <AlertDialogFooter>
-                                                            <AlertDialogCancel className="w-full">Cancel</AlertDialogCancel>
-                                                            <AlertDialogAction onClick={handleSignOut} className="w-full">Log out</AlertDialogAction>
-                                                        </AlertDialogFooter>
-                                                    </AlertDialogContent>
-                                                </AlertDialog>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                    <Sheet>
-                                        <SheetTrigger asChild>
-                                            <Button type="button" variant={'ghost'} size={'icon'} className="flex xl:hidden"><MenuIcon /></Button>
-                                        </SheetTrigger>
-                                        <SheetContent className="flex justify-center items-center">
-                                            <SheetHeader className="hidden">
-                                                <SheetTitle></SheetTitle>
-                                                <SheetDescription>
-                                                </SheetDescription>
-                                            </SheetHeader>
-                                            <div className="flex flex-col text-center gap-2">
-                                                <Link href='/' className="block font-medium hover:scale-125 py-1 hover:py-4 transition-all hover:text-black hover:dark:text-white duration-300">Getting started</Link>
-                                                <Link href='/' className="block font-medium hover:scale-125 py-1 hover:py-4 transition-all hover:text-black hover:dark:text-white duration-300">Components</Link>
-                                                <Link href='/' className="block font-medium hover:scale-125 py-1 hover:py-4 transition-all hover:text-black hover:dark:text-white duration-300">Admin</Link>
-                                                <Link href='/' className="block font-medium hover:scale-125 py-1 hover:py-4 transition-all hover:text-black hover:dark:text-white duration-300">Login</Link>
-                                                <Link href='/' className="block font-medium hover:scale-125 py-1 hover:py-4 transition-all hover:text-black hover:dark:text-white duration-300">Register</Link>
-                                                <Link href='/' className="block font-medium hover:scale-125 py-1 hover:py-4 transition-all hover:text-black hover:dark:text-white duration-300">About</Link>
+                                        ) : (
+                                            <div onClick={() => navigate.push('/login')} className="p-2 flex items-center gap-2 hover:bg-zinc-200 hover:dark:bg-zinc-900 border border-template rounded-lg transition-colors duration-150 cursor-pointer">
+                                                <div className="w-8 h-8 bg-zinc-900 border border-template rounded-full" />
+                                                <div>
+                                                    <p className="line-clamp-1 text-black dark:text-white text-sm">Guest User</p>
+                                                    <p className="line-clamp-1 text-[10px]">Login to show your profile.</p>
+                                                </div>
                                             </div>
-                                        </SheetContent>
-                                    </Sheet>
-                                </div>
-                            ) : (
-                                <>
-                                    <Link
-                                        href="/login"
-                                        className="text-zinc-800 dark:text-white hover:bg-zinc-50 focus:ring-4 focus:ring-zinc-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:hover:bg-zinc-700 focus:outline-none dark:focus:ring-zinc-800"
-                                    >
-                                        Sign In
-                                    </Link>
-                                    <Link
-                                        href="/register"
-                                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                                    >
-                                        Sign Up
-                                    </Link>
-                                </>
-                            ) : (
-                                <div className="flex items-center gap-2">
-                                    <Skeleton className="w-36 h-6" />
-                                    <Skeleton className="w-7 h-7 rounded-full" />
-                                </div>
-                            )}
+                                        ) : (
+                                            <div className="p-2 flex items-center gap-2 hover:bg-zinc-200 hover:dark:bg-zinc-900 border border-template rounded-lg transition-colors duration-150 cursor-pointer">
+                                                    <div>
+                                                        <Skeleton className="w-8 h-8 rounded-full" />
+                                                    </div>
+                                                <div className="space-y-1">
+                                                    <Skeleton className="w-24 h-5" />
+                                                    <Skeleton className="w-32 h-3" />
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className="space-y-1">
+                                            <Link href='/posts' className="block text-sm md:text-base font-medium hover:bg-zinc-200 hover:dark:bg-zinc-900 rounded px-2 py-1 transition-colors hover:text-black hover:dark:text-white duration-300"><CornerDownRight className="inline h-3 w-3 mb-0.5 me-2 text-zinc-500" />Browse Articles</Link>
+                                            <Link href='/' className="block text-sm md:text-base font-medium hover:bg-zinc-200 hover:dark:bg-zinc-900 rounded px-2 py-1 transition-colors hover:text-black hover:dark:text-white duration-300"><CornerDownRight className="inline h-3 w-3 mb-0.5 me-2 text-zinc-500" />About</Link>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        {!isLogin ? (
+                                            <>
+                                                <Button onClick={() => navigate.push('/login')} variant={'editorBlockBar'} size={'sm'} className="w-full">Sign In</Button>
+                                                <Button onClick={() => navigate.push('/register')} variant={'submit'} size={'sm'} className="w-full">Sign Up</Button>
+                                            </>
+                                        ) : (
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button type="button" variant={'destructive'} size={'sm'} className="w-full">logout</Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader className="py-12">
+                                                        <AlertDialogTitle className="text-black dark:text-white text-2xl text-center">Are you sure you want to log out?</AlertDialogTitle>
+                                                        <AlertDialogDescription className="text-center">
+                                                            You will log out from {user.email}
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel className="w-full">Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction onClick={handleSignOut} className="w-full">Log out</AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        )}
+                                    </div>
+                                </SheetContent>
+                            </Sheet>
                         </div>
                     </div>
                 </div>

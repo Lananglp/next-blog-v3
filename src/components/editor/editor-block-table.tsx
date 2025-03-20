@@ -42,10 +42,10 @@ const EditorBlockTable = ({ editor }: { editor: Editor }) => {
                     <Grid2X2 />Table<ChevronDown />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className='w-96 lg:w-[40rem]'>
+            <DropdownMenuContent className='w-80 lg:w-[40rem]'>
                 <DropdownMenuLabel>Insert Table</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <div className="grid grid-cols-3 gap-1 p-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 p-2">
                     <Button
                         type="button"
                         variant={'editorBlockBar'}

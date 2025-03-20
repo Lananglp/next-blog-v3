@@ -348,8 +348,8 @@ export default function PostEdit({ pageTitle, post }: { pageTitle: string, post:
                                 errors={errors.status}
                             />
                             <div className="flex items-center gap-2">
-                                <Button title="Preview" type="button" onClick={() => setPreview(true)} variant={'editorBlockBar'}><Eye /> Preview</Button>
-                                <Button title="Update Post" type="button" onClick={() => setSubmitModal(true)} variant={'submit'}><Send />Update Post</Button>
+                                <Button title="Preview" type="button" onClick={() => setPreview(true)} variant={'editorBlockBar'}><Eye /><span className="hidden md:inline">Preview</span></Button>
+                                <Button title="Update Post" type="button" onClick={() => setSubmitModal(true)} variant={'submit'}><Send /><span className="hidden md:inline">Update Post</span></Button>
                             </div>
                         </div>
                     </div>

@@ -8,7 +8,7 @@ function BatteryStatus() {
     const {level, isCharging} = useBatteryStatus();
 
   return (
-    <p className='text-sm'>
+    <p className='hidden md:inline-block text-sm'>
         {!isCharging ? level >= 90 ? (
             <BatteryFull className="inline h-5 w-5 mb-0.5 me-1" />
         ) : level >= 60 ? (

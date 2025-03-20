@@ -77,7 +77,8 @@ function EditorBlockImage({ editor, blockType="insert", className, onOpenModalCh
                         <ImageIcon />{blockType === 'change' ? 'Change this' : editor.isActive('image') ? 'Change' : 'Insert'} Image<ChevronDown />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className='w-48 lg:w-80'>
+                {/* <DropdownMenuContent className='w-48 lg:w-80'> */}
+                <DropdownMenuContent className='w-80'>
                     <DropdownMenuLabel>Insert Image</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <div className='p-2'>

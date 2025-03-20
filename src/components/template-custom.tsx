@@ -21,7 +21,7 @@ function Template({ children, container }: { children: React.ReactNode, containe
       </div> */}
       <div className="flex-grow">
         <Header />
-        <div className='mt-8 px-4 max-w-7xl mx-auto'>
+        <div className='lg:mt-8 px-4 max-w-7xl mx-auto'>
           <BreadcrumbCustom className='mb-4' />
           {children}
         </div>

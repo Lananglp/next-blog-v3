@@ -14,7 +14,7 @@ function EditorBlock({ editor }: { editor: Editor }) {
     }
 
     return (
-        <div className='flex flex-wrap items-center gap-1'>
+        <div className='flex items-center gap-1'>
             <Button
                 type='button'
                 title='Horizontal rule <hr/>'

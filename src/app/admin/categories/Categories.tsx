@@ -199,11 +199,7 @@ function Categories() {
                                                         </div>
                                                     </td>
                                                     <td className='p-4 border-b border-template text-center'>{(page - 1) * limit + index + 1}</td>
-                                                    <td className='p-4 border-b border-template text-start'>
-                                                        <div className='line-clamp-3'>
-                                                            {item.name}
-                                                        </div>
-                                                    </td>
+                                                    <td className='p-4 border-b border-template text-start text-nowrap'>{item.name}</td>
                                                     <td className='p-4 border-b border-template text-start text-nowrap text-sm text-zinc-500'>{item?.createdAt ? formatDateTime(item?.createdAt.toString()) : ''}</td>
                                                     <td className='p-4 border-b border-template text-start text-nowrap text-sm text-zinc-500'>{item?.updatedAt !== item?.createdAt ? formatDateTime(item?.updatedAt.toString()) : '-'}</td>
                                                 </tr>
