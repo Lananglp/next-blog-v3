@@ -3,9 +3,18 @@ import Header from './header'
 import Footer from './footer'
 import BreadcrumbCustom from './breadcrumb-custom'
 
-function Template({ children, container }: { children: React.ReactNode, container?: boolean }) {
+function Template({ children, container=true, className, gradient }: { children: React.ReactNode, container?: boolean, className?: string, gradient?: boolean }) {
   return (
     <div className="flex flex-col min-h-svh h-screen">
+      {/* <div className="fixed inset-0 bg-gradient-to-br from-sky-500/5 from-[0%] via-transparent via-[55%] to-sky-500/5 to-[0%] pointer-events-none">
+        <div className="fixed inset-x-0 top-0 h-1/2 bg-gradient-to-tr from-transparent from-[0%] via-transparent via-[65%] to-sky-500/5 to-[0%] pointer-events-none" />
+      </div> */}
+      {gradient && (
+        <div className="fixed inset-0 bg-gradient-to-br from-sky-500/5 from-[0%] via-transparent via-[55%] to-sky-500/5 to-[0%] pointer-events-none">
+          <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-tr from-transparent from-[0%] via-transparent via-[65%] to-sky-500/5 to-[0%] pointer-events-none" />
+          <div className="absolute inset-0 top-0 bg-gradient-to-br from-sky-500/5 dark:from-sky-500/25 from-[0%] via-transparent via-[65%] to-transparent to-[0%] pointer-events-none" />
+        </div>
+      )}
       {/* <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <svg className="absolute opacity-10 top-0 left-[max(50%,25rem)] h-[64rem] w-[128rem] -translate-x-1/2 stroke-zinc-500 dark:stroke-zinc-400 [mask-image:radial-gradient(64rem_64rem_at_top,white,transparent)]" aria-hidden="true">
           <defs>
@@ -21,8 +30,8 @@ function Template({ children, container }: { children: React.ReactNode, containe
       </div> */}
       <div className="flex-grow">
         <Header />
-        <div className='lg:mt-8 px-4 max-w-7xl mx-auto'>
-          <BreadcrumbCustom className='mb-4' />
+        <div className={`${container && 'lg:mt-8 px-4 max-w-7xl mx-auto'} ${className}`}>
+          {container && <BreadcrumbCustom className='mb-4' />}
           {children}
         </div>
       </div>

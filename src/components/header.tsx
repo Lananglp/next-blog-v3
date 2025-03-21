@@ -80,6 +80,17 @@ function Header() {
 
     // if (!isMounted) return null;
 
+    const menuItems = [
+        {
+            name: "Blog",
+            href: "/blog",
+        },
+        {
+            name: "About",
+            href: "/about",
+        },
+    ]
+
     return (
         // <header className="sticky z-50" style={{ top: `${scrollYForPadding}px`, paddingLeft: `${scrollYForPadding}px`, paddingRight: `${scrollYForPadding}px` }}>
         <header className="sticky z-50 top-0">
@@ -104,8 +115,9 @@ function Header() {
                             <Separator orientation="vertical" className="hidden md:block h-7" />
                             {/* <NavMenu /> */}
                             <div className="hidden md:flex flex-wrap gap-4 px-4">
-                                <Link href='/posts' className="hover:text-black hover:dark:text-white text-sm transition-colors duration-150">Browse articles</Link>
-                                <Link href='/about' className="hover:text-black hover:dark:text-white text-sm transition-colors duration-150">About</Link>
+                                {menuItems.map((item, index) => (
+                                    <Link key={index} href={item.href} className="hover:text-black hover:dark:text-white text-sm transition-colors duration-150">{item.name}</Link>
+                                ))}
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -206,8 +218,9 @@ function Header() {
                                             </div>
                                         )}
                                         <div className="space-y-1">
-                                            <Link href='/posts' className="block text-sm md:text-base font-medium hover:bg-zinc-200 hover:dark:bg-zinc-900 rounded px-2 py-1 transition-colors hover:text-black hover:dark:text-white duration-300"><CornerDownRight className="inline h-3 w-3 mb-0.5 me-2 text-zinc-500" />Browse Articles</Link>
-                                            <Link href='/' className="block text-sm md:text-base font-medium hover:bg-zinc-200 hover:dark:bg-zinc-900 rounded px-2 py-1 transition-colors hover:text-black hover:dark:text-white duration-300"><CornerDownRight className="inline h-3 w-3 mb-0.5 me-2 text-zinc-500" />About</Link>
+                                            {menuItems.map((item, index) => (
+                                                <Link key={index} href={item.href} className="block text-sm md:text-base font-medium hover:bg-zinc-200 hover:dark:bg-zinc-900 rounded px-2 py-1 transition-colors hover:text-black hover:dark:text-white duration-300"><CornerDownRight className="inline h-3 w-3 mb-0.5 me-2 text-zinc-500" />{item.name}</Link>
+                                            ))}
                                         </div>
                                     </div>
                                     <div className="space-y-2">

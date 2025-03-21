@@ -5,7 +5,7 @@ import ReduxProvider from "@/components/redux-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 // import { fontPoppins } from "@/lib/font";
 import AuthProvider from "@/components/auth-check-provider";
-import { Poppins } from "next/font/google";
+import { Poppins, Turret_Road, Orbitron } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react"
 
 const poppins = Poppins({
@@ -13,6 +13,13 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
+
+const fontTitle = Turret_Road({
+  variable: "--font-family-title",
+  subsets: ["latin"],
+  // weight: ["400", "500", "700", "800", "900"],
+  weight: ["200", "300", "400", "500", "700", "800"],
+})
 
 export const metadata: Metadata = {
   title: {
@@ -30,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${poppins.className} antialiased`}
+        className={`${poppins.className} ${fontTitle.variable} antialiased`}
       >
         <Analytics />
         <ReduxProvider>

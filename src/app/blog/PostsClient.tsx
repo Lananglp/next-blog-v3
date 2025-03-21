@@ -1,11 +1,12 @@
 'use client'
 import InputSearch from '@/components/input/input-search'
 import Template from '@/components/template-custom'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
-import { AtSignIcon, CirclePlusIcon, EllipsisVerticalIcon, HashIcon, LayoutDashboardIcon, SearchIcon, SlidersHorizontalIcon } from 'lucide-react'
+import { AtSignIcon, CirclePlusIcon, EllipsisVerticalIcon, HashIcon, LayoutDashboardIcon, SearchIcon, SlidersHorizontalIcon, Terminal } from 'lucide-react'
 import { motion } from 'motion/react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -39,6 +40,13 @@ function PostsClient() {
                     </div>
                 </div>
             </div> */}
+            <Alert className='mb-2'>
+                <Terminal className="h-4 w-4" />
+                <AlertTitle>Heads up!</AlertTitle>
+                <AlertDescription>
+                    You&apos;re on the blog page but this page is still in maintenance.
+                </AlertDescription>
+            </Alert>
             <div className='flex flex-col lg:flex-row gap-4'>
                 <div className='hidden lg:block w-full lg:w-96'>
                     <div className='sticky top-[4rem] mt-2 w-full h-auto md:h-[calc(100svh-10rem)] border border-template rounded-lg space-y-2'>

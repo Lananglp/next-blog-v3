@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://yourdefaultdomain.com";
-    const staticPages = ["/", "/about", "/login", "/register", "/posts"];
+    const staticPages = ["/", "/about", "/login", "/register", "/blog"];
     
 
     // Ambil semua post dengan kategori
