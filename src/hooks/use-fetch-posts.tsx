@@ -3,7 +3,7 @@ import { GetResponseType } from "@/types/fetch-type";
 import { PostType } from "@/types/post-type";
 import { useCallback, useEffect, useState } from "react";
 
-export const useFetchPosts = (page?: number, limit?: number, search?: string) => {
+export const useFetchPosts = (page?: number, limit?: number, search?: string, categoryId?: string) => {
     const [posts, setPosts] = useState<GetResponseType<PostType[]> | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -12,7 +12,7 @@ export const useFetchPosts = (page?: number, limit?: number, search?: string) =>
         setLoading(true);
         setError(null);
         try {
-            const res = await getPosts(page, limit, search);
+            const res = await getPosts(page, limit, search, categoryId);
             setPosts(res.data);
         } catch (err) {
             setError("Error fetching posts");
@@ -20,7 +20,7 @@ export const useFetchPosts = (page?: number, limit?: number, search?: string) =>
         } finally {
             setLoading(false);
         }
-    }, [ page, limit, search ]);
+    }, [ page, limit, search, categoryId ]);
 
     useEffect(() => {
         fetchPosts();

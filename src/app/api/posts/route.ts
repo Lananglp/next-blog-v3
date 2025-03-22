@@ -8,19 +8,29 @@ export async function GET(req: Request) {
         const pageParam = searchParams.get('page');
         const limitParam = searchParams.get('limit');
         const search = searchParams.get('search') || '';
+        const categoryId = searchParams.get('categoryId');
 
         const page = pageParam ? parseInt(pageParam, 10) : undefined;
         const limit = limitParam ? parseInt(limitParam, 10) : undefined;
 
-        const whereClause: Prisma.PostWhereInput = search
-            ? {
-                OR: [
-                    { title: { contains: search, mode: 'insensitive' } },
-                    { content: { contains: search, mode: 'insensitive' } },
-                    { excerpt: { contains: search, mode: 'insensitive' } },
-                ],
-            }
-            : {};
+        const whereClause: Prisma.PostWhereInput = {
+            AND: [
+                search ? {
+                    OR: [
+                        { title: { contains: search, } },
+                        { content: { contains: search, } },
+                        { excerpt: { contains: search, } },
+                    ]
+                } : {},
+                categoryId ? {
+                    categories: {
+                        some: {
+                            categoryId: categoryId,
+                        },
+                    },
+                } : {},
+            ].filter(Boolean),
+        };
 
         const totalPosts = await prisma.post.count({ where: whereClause });
 
@@ -48,7 +58,7 @@ export async function GET(req: Request) {
 
         const formattedPosts = posts.map(post => ({
             ...post,
-            categories: post.categories.map(cat => cat.category) // Flatten category layer
+            categories: post.categories.map(cat => cat.category), // Flatten category layer
         }));
 
         return NextResponse.json({

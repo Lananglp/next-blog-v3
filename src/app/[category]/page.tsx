@@ -1,7 +1,24 @@
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
-import Template from "@/components/template-custom";
 import CategoryShow from "./category-show";
+import { CategoriesType } from "@/types/category-type";
+
+type CategoryWithPostType = {
+    id: string;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    posts: {
+        altText: string | null | undefined;
+        title: string;
+        excerpt: string;
+        featuredImage: string;
+        createdAt: Date;
+        author: {
+            name: string;
+        };
+    };
+}
 
 interface CategoryPageProps {
     params: Promise<{ category: string }>;
@@ -23,17 +40,52 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             },
         },
         include: {
-            posts: true,
+            posts: {
+                take: 1,
+                select: {
+                    post: {
+                        select: {
+                            altText: true,
+                            title: true,
+                            excerpt: true,
+                            featuredImage: true,
+                            createdAt: true,
+                            author: {
+                                select: {
+                                    name: true,
+                                }
+                            },
+                        }
+                    }
+                }
+            },
         }
     });
+
+    const formattedItems: CategoryWithPostType = {
+        ...data || {
+            id: "",
+            name: "",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        },
+        posts: data?.posts[0].post || {
+            altText: "",
+            title: "",
+            excerpt: "",
+            featuredImage: "",
+            createdAt: new Date(),
+            author: {
+                name: "",
+            },
+        }
+    }
 
     if (!data) {
         return notFound();
     }
 
     return (
-        <Template>
-            <CategoryShow category={data} />
-        </Template>
+        <CategoryShow category={formattedItems} />
     );
 }

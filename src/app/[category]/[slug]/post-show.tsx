@@ -44,7 +44,7 @@ function PostShow({ post }: Props) {
                     <header>
                         {post.featuredImage && (
                             <figure className='mt-0'>
-                                <Image priority src={post.featuredImage} alt="Featured image AI" width={592} height={333} className='aspect-video object-cover w-full h-full' />
+                                <Image priority src={`${post.featuredImage}?tr=w-592&tr=h-333`} alt="Featured image AI" width={592} height={333} className='aspect-video object-cover w-full h-full' />
                                 {post.altText && <figcaption className='text-zinc-600 dark:text-zinc-400 text-xs mt-2'>{post.altText}</figcaption>}
                             </figure>
                         )}

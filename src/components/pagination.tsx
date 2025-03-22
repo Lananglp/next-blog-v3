@@ -9,7 +9,8 @@ interface PaginationProps {
     totalData: number;
     dataPerPage: number;
     onPageChange: (page: number) => void;
-    className?: string
+    className?: string;
+    align?: 'start' | 'center' | 'end';
 }
 
 export const Pagination: React.FC<PaginationProps> = ({
@@ -17,7 +18,8 @@ export const Pagination: React.FC<PaginationProps> = ({
     totalData,
     dataPerPage,
     onPageChange,
-    className
+    className,
+    align='end'
 }) => {
     const totalPages = Math.ceil(totalData / dataPerPage);
 
@@ -68,7 +70,12 @@ export const Pagination: React.FC<PaginationProps> = ({
     const pages = generatePageNumbers();
 
     return (
-        <div className={`flex items-center justify-end gap-1 ${className}`}>
+        <div className={`
+            flex items-center gap-1 
+            ${align === 'start' && 'justify-start'} ${align === 'center' && 'justify-center'} ${align === 'end' && 'justify-end'} 
+            ${className}
+            `}
+        >
             <Button
                 type="button"
                 onClick={() => handlePageChange(currentPage - 1)}

@@ -3,11 +3,12 @@ import { GetResponseType } from "@/types/fetch-type";
 import { PostType } from "@/types/post-type";
 import { AxiosResponse } from "axios";
 
-export const getPosts = async (page?: number, limit?: number, search?: string): Promise<AxiosResponse<GetResponseType<PostType[]>>> => {
+export const getPosts = async (page?: number, limit?: number, search?: string, categoryId?: string): Promise<AxiosResponse<GetResponseType<PostType[]>>> => {
     const params = new URLSearchParams();
     if (page) params.append("page", page.toString());
     if (limit) params.append("limit", limit.toString());
     if (search) params.append("search", search);
+    if (categoryId) params.append("categoryId", categoryId);
 
     return await api.get<GetResponseType<PostType[]>>(`/api/posts?${params.toString()}`, { withCredentials: true });
 };

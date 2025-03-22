@@ -2,7 +2,14 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
+import {
+    Breadcrumb,
+    BreadcrumbList,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbSeparator,
+    BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
 import React from "react";
 
 interface BreadcrumbCustomProps {
@@ -10,33 +17,35 @@ interface BreadcrumbCustomProps {
     className?: string; // Custom class name
 }
 
-export default function BreadcrumbCustom({ basePath = "/", className }: BreadcrumbCustomProps) {
+export default function BreadcrumbCustom({
+    basePath = "/",
+    className,
+}: BreadcrumbCustomProps) {
     const pathname = usePathname(); // Dapatkan path saat ini
-    const pathSegments = pathname.startsWith(basePath)
-        ? pathname.replace(basePath, "").split("/").filter(Boolean)
-        : [];
+
+    // Perbaikan untuk menghindari pemotongan yang salah ketika basePath adalah "/"
+    const adjustedPath = pathname.startsWith(basePath + "/")
+        ? pathname.replace(basePath, "")
+        : pathname === basePath ? "" : pathname;
+
+    const pathSegments = adjustedPath.split("/").filter(Boolean);
 
     return (
         <Breadcrumb className={className}>
             <BreadcrumbList>
-                {/* Tambahkan basePath sebagai breadcrumb pertama */}
-                {basePath !== "/" ? (
-                    <BreadcrumbItem className="hidden lg:block">
-                        <BreadcrumbLink asChild>
-                            <Link href={basePath}>{decodeURIComponent(basePath.replace("/", ""))}</Link>
-                        </BreadcrumbLink>
-                    </BreadcrumbItem>
-                ) : (
-                    <BreadcrumbItem className="hidden lg:block">
-                        <BreadcrumbLink asChild>
-                            <Link href="/">home</Link>
-                        </BreadcrumbLink>
-                    </BreadcrumbItem>
-                )}
+                {/* Base path breadcrumb */}
+                <BreadcrumbItem className="hidden lg:block">
+                    <BreadcrumbLink asChild>
+                        <Link href={basePath}>{basePath === "/" ? "home" : decodeURIComponent(basePath.replace("/", ""))}</Link>
+                    </BreadcrumbLink>
+                </BreadcrumbItem>
 
                 {pathSegments.map((segment, index) => {
-                    const href = basePath + "/" + pathSegments.slice(0, index + 1).join("/"); // Buat URL untuk setiap segment
-                    const isLast = index === pathSegments.length - 1; // Cek apakah ini segment terakhir
+                    const href =
+                        basePath === "/"
+                            ? `/${pathSegments.slice(0, index + 1).join("/")}`
+                            : `${basePath}/${pathSegments.slice(0, index + 1).join("/")}`;
+                    const isLast = index === pathSegments.length - 1;
 
                     return (
                         <React.Fragment key={href}>

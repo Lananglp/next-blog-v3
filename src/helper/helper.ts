@@ -44,7 +44,7 @@ export const formatTimeAgo = (created_at: string | Date): string => {
     return moment(created_at).locale('en').fromNow();
 };
 
-export const decodeCategory = (category: string, slug: string) => {
+export const decodeCategory = (category: string, slug?: string) => {
     const origin = process.env.NEXT_PUBLIC_API_URL;
-    return `${origin}/${category.split(' ').join('-').toLowerCase()}/${slug}`
+    return `${origin}/${category.split(' ').join('-').toLowerCase()}${slug ? `/${slug}` : ''}`
 }
