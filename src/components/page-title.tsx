@@ -6,16 +6,16 @@ import { MoveLeftIcon } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/redux';
 
-function PageTitle() {
+function PageTitle({ className }: { className?: string }) {
 
     const { title } = useSelector((state: RootState) => state.pageTitle);
     const pathname = usePathname();
     const navigate = useRouter();
 
     return (
-        <div className="flex items-center gap-2 border-b border-zinc-300 dark:border-zinc-800 pb-2 mb-4">
+        <div className={`flex items-center gap-2 mb-4 ${className}`}>
             {pathname !== '/admin' && <Button type="button" onClick={() => navigate.back()} variant={'ghost'} size={'icon'}><MoveLeftIcon /></Button>}
-            <h2 className="text-black dark:text-white text-base md:text-lg lg:text-xl font-semibold">{title}</h2>
+            <h2 className="line-clamp-1 text-black dark:text-white text-base md:text-lg lg:text-xl font-semibold">{title}</h2>
         </div>
     )
 }

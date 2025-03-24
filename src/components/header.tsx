@@ -18,7 +18,7 @@ import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { Skeleton } from "./ui/skeleton";
 import { useRouter } from "next/navigation";
-import { useWindowScroll } from "react-use";
+import { useMedia, useWindowScroll } from "react-use";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/redux";
@@ -32,6 +32,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 
 function Header() {
+    const breakpointLg = useMedia("(min-width: 1024px)");
     const appName = process.env.NEXT_PUBLIC_APP_NAME;
     const dispatch = useDispatch();
     const { toast } = useToast();
@@ -122,9 +123,9 @@ function Header() {
                         </div>
                         <div className="flex items-center gap-2">
                             <ModeToggle />
-                            {isLogin && !isLoading && user.role === 'ADMIN' && <Button onClick={() => navigate.push("/admin")} variant={'editorBlockBar'} size={'sm'}><SquarePenIcon /><span className="hidden lg:inline">Manage your contents</span></Button>}
+                            {isLogin && !isLoading && user.role === 'ADMIN' && <Button onClick={() => navigate.push("/admin")} variant={'editorBlockBar'} size={breakpointLg ? 'sm' : 'iconSm'}><SquarePenIcon /><span className="hidden lg:inline">Manage your contents</span></Button>}
                             <Separator orientation="vertical" className="h-7 mx-3" />
-                            <div className="hidden md:block">
+                            <div className="hidden md:block space-x-1">
                                 {!isLoading ? isLogin ? (
                                     <div className="flex items-center gap-2">
                                         <DropdownMenu>

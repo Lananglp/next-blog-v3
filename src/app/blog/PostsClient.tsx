@@ -58,7 +58,7 @@ function PostsClient() {
                                 <div key={index} className='w-full space-y-4'>
                                     <Link href={decodeCategory(item.categories[0].name, item.slug)}>
                                         <div>
-                                            <Image src={`${item.featuredImage}?tr=w-320&tr=h-180`} alt={item.altText || "Featured Image"} width={320} height={180} className='w-full h-full aspect-video rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
+                                            <Image priority src={`${item.featuredImage}?tr=f-webp`} alt={item.altText || "Featured Image"} width={320} height={180} className='w-full h-full aspect-video rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
                                         </div>
                                     </Link>
                                     <div className='w-full space-y-2'>

@@ -44,7 +44,7 @@ function PostShow({ post }: Props) {
                     <header>
                         {post.featuredImage && (
                             <figure className='mt-0'>
-                                <Image priority src={`${post.featuredImage}?tr=w-592&tr=h-333`} alt="Featured image AI" width={592} height={333} className='aspect-video object-cover w-full h-full' />
+                                <Image priority src={`${post.featuredImage}?tr=f-webp`} alt="Featured image AI" width={592} height={333} className='aspect-video object-cover w-full h-full' />
                                 {post.altText && <figcaption className='text-zinc-600 dark:text-zinc-400 text-xs mt-2'>{post.altText}</figcaption>}
                             </figure>
                         )}
@@ -52,15 +52,15 @@ function PostShow({ post }: Props) {
                     </header>
                     <article className='tiptap-preview' dangerouslySetInnerHTML={{ __html: parseHTML(post.content) }} />
                 </div>
-                <Separator orientation='horizontal' className='mb-4' />
+                {(data?.relatedByCategory && data?.relatedByCategory.length > 0 || data?.relatedByAuthor && data?.relatedByAuthor.length > 0) && <Separator orientation='horizontal' className='mb-4' />}
                 {data?.relatedByCategory && data?.relatedByCategory.length > 0 && (
                     <div className='mb-4'>
-                        <p className='mb-6 text-xl font-semibold text-black dark:text-white'>Continue reading related posts :</p>
+                        <p className='mb-4 font-medium text-black dark:text-white'>Continue reading related posts :</p>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                             {data?.relatedByCategory.map((item, index) => (
-                                <div className='w-full flex flex-row md:flex-col items-center gap-4' key={index}>
-                                    <Link href={decodeCategory(item.categories[0].name, item.slug)} className='block aspect-video md:aspect-auto w-80 md:w-full h-full rounded-lg'>
-                                        <Image src={item.featuredImage} alt={item.altText || "Featured Image"} width={320} height={180} className='w-full h-full aspect-video md:aspect-auto rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
+                                <div className='w-full flex flex-col items-center gap-4' key={index}>
+                                    <Link href={decodeCategory(item.categories[0].name, item.slug)} className='block aspect-video w-full rounded-lg'>
+                                        <Image src={`${item.featuredImage}?tr=f-webp`} alt={item.altText || "Featured Image"} width={320} height={180} className='w-full h-full aspect-video rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
                                     </Link>
                                     <div className='w-full space-y-2'>
                                         <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-2 md:text-lg font-medium text-black dark:text-white'>{item.title}</Link>
@@ -74,12 +74,12 @@ function PostShow({ post }: Props) {
                 )}
                 {data?.relatedByAuthor && data?.relatedByAuthor.length > 0 && (
                     <div className='mb-4'>
-                        <p className='mb-6 text-xl font-semibold text-black dark:text-white'>Other posts by author :</p>
+                        <p className='mb-4 font-medium text-black dark:text-white'>Other posts by author :</p>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                             {data?.relatedByAuthor.map((item, index) => (
-                                <div className='w-full flex flex-row md:flex-col items-center gap-4' key={index}>
-                                    <Link href={decodeCategory(item.categories[0].name, item.slug)} className='block aspect-video md:aspect-auto w-80 md:w-full h-full rounded-lg'>
-                                        <Image src={item.featuredImage} alt={item.altText || "Featured Image"} width={320} height={180} className='w-full h-full aspect-video md:aspect-auto rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
+                                <div className='w-full flex flex-col items-center gap-4' key={index}>
+                                    <Link href={decodeCategory(item.categories[0].name, item.slug)} className='block aspect-video w-full rounded-lg'>
+                                        <Image src={`${item.featuredImage}?tr=f-webp`} alt={item.altText || "Featured Image"} width={320} height={180} className='w-full h-full aspect-video rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
                                     </Link>
                                     <div className='w-full space-y-2'>
                                         <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-2 md:text-lg font-medium text-black dark:text-white'>{item.title}</Link>
@@ -151,17 +151,17 @@ function PostShow({ post }: Props) {
                     <div className='flex-grow'>
                         <PostComment post={post} user={user} isLogin={isLogin} />
                     </div>
-                    {data?.randomPosts && (
+                    {data?.randomPosts && data?.randomPosts.length > 0 && (
                         <div>
                             <p className='font-medium text-black dark:text-white mb-4'>Related Posts :</p>
                             <div className='space-y-4'>
                                 {data?.randomPosts.map((item, index) => (
                                     <div className='flex items-center gap-4' key={index}>
-                                        <Link href={decodeCategory(item.categories[0].name, item.slug)} className='block aspect-video w-80 rounded-lg'>
-                                            <Image src={item.featuredImage} alt={item.altText || "Featured Image"} width={320} height={180} className='aspect-video rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
+                                        <Link href={decodeCategory(item.categories[0].name, item.slug)} className='block aspect-video w-64 md:w-80 rounded-lg'>
+                                            <Image src={`${item.featuredImage}?tr=f-webp`} alt={item.altText || "Featured Image"} width={320} height={180} className='aspect-video rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
                                         </Link>
                                         <div className='w-full space-y-2'>
-                                            <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-2 font-medium text-black dark:text-white'>{item.title}</Link>
+                                            <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-2 text-sm md:text-base font-medium text-black dark:text-white'>{item.title}</Link>
                                             <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-2 text-xs'>{item.excerpt}</Link>
                                         </div>
                                     </div>

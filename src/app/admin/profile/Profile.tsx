@@ -144,7 +144,7 @@ function Profile({ pageTitle }: Props) {
                                 <ImageIcon className='h-8 w-8' />
                                 <p className='text-xs'>Drag and drop or click to upload an image</p>
                             </div>
-                            {image && <Image src={`${image}?tr=w-92&tr=h-92`} alt="Preview" width={92} height={92} className='absolute inset-0 h-full w-full object-cover rounded-full bg-zinc-100 dark:bg-zinc-900' />}
+                            {image && <Image priority src={`${image}?tr=f-webp`} alt="Preview" width={92} height={92} className='absolute inset-0 h-full w-full object-cover rounded-full bg-zinc-100 dark:bg-zinc-900' />}
                             {image && <div className='absolute -bottom-2 -end-2 bg-zinc-100 dark:bg-zinc-900 border border-template rounded-full p-2'><PenIcon className='h-4 w-4' /></div>}
                         </div>
                     ) : (
