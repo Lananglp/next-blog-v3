@@ -515,7 +515,7 @@ const StorageImageList = ({ urlEndpoint, index, item, detail, onClick }: Storage
                         lqip={{ active: true, quality: 20 }}
                         transformation={[
                             {
-                                quality: "60",
+                                quality: 60,
                                 width: "168",
                                 height: "auto",
                                 // cropMode: "fill",

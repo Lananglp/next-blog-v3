@@ -19,7 +19,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     dataPerPage,
     onPageChange,
     className,
-    align='end'
+    align='start'
 }) => {
     const totalPages = Math.ceil(totalData / dataPerPage);
 

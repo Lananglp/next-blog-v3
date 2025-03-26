@@ -158,7 +158,7 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%}
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   @apply w-2.5 h-2.5;
 }
 
@@ -168,7 +168,7 @@ body {
 
 ::-webkit-scrollbar-track {
   @apply bg-zinc-200 dark:bg-zinc-900;
-}
+} */
 
 @layer base {
   * {

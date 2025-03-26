@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { SelectedType } from '@/types/all-type';
 import { useFetchCategories } from '@/hooks/use-fetch-categories';
 import { Button } from '@/components/ui/button';
-import { EditIcon, Loader, TrashIcon, XIcon } from 'lucide-react';
+import { EditIcon, Loader, Loader2Icon, TrashIcon, XIcon } from 'lucide-react';
 import { Pagination } from '@/components/pagination';
 import { Checkbox } from '@/components/ui/checkbox';
 import { formatDateTime } from '@/helper/helper';
@@ -212,8 +212,8 @@ function Categories() {
                                             </tr>
                                         ) : (
                                         <tr>
-                                            <td colSpan={5} className='p-4 animate-pulse bg-zinc-200/50 dark:bg-zinc-900/50 border-b border-template text-center text-sm font-medium text-zinc-500 dark:text-zinc-400'>
-                                                <Loader className='inline h-4 w-4 mb-0.5 me-1 animate-spin' />Loading...
+                                            <td colSpan={5} className='p-4 animate-pulse bg-zinc-200/50 dark:bg-zinc-900/50 border-b border-template text-sm font-medium text-zinc-500 dark:text-zinc-400'>
+                                                <Loader2Icon className='inline h-4 w-4 mb-0.5 me-2 animate-spin' />please wait...
                                             </td>
                                         </tr>
                                     )
