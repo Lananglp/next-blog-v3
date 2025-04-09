@@ -53,17 +53,17 @@ function PostsClient() {
                         </div>
                     </div>
                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                        {!loading ? items.length > 0 ? items.map((item, index) => {
+                        {!loading ? items.length > 0 ? items.filter((i) => i.status === 'PUBLISH').map((item, index) => {
                             return (
                                 <div key={index} className='w-full space-y-4'>
                                     <Link href={decodeCategory(item.categories[0].name, item.slug)}>
                                         <div>
-                                            <Image priority src={`${item.featuredImage}?tr=f-webp`} alt={item.altText || "Featured Image"} width={320} height={180} className='w-full h-full aspect-video rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
+                                            <Image priority src={`${item.image}?tr=f-webp`} alt={item.altText || "Featured Image"} width={320} height={180} className='w-full h-full aspect-video rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
                                         </div>
                                     </Link>
                                     <div className='w-full space-y-2'>
                                         <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-3 md:line-clamp-2 font-semibold text-black dark:text-white'>{item.title}</Link>
-                                        <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-3 md:line-clamp-2 text-xs md:text-sm'>{item.excerpt}</Link>
+                                        <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-3 md:line-clamp-2 text-xs md:text-sm'>{item.description}</Link>
                                         <Link href={decodeCategory(item.categories[0].name, item.slug)} className='text-xs'><span className='font-semibold text-black dark:text-white'>{item.author.name}</span> &nbsp; | &nbsp; {item.createdAt && formatTimeAgo(item.createdAt)}</Link>
                                     </div>
                                 </div>

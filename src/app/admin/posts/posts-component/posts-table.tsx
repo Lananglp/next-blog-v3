@@ -96,7 +96,7 @@ function PostsTable({
                                                 </div>
                                             </td>
                                             <td className='p-1 border-b border-template text-center'>
-                                                {post?.featuredImage && <PostsThumbnail key={post?.id} url={post?.featuredImage} />}
+                                                {post?.image && <PostsThumbnail key={post?.id} url={post?.image} />}
                                             </td>
                                             <td className='p-4 border-b border-template text-start'>
                                                 <div className='line-clamp-3 text-black dark:text-white'>
@@ -105,7 +105,7 @@ function PostsTable({
                                             </td>
                                             <td className='p-4 border-b border-template text-start'>
                                                 <div className='line-clamp-2 text-sm'>
-                                                    {post?.excerpt}
+                                                    {post?.description}
                                                 </div>
                                             </td>
                                             <td className='p-4 border-b border-template text-start'>

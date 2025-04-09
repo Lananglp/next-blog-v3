@@ -3,22 +3,21 @@ import * as z from 'zod'
 // ============================= Post create & edit =============================
 export const postSchema = z.object({
     id: z.string().optional(),
-    title: z.string().min(1, "Title is required").min(5, "Minimum 5 characters required").max(100, "The word is too long"),
+    title: z.string().min(1, "Title is required").min(5, "Minimum 10 characters required").max(100, "The word is too long"),
     content: z.string().min(1, "Content is required").min(30, "Minimum 30 characters required"),
-    excerpt: z.string().min(1, "Summary is required").min(10, "Minimum 10 characters required").max(200, "The word is too long"),
-    slug: z.string().min(1, "Slug is required").min(5, "Minimum 5 characters required").max(150, "The word is too long"),
-    status: z.enum(["PUBLISH", "DRAFT", "PRIVATE"]),
+    description: z.string().min(1, "Summary is required").min(10, "Minimum 10 characters required").max(200, "The word is too long"),
+    status: z.enum(["PUBLISH", "DRAFT"]),
     categories: z.array(z.string()).min(1, "1 category is required"),
     tags: z.array(z.string()).min(1, "1 tag is required"),
-    authorId: z.string(),
-    featuredImage: z.string().url("The URL is not valid"),
+    authorId: z.string().optional(),
+    image: z.string().url("The URL is not valid"),
     altText: z.string(),
     commentStatus: z.enum(["OPEN", "CLOSED"]),
     meta: z.object({
-        title: z.string().max(100, "The word is too long"),
-        description: z.string().max(200, "The word is too long"),
+        title: z.string(),
+        description: z.string(),
         keywords: z.array(z.string()),
-        ogImage: z.string(),
+        image: z.string(),
     }),
 });
 

@@ -15,9 +15,11 @@ interface InputExcerptProps {
     errors?: any;
     control: any;
     name: string;
+    label: string;
+    required?: boolean;
 }
 
-export default function InputExcerpt({ value, content, placeholder, errors, control, name }: InputExcerptProps) {
+export default function InputExcerpt({ value, content, placeholder, errors, control, name, label, required }: InputExcerptProps) {
 
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -50,7 +52,7 @@ export default function InputExcerpt({ value, content, placeholder, errors, cont
                 return (
                     <div>
                         <div className="flex flex-wrap justify-between items-end mb-2">
-                            <Label htmlFor="excerpt"><span className="text-red-500">*</span>&nbsp;Post Summary :</Label>
+                            <Label htmlFor={label} className="inline-block">{required && <span className="text-red-500">*</span>}&nbsp;{label} :</Label>
                             <Button
                                 type="button"
                                 title="get summary from content field"
@@ -62,7 +64,7 @@ export default function InputExcerpt({ value, content, placeholder, errors, cont
                             </Button>
                         </div>
                         <Textarea
-                            id="excerpt"
+                            id={label}
                             {...field}
                             ref={(ref) => {
                                 field.ref(ref);

@@ -32,8 +32,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
         },
         select: {
             title: true,
-            excerpt: true,
-            featuredImage: true,
+            description: true,
+            image: true,
             createdAt: true,
             updatedAt: true,
             author: {
@@ -41,6 +41,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
                     name: true,
                 },
             },
+            meta: true,
         },
     });
 
@@ -52,12 +53,12 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     }
 
     return {
-        title: post.title,
-        description: post.excerpt || "Read this amazing post.",
+        title: post.meta?.title || post.title,
+        description: post.meta?.description || post.description,
         openGraph: {
-            title: post.title,
-            description: post.excerpt || "Read this amazing post.",
-            images: post.featuredImage ? [{ url: post.featuredImage }] : [],
+            title: post.meta?.title || post.title,
+            description: post.meta?.description || post.description,
+            images: post.meta?.image ? [{ url: post.meta?.image }] : post.image ? [{ url: post.image }] : [],
             type: "article",
             publishedTime: post.createdAt.toISOString(),
             modifiedTime: post.updatedAt.toISOString(),
@@ -66,11 +67,11 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
         twitter: {
             card: "summary_large_image",
             title: post.title,
-            description: post.excerpt || "Read this amazing post.",
-            images: post.featuredImage ? [post.featuredImage] : [],
+            description: post.meta?.description || post.description,
+            images: post.meta?.image ? [post.meta?.image] : post.image ? [post.image] : [],
         },
         alternates: {
-            canonical: `/post/${category}/${slug}`,
+            canonical: `/${category}/${slug}`,
         },
     };
 }
@@ -130,21 +131,28 @@ export default async function PostPage({ params }: PostPageProps) {
                     category: true,
                 },
             },
+            meta: true,
+            _count: {
+                select: {
+                    comments: true,
+                    likes: true,
+                },
+            },
+            likes: {
+                select: {
+                    postId: true,
+                    userId: true,
+                }
+            }
         },
     });
 
     const formattedPost: PostType = {
         ...post || initialPost,
         categories: post?.categories.map((cat) => cat.category) || [],
-        meta: {
-            title: (post?.meta as any)?.title || "",
-            description: (post?.meta as any)?.description || "",
-            keywords: (post?.meta as any)?.keywords || [],
-            ogImage: (post?.meta as any)?.ogImage || "",
-        },
     };
 
-    if (!post) {
+    if (!post || post.status === "DRAFT") {
         return notFound();
     }
 

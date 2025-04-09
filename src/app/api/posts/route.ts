@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
+import { responseStatus } from '@/helper/system-config';
 
 export async function GET(req: Request) {
     try {
@@ -19,7 +20,7 @@ export async function GET(req: Request) {
                     OR: [
                         { title: { contains: search, } },
                         { content: { contains: search, } },
-                        { excerpt: { contains: search, } },
+                        { description: { contains: search, } },
                     ]
                 } : {},
                 categoryId ? {
@@ -53,12 +54,18 @@ export async function GET(req: Request) {
                         category: true,
                     },
                 },
+                comments: {
+                    select: {
+                        id: true,
+                    },
+                },
             },
         });
 
         const formattedPosts = posts.map(post => ({
             ...post,
             categories: post.categories.map(cat => cat.category), // Flatten category layer
+            comments: post.comments.length,
         }));
 
         return NextResponse.json({
@@ -71,6 +78,6 @@ export async function GET(req: Request) {
             } : null,
         });
     } catch (error) {
-        return NextResponse.json({ message: error || 'Something went wrong' }, { status: 400 });
+        return NextResponse.json({ status: responseStatus.error, message: error || 'Something went wrong' }, { status: 400 });
     }
 }

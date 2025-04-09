@@ -11,8 +11,8 @@ type CategoryWithPostType = {
     posts: {
         altText: string | null | undefined;
         title: string;
-        excerpt: string;
-        featuredImage: string;
+        description: string;
+        image: string;
         createdAt: Date;
         author: {
             name: string;
@@ -47,8 +47,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                         select: {
                             altText: true,
                             title: true,
-                            excerpt: true,
-                            featuredImage: true,
+                            description: true,
+                            image: true,
                             createdAt: true,
                             author: {
                                 select: {
@@ -72,8 +72,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         posts: data?.posts[0].post || {
             altText: "",
             title: "",
-            excerpt: "",
-            featuredImage: "",
+            description: "",
+            image: "",
             createdAt: new Date(),
             author: {
                 name: "",

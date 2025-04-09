@@ -65,12 +65,14 @@ const CommentSection = ({ post, user, comment, onReply }: { post: PostType, user
                         <h6 className="line-clamp-1 text-sm text-black dark:text-white font-medium">{comment.author.name} {comment.authorId === post.authorId && <span className='px-2 border border-template rounded text-sky-700 dark:text-sky-400 font-medium text-xs'>Creator</span>}</h6>
                     </div>
                 </div>
-                <div className='flex items-center gap-1'>
-                    <Button type='button' onClick={() => handleSubmitLike(comment.id, user.id)} variant={'ghost'} size={'iconXs'}>
-                        {isLiked ? <FaHeart className='text-red-500' /> : <FaRegHeart />}
-                    </Button>
-                    <Button type='button' onClick={() => onReply(comment.id, comment.author.name)} variant={'outline'} size={'xs'}>Reply</Button>
-                </div>
+                {post.commentStatus === 'OPEN' && (
+                    <div className='flex items-center gap-1'>
+                        <Button type='button' onClick={() => handleSubmitLike(comment.id, user.id)} variant={'ghost'} size={'iconXs'}>
+                            {isLiked ? <FaHeart className='text-red-500' /> : <FaRegHeart />}
+                        </Button>
+                        <Button type='button' onClick={() => onReply(comment.id, comment.author.name)} disabled={post.commentStatus !== 'OPEN'} variant={'outline'} size={'xs'}>Reply</Button>
+                    </div>
+                )}
             </div>
             <div className='text-sm space-y-1'>
                 <p>{comment.content}</p>

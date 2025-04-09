@@ -130,7 +130,7 @@ function Posts() {
                 <div>
                     <Button type='button' onClick={() => navigate.push('/admin/posts/create')} variant={'primary'} className='w-full'><PenLine />Create new post</Button>
                 </div>
-                <div className='flex flex-col lg:flex-row items-center gap-2'>
+                <div className='flex flex-col md:flex-wrap lg:flex-row items-center gap-2'>
                     <FilterByCategory selectedCategory={selectedCategory} onSelectionChange={(value) => setSelectedCategory(value)} />
                     <FilterDataPerPage
                         value={limit}
@@ -210,7 +210,10 @@ function Posts() {
                             page={page}
                             limit={limit}
                             isSelected={isSelected}
-                            isSelectedChange={(value) => setIsSelected(value)}
+                            isSelectedChange={(value) => {
+                                setIsSelected(value);
+                                setSelectedPosts([]);
+                            }}
                         />
                     )}
                     {dataView === 'TABLE' && (
@@ -225,7 +228,10 @@ function Posts() {
                             page={page}
                             limit={limit}
                             isSelected={isSelected}
-                            isSelectedChange={(value) => setIsSelected(value)}
+                            isSelectedChange={(value) => {
+                                setIsSelected(value);
+                                setSelectedPosts([]);
+                            }}
                         />
                     )}
                     {dataView === 'CARD' && (
@@ -240,7 +246,10 @@ function Posts() {
                             page={page}
                             limit={limit}
                             isSelected={isSelected}
-                            isSelectedChange={(value) => setIsSelected(value)}
+                            isSelectedChange={(value) => {
+                                setIsSelected(value);
+                                setSelectedPosts([]);
+                            }}
                         />
                     )}
                     

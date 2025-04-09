@@ -59,6 +59,19 @@ async function Page({ params }: PostEditProps) {
                     category: true,
                 },
             },
+            meta: true,
+            _count: {
+                select: {
+                    comments: true,
+                    likes: true,
+                },
+            },
+            likes: {
+                select: {
+                    postId: true,
+                    userId: true,
+                }
+            },
         },
     });
 
@@ -66,10 +79,10 @@ async function Page({ params }: PostEditProps) {
         ...post || initialPost,
         categories: post?.categories.map((cat) => cat.category) || [],
         meta: {
-            title: (post?.meta as { title?: string })?.title || "",
-            description: (post?.meta as { description?: string })?.description || "",
-            keywords: (post?.meta as { keywords?: string[] })?.keywords || [],
-            ogImage: (post?.meta as { ogImage?: string })?.ogImage || "",
+            title: post?.meta?.title || "",
+            description: post?.meta?.description || "",
+            keywords: post?.meta?.keywords || [],
+            image: post?.meta?.image || "",
         },
     };
 

@@ -44,6 +44,11 @@ export const formatTimeAgo = (created_at: string | Date): string => {
     return moment(created_at).locale('en').fromNow();
 };
 
+export const formatInitials = (name: string) => {
+    const initials = name.split(" ").slice(0, 2).map(word => word[0]).join("");
+    return initials.toUpperCase();
+}
+
 export const decodeCategory = (category: string, slug?: string) => {
     const origin = process.env.NEXT_PUBLIC_API_URL;
     return `${origin}/${category.split(' ').join('-').toLowerCase()}${slug ? `/${slug}` : ''}`

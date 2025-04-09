@@ -40,3 +40,7 @@ export const deletePosts = async (ids: string[]): Promise<AxiosResponse<Fetching
         withCredentials: true,
     });
 };
+
+export const toggleLikePost = async (data: { postId: string; userId: string }): Promise<AxiosResponse> => {
+    return await api.post("/api/posts/like", data, { withCredentials: true });
+};

@@ -202,19 +202,19 @@ function EditorLayout({ errors, field }: EditorLayoutProps) {
         <div>
             <Label htmlFor="content" className="inline-block mb-2"><span className="text-red-500">*</span>&nbsp;Post Content :</Label>
             {!editor ? <EditorLoading /> : (
-                <>
+                <div className={`border ${errors ? 'border-red-500' : 'border-template'} rounded-lg pt-[1px]`}>
                     {/* <EditorBubbleMenu editor={editor} />
                     <EditorFloatingMenu editor={editor} /> */}
-                    <EditorMenu editor={editor} errors={errors} className='sticky top-2 z-10' />
+                    <EditorMenu editor={editor} errors={errors} className='sticky top-12 z-10 border-b border-template' />
                     <EditorContent
                         id='content'
                         // className={`rounded-b-lg border-x border-b p-6 min-h-96 md:max-h-[calc(100vh-12rem)] overflow-y-auto ${errors ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-800'} max-w-none prose dark:prose-invert prose-th:border prose-td:border prose-th:dark:bg-zinc-900/50 prose-zinc prose-th:px-2 prose-li:mb-0 prose-headings:text-zinc-700 prose-headings:dark:text-white prose-strong:text-zinc-700 prose-strong:dark:text-white prose-a:text-zinc-700 prose-a:dark:text-white`}
-                        className={`mt-2 rounded-lg border p-6 min-h-96 lg:min-h-[64rem] ${errors ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-800'} max-w-none prose dark:prose-invert prose-custom`}
+                        className={`p-6 min-h-96 lg:min-h-[64rem] max-w-none prose dark:prose-invert prose-custom`}
                         editor={editor}
                         onClick={() => editor?.commands.focus()}
                     />
                     {errors && <p className="mt-2 text-red-500 text-xs">{errors?.message}</p>}
-                </>
+                </div>
             )}
         </div>
     );

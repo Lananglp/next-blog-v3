@@ -17,13 +17,44 @@ export async function GET(req: NextRequest) {
         const { payload } = await jwtVerify(token, secret);
         const userId = payload.id;
 
-        const user = await prisma.user.findUnique({
+        const dbUser = await prisma.user.findUnique({
             where: { id: userId as string },
+            include: {
+                _count: {
+                    select: {
+                        posts: true,
+                        followers: true,
+                        following: true,
+                    }
+                },
+                // followers: {
+                //     select: {
+                //         follower: {
+                //             select: {
+                //                 _count: true
+                //             }
+                //         },
+                //     }
+                // },
+            }
         });
         
-        if (!user) {
+        if (!dbUser) {
             return NextResponse.json({ status: responseStatus.unauthorized, message: "Unauthorized" }, { status: 401 });
         }
+
+        const filteredUser = {
+            ...dbUser,
+            totalPosts: dbUser._count.posts,
+            totalFollowers: dbUser._count.followers,
+            totalFollowing: dbUser._count.following,
+        };
+
+        const {
+            password,
+            _count,
+            ...user
+        } = filteredUser;
 
         return NextResponse.json({ user: user });
     } catch (error) {

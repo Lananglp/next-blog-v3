@@ -16,7 +16,12 @@ const sessionSlice = createSlice({
             state.user.name = action.payload.name;
             state.user.email = action.payload.email;
             state.user.image = action.payload.image;
+            state.user.imageId = action.payload.imageId;
+            state.user.imageProvider = action.payload.imageProvider;
             state.user.role = action.payload.role;
+            state.user.totalPosts = action.payload.totalPosts;
+            state.user.totalFollowers = action.payload.totalFollowers;
+            state.user.totalFollowing = action.payload.totalFollowing;
             state.user.createdAt = action.payload.createdAt;
             state.user.updatedAt = action.payload.updatedAt;
             // Periksa apakah account ada

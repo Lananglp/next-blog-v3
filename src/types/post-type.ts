@@ -1,5 +1,3 @@
-import { JsonValue } from "@prisma/client/runtime/library";
-
 export type PostType = {
     id: string;
     author: {
@@ -22,9 +20,9 @@ export type PostType = {
     }
     title: string;
     content: string;
-    excerpt: string;
+    description: string;
     slug: string;
-    status: "PUBLISH" | "DRAFT" | "PRIVATE" | string;
+    status: "PUBLISH" | "DRAFT" | string;
     categories: {
         id: string;
         name: string;
@@ -33,19 +31,23 @@ export type PostType = {
     }[];
     tags: string[];
     authorId: string;
-    featuredImage: string;
+    _count: {
+        comments: number;
+        likes: number;
+    }
+    image: string;
     altText: string | null | undefined;
     commentStatus: "OPEN" | "CLOSED" | string;
+    likes: {
+        postId: string,
+        userId: string,
+    }[],
     meta: {
         title: string;
         description: string;
         keywords: string[];
-        ogImage: string;
-    };
-    metaTitle: string | null | undefined;
-    metaDescription: string | null | undefined;
-    metaKeywords: string[];
-    metaImage: string | null | undefined;
+        image: string;
+    } | null;
     createdAt: Date;
     updatedAt: Date;
 };
@@ -54,13 +56,13 @@ export const initialPost = {
     id: "",
     title: "",
     content: "",
-    excerpt: "",
+    description: "",
     slug: "",
-    status: "PUBLISH",
+    status: "DRAFT",
     categories: [],
     tags: [],
     authorId: "",
-    featuredImage: "",
+    image: "",
     altText: "",
     commentStatus: "OPEN",
     author: {
@@ -71,16 +73,17 @@ export const initialPost = {
         followers: [],
         following: [],
     },
+    likes: [],
+    _count: {
+        comments: 0,
+        likes: 0,
+    },
     meta: {
         title: "",
         description: "",
         keywords: [],
-        ogImage: "",
+        image: "",
     },
-    metaTitle: "",
-    metaDescription: "",
-    metaKeywords: [],
-    metaImage: "",
     createdAt: new Date(),
     updatedAt: new Date(),
 };

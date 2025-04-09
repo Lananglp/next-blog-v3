@@ -39,9 +39,11 @@ interface InputKategoriProps {
     errors?: any;
     name: string;
     control: any;
+    label: string;
+    required?: boolean;
 }
 
-export default function InputCategory({ value, placeholder, errors, control, name }: InputKategoriProps) {
+export default function InputCategory({ value, placeholder, errors, control, name, label, required }: InputKategoriProps) {
     const { toast } = useToast();
     const [modal, setModal] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -120,7 +122,7 @@ export default function InputCategory({ value, placeholder, errors, control, nam
 
                 return (
                     <div>
-                        <Label htmlFor="category" className="inline-block mb-2">Post Category :</Label>
+                        <Label className="inline-block mb-2">{required && <span className="text-red-500">*</span>}&nbsp;{label} :</Label>
                         <div className={`w-full border ${errors ? "border-red-500" : "border-zinc-300 dark:border-zinc-800"} rounded-lg p-1`}>
                             <div className="flex items-center flex-wrap gap-1">
                                 {value && value.map((category, index) => (
@@ -133,7 +135,7 @@ export default function InputCategory({ value, placeholder, errors, control, nam
                                 ))}
                             </div>
                             <Button
-                                id="category"
+                                // id={label}
                                 type="button"
                                 variant={'editorBlockBar'}
                                 size={'editorBlockBar'}

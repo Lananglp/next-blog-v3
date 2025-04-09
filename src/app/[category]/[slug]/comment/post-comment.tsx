@@ -18,7 +18,7 @@ import { useFetchComments } from '@/hooks/use-fetch-comments';
 import { Skeleton } from '@/components/ui/skeleton';
 import CommentSection from './comment-section';
 
-const PostComment = ({ post, user, isLogin }: { post: PostType, user: UserType, isLogin: boolean }) => {
+const PostComment = ({ post, user, isLogin, totalComments }: { post: PostType, user: UserType, isLogin: boolean, totalComments: number }) => {
     const [isloading, setIsLoading] = useState<boolean>(true);
     const [replyName, setReplyName] = useState<string>('');
     const formCommentRef = useRef<HTMLFormElement>(null);
@@ -108,7 +108,7 @@ const PostComment = ({ post, user, isLogin }: { post: PostType, user: UserType, 
         <div className="sticky top-24 border border-template rounded-xl">
             <div className={`px-4 hover:bg-template py-4 rounded-t-xl cursor-pointer flex items-center justify-between hover-bg-template transition-colors duration-300`}>
                 <h4 className={`font-medium text-base text-black dark:text-white`}><span>Discussion and Comments&nbsp;</span></h4>
-                <p><MessageCircle className='inline h-4 w-4 mb-0.5 me-1' />{comments ? comments.length : 0}</p>
+                <p><MessageCircle className='inline h-4 w-4 mb-0.5 me-1' />{totalComments}</p>
             </div>
             <div className='relative'>
                 <Separator />
@@ -121,8 +121,10 @@ const PostComment = ({ post, user, isLogin }: { post: PostType, user: UserType, 
                                     <CommentSection key={index} post={post} user={user} comment={comment} onReply={() => handleReply(comment.id, comment.author.name)} />
                                 )
                             }
+                            ) : post.commentStatus === 'OPEN' ? (
+                                <p className='text-zinc-500 text-sm'>There are no comments for this post yet.</p>
                             ) : (
-                                <p>There are no comments for this post yet.</p>
+                                <p className='text-zinc-500 text-sm'>Comments are closed for this post.</p>
                             ) : (
                             <>
                                 <div className="flex items-start gap-3">
@@ -172,6 +174,7 @@ const PostComment = ({ post, user, isLogin }: { post: PostType, user: UserType, 
                                 onSubmit={handleClickSubmit}
                                 placeholder={isLogin ? replyName !== '' && parentId !== null ? `Reply to ${replyName}...` : `Comment as ${user.name}...` : 'Say something...'}
                                 loading={loading}
+                                disabledComment={post.commentStatus === 'CLOSED'}
                                 onHeightChange={(value) => setTextareaHeight(value)}
                             />
                         )}

@@ -1,6 +1,5 @@
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ChevronDown } from 'lucide-react';
 import React from 'react'
 import { Controller } from 'react-hook-form'
 
@@ -27,7 +26,6 @@ function InputStatus({ control, name, errors }: { control: any; name: string, er
                                 <SelectContent>
                                     <SelectItem value="DRAFT">Draft</SelectItem>
                                     <SelectItem value="PUBLISH">Publish</SelectItem>
-                                    <SelectItem value="PRIVATE">Private</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

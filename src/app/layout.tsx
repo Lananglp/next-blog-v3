@@ -5,8 +5,20 @@ import ReduxProvider from "@/components/redux-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 // import { fontPoppins } from "@/lib/font";
 import AuthProvider from "@/components/auth-check-provider";
-import { Poppins, Turret_Road, Orbitron } from "next/font/google";
+import { Poppins, Turret_Road, Orbitron, Inter, Open_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react"
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
+
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+})
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -37,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${poppins.className} ${fontTitle.variable} antialiased`}
+        className={`${inter.className} ${openSans.variable} ${poppins.variable} ${fontTitle.variable} antialiased`}
       >
         <Analytics />
         <ReduxProvider>

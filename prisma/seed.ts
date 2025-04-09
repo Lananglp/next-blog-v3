@@ -17,9 +17,14 @@ async function main() {
         email: "admin@admin.com",
         password: passwordHash,
         role: UserRole.ADMIN,
+        profile: {
+          create: {
+            bio: "Welcome to my blog!",
+          }
+        }
       },
     });
-    console.log("BERHASIL !!!");
+    console.log("SUCCESS !!!");
   } else {
     console.log("DATA SUDAH ADA.");
   }

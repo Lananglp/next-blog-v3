@@ -183,6 +183,14 @@ body {
     font-family: var(--font-family-title);
   }
 
+  .font-poppins {
+    font-family: var(--font-poppins);
+  }
+
+  .font-open-sans {
+    font-family: var(--font-open-sans);
+  }
+
   /* Custom styling untuk TwitterPicker */
   .custom-color-picker {
     @apply bg-zinc-100 dark:bg-zinc-900;

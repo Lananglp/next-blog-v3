@@ -32,6 +32,7 @@ const RepliesSection = ({ post, user, replyCount, commentId, onReply }: RepliesS
             {!showReplies && replyCount > 0 && <Button type='button' onClick={() => setShowReplies(true)} variant={'ghost'} size={'xs'} className='w-full'>View {replyCount} more replies</Button>}
             {showReplies &&
                 <RepliesLoop
+                    post={post}
                     user={user}
                     commentId={commentId}
                     postAuthorId={post.authorId}
@@ -47,6 +48,7 @@ const RepliesSection = ({ post, user, replyCount, commentId, onReply }: RepliesS
 export default RepliesSection;
 
 type RepliesLoopProps = {
+    post: PostType,
     user: UserType;
     commentId: string;
     postAuthorId: string;
@@ -55,7 +57,7 @@ type RepliesLoopProps = {
     onReply: (commentId: string, userName: string) => void
 }
 
-const RepliesLoop = ({ commentId, postAuthorId, onOpenChange, showReplies, user, onReply }: RepliesLoopProps) => {
+const RepliesLoop = ({ post, commentId, postAuthorId, onOpenChange, showReplies, user, onReply }: RepliesLoopProps) => {
 
     const { replies, loading } = useFetchReplies(commentId);
 
@@ -83,12 +85,14 @@ const RepliesLoop = ({ commentId, postAuthorId, onOpenChange, showReplies, user,
                                         </div>
                                     </div>
                                 </div>
-                                <ActionButton
-                                    replies={replies}
-                                    user={user}
-                                    repliesAuthorName={replies.author.name}
-                                    onReply={(commentId, userName) => onReply(commentId, userName)}
-                                />
+                                {post.commentStatus === 'OPEN' && (
+                                    <ActionButton
+                                        replies={replies}
+                                        user={user}
+                                        repliesAuthorName={replies.author.name}
+                                        onReply={(commentId, userName) => onReply(commentId, userName)}
+                                    />
+                                )}
                             </div>
                             <div className='text-sm space-y-1'>
                                 <p>{replies.replyToUser && <span className='px-1 bg-zinc-200 dark:bg-zinc-900 border border-template rounded text-black dark:text-white font-medium text-xs me-1'><UserRoundIcon className='inline h-3 w-3 mb-0.5 me-1' />{replies.replyToUser.name}</span>}{replies.content}</p>

@@ -21,8 +21,8 @@ const EditorMenu = ({ className, editor, errors }: Props) => {
 
     return (
         <div className={className}>
-            <div className={`flex flex-col bg-zinc-100 dark:bg-zinc-950 rounded-lg border-x border-t ${errors ? 'border border-red-500' : 'border-zinc-300 dark:border-zinc-800'}`}>
-                <div className="overflow-x-auto flex items-center gap-1 p-2 border-b border-zinc-300 dark:border-zinc-800 rounded-t-lg">
+            <div className={`flex flex-col bg-white dark:bg-zinc-950 rounded-lg`}>
+                <div className="overflow-x-auto flex items-center gap-1 p-2">
                     <EditorUndoRedo editor={editor} />
                     {/* <EditorVerticalLine />
                     <EditorTextColor editor={editor} /> */}
@@ -35,7 +35,7 @@ const EditorMenu = ({ className, editor, errors }: Props) => {
                     <EditorVerticalLine />
                     <EditorAlign editor={editor} />
                 </div>
-                <div className="p-2 overflow-x-auto bg-zinc-100 dark:bg-zinc-950 border-b border-zinc-300 dark:border-zinc-800 rounded-b-lg">
+                <div className="p-2 overflow-x-auto bg-white dark:bg-zinc-950">
                     <EditorBlock editor={editor} />
                 </div>
             </div>

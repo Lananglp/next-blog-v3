@@ -24,8 +24,8 @@ type CategoryWithPostType = {
     posts: {
         altText: string | null | undefined;
         title: string;
-        excerpt: string;
-        featuredImage: string;
+        description: string;
+        image: string;
         createdAt: Date;
         author: {
             name: string;
@@ -80,12 +80,12 @@ function CategoryShow({ category }: Props) {
                                 <div key={index} className='w-full space-y-4'>
                                     <Link href={decodeCategory(item.categories[0].name, item.slug)}>
                                         <div>
-                                            <Image priority src={`${item.featuredImage}?tr=f-webp`} alt={item.altText || "Featured Image"} width={320} height={180} className='w-full h-full aspect-video rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
+                                            <Image priority src={`${item.image}?tr=f-webp`} alt={item.altText || "Featured Image"} width={320} height={180} className='w-full h-full aspect-video rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
                                         </div>
                                     </Link>
                                     <div className='w-full space-y-2'>
                                         <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-2 font-medium text-black dark:text-white'>{item.title}</Link>
-                                        <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-2 text-xs md:text-sm'>{item.excerpt}</Link>
+                                        <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-2 text-xs md:text-sm'>{item.description}</Link>
                                         <Link href={decodeCategory(item.categories[0].name, item.slug)} className='text-xs'><span className='font-semibold text-black dark:text-white'>{item.author.name}</span> &nbsp; | &nbsp; {item.createdAt && formatTimeAgo(item.createdAt)}</Link>
                                     </div>
                                 </div>

@@ -64,10 +64,20 @@ function PostsCard({
                                     onMouseEnter={() => setHoveredId(post.id)}
                                     onMouseLeave={() => setHoveredId(null)}
                                 >
+                                    {isSelected && (
+                                        <div className='flex items-center gap-2'>
+                                            <Checkbox
+                                                checked={selectedPosts.map((item) => item.id).includes(post.id)}
+                                                onClick={() => toggleSelection(post.id, post.title)}
+                                                variant={'primary'}
+                                            />
+                                            <p className='text-sm'>Select</p>
+                                        </div>
+                                    )}
                                     <div className='flex lg:flex-row gap-4'>
-                                        {post?.featuredImage && (
+                                        {post?.image && (
                                             <div className='w-64'>
-                                                <PostsThumbnail key={post?.id} url={post?.featuredImage} />
+                                                <PostsThumbnail key={post?.id} url={post?.image} />
                                             </div>
                                         )}
                                         <div className='w-full space-y-2'>
@@ -114,7 +124,7 @@ function PostsCard({
                                     </div>
                                     <div className='space-y-3'>
                                         <div className='line-clamp-3 text-lg font-semibold text-black dark:text-white'>{post?.title}</div>
-                                        <div className='line-clamp-2 text-sm'>{post?.excerpt}</div>
+                                        <div className='line-clamp-2 text-sm'>{post?.description}</div>
                                         <div className='flex md:hidden flex-wrap items-center gap-1'>
                                             {post.categories.length > 0 && post?.categories?.slice(0, 6).map((category: CategoriesType, index: number) => {
                                                 return (
@@ -143,19 +153,6 @@ function PostsCard({
                                                 </div>
                                             )}
                                         </div>
-                                        {isSelected && (
-                                            <div className='space-y-2'>
-                                                <p className='text-sm'>Action :</p>
-                                                <div className='flex items-center gap-2'>
-                                                    <Checkbox
-                                                        checked={selectedPosts.map((item) => item.id).includes(post.id)}
-                                                        onClick={() => toggleSelection(post.id, post.title)}
-                                                        variant={'primary'}
-                                                    />
-                                                    <p className='text-sm'>Select this post</p>
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             )
@@ -172,18 +169,14 @@ function PostsCard({
                                 <Skeleton className='aspect-video w-64'  />
                                 <div className='w-full space-y-2'>
                                     <div className='flex flex-wrap justify-between items-center gap-3'>
-                                        <div className='flex items-center gap-3'>
+                                        <div className='flex items-center gap-2'>
                                             <Skeleton className='h-7 w-16' />
                                             <Skeleton className='h-7 w-16' />
                                         </div>
                                         <Skeleton className='h-7 w-32' />
                                     </div>
-                                    <div className='hidden md:flex flex-wrap items-center gap-1'>
-                                        {[1, 2, 3, 4, 5, 6].map((index) => {
-                                            return (
-                                                <Skeleton key={index} className='h-6 w-20' />
-                                            )
-                                        })}
+                                    <div className='hidden md:block'>
+                                        <Skeleton className='h-12 w-full' />
                                     </div>
                                 </div>
                             </div>

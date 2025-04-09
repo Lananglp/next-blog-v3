@@ -13,28 +13,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id                String        @id @default(uuid())
+  email             String        @unique
+  name              String
+  password          String
+  image             String?
+  imageId           String?
+  imageProvider     ImageProvider @default(DEFAULT)
+  role              UserRole      @default(USER)
+  posts             Post[]
+  comments          Comment[]     // Tambahkan ini agar user bisa memiliki komentar
+  commentLike       CommentLike[]        // Tambahkan ini agar user bisa menyukai komentar
+  postLike          PostLike[]
+  profile           Profile?
+  // Relasi untuk followers (pengguna yang mengikuti user ini)
+  followers         Follow[]      @relation("Followers")
+  // Relasi untuk following (pengguna yang diikuti oleh user ini)
+  following         Follow[]      @relation("Following")
+  receivedReplies   Comment[]     @relation("ReplyToUser")
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
 model Post {
-  id                String   @id @default(uuid())
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                String      @id @default(uuid())
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
   title             String
   content           String
-  excerpt           String
-  slug              String   @unique
+  description       String
+  slug              String      @unique
   status            PostStatus
   categories        PostCategory[]
   tags              String[]
   comments          Comment[]
-  author            User      @relation(fields: [authorId], references: [id])
+  author            User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId          String
-  featuredImage     String
+  image             String
   altText           String?   
   commentStatus     CommentStatus
-  meta              Json
-  metaTitle         String?
-  metaDescription   String?
-  metaKeywords      String[]
-  metaImage         String?
+  meta              Meta?
+  likes             PostLike[]
+}
+
+model Meta {
+  id                String    @id @default(uuid())
+  title             String
+  description       String
+  keywords          String[]
+  image             String
+
+  post              Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId            String?   @unique
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 model Category {
@@ -54,33 +88,36 @@ model PostCategory {
   @@id([postId, categoryId])
 }
 
+// model Profile {
+//   id          String    @id @default(uuid())
+//   bio         String?   @db.VarChar(500) // Batasi panjang bio maksimal 500 karakter
+//   phone_1     String?   @db.VarChar(20)  // Batasi panjang nomor telepon maksimal 20 karakter
+//   phone_2     String?   @db.VarChar(20)
+//   url_1       String?   @db.VarChar(255) // Batasi panjang URL maksimal 255 karakter
+//   url_2       String?   @db.VarChar(255)
+//   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   userId      String    @unique
+// }
 model Profile {
   id          String    @id @default(uuid())
   bio         String?
-  user        User      @relation(fields: [userId], references: [id])
+  phone_1     String?
+  phone_2     String?
+  url_1       String?
+  url_2       String?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String    @unique
 }
 
-model User {
-  id                String        @id @default(uuid())
-  email             String        @unique
-  name              String
-  password          String
-  image             String?
-  imageId           String?
-  imageProvider     ImageProvider @default(DEFAULT)
-  role              UserRole      @default(USER)
-  posts             Post[]
-  comments          Comment[]     // Tambahkan ini agar user bisa memiliki komentar
-  commentLike       CommentLike[]        // Tambahkan ini agar user bisa menyukai komentar
-  profile           Profile?
-  // Relasi untuk followers (pengguna yang mengikuti user ini)
-  followers         Follow[]      @relation("Followers")
-  // Relasi untuk following (pengguna yang diikuti oleh user ini)
-  following         Follow[]      @relation("Following")
-  receivedReplies   Comment[]     @relation("ReplyToUser")
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
+model PostLike {
+  id        String @id @default(uuid())
+  post      Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId]) // Tambahkan constraint unik untuk mencegah user memberi lebih dari 1 like per post
 }
 
 model Image {
@@ -141,7 +178,6 @@ enum UserRole {
 enum PostStatus {
   PUBLISH
   DRAFT
-  PRIVATE
 }
 
 enum CommentStatus {

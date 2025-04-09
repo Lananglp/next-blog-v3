@@ -21,6 +21,7 @@ interface InputCommentProps {
     name: string;
     required?: boolean;
     loading?: boolean;
+    disabledComment?: boolean;
     onSubmit?: () => void;
     onHeightChange?: (height: number) => void;
 }
@@ -37,6 +38,7 @@ export default function InputComment({
     onSubmit,
     onHeightChange,
     loading,
+    disabledComment,
 }: InputCommentProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const isMobile = useMedia('(max-width: 1024px)');
@@ -84,51 +86,59 @@ export default function InputComment({
 
                 return (
                     <div>
-                        <div className={`relative overflow-hidden ${className}`}>
-                            <Textarea
-                                ref={setRefs}
-                                value={value}
-                                onChange={handleChange}
-                                variant={'primary'}
-                                className='ps-4 pt-4 pb-2 pe-[3.5rem] resize-none border-none'
-                                placeholder={placeholder}
-                                rows={1}
-                                // disabled={isLoading}
-                                onKeyDown={(e) => {
-                                    if (!isMobile && e.key === 'Enter' && !e.shiftKey) {
-                                        e.preventDefault();
-                                        handleSubmit();
-                                    }
-                                }}
-                            />
-                            {isLogin && !isLoading ? (
-                                <Button
-                                    type="button"
-                                    disabled={loading}
-                                    onClick={handleSubmit}
-                                    variant={'submit'}
-                                    className="absolute bottom-2.5 right-2.5 rounded-full w-10 h-10 hover:scale-105 transition duration-200"
-                                >
-                                    {loading ? (
-                                        <LoaderCircle className="animate-spin" />
+                        {!disabledComment ? (
+                            <>
+                                <div className={`relative overflow-hidden ${className}`}>
+                                    <Textarea
+                                        ref={setRefs}
+                                        value={value}
+                                        onChange={handleChange}
+                                        variant={'primary'}
+                                        className='ps-4 pt-4 pb-2 pe-[3.5rem] resize-none border-none'
+                                        placeholder={placeholder}
+                                        rows={1}
+                                        // disabled={isLoading}
+                                        onKeyDown={(e) => {
+                                            if (!isMobile && e.key === 'Enter' && !e.shiftKey) {
+                                                e.preventDefault();
+                                                handleSubmit();
+                                            }
+                                        }}
+                                    />
+                                    {isLogin && !isLoading ? (
+                                        <Button
+                                            type="button"
+                                            disabled={loading}
+                                            onClick={handleSubmit}
+                                            variant={'submit'}
+                                            className="absolute bottom-2.5 right-2.5 rounded-full w-10 h-10 hover:scale-105 transition duration-200"
+                                        >
+                                            {loading ? (
+                                                <LoaderCircle className="animate-spin" />
+                                            ) : (
+                                                <Send />
+                                            )}
+                                        </Button>
                                     ) : (
-                                        <Send />
+                                        <LoginModal>
+                                            <Button
+                                                type="button"
+                                                variant={'submit'}
+                                                className="absolute bottom-2.5 right-2.5 rounded-full w-10 h-10 hover:scale-105 transition duration-200"
+                                            >
+                                                <Send />
+                                            </Button>
+                                        </LoginModal>
                                     )}
-                                </Button>
-                            ) : (
-                                <LoginModal>
-                                    <Button
-                                        type="button"
-                                        variant={'submit'}
-                                        className="absolute bottom-2.5 right-2.5 rounded-full w-10 h-10 hover:scale-105 transition duration-200"
-                                    >
-                                        <Send />
-                                    </Button>
-                                </LoginModal>
-                            )}
-                        </div>
-                        {errors && (
-                            <p className="mt-2 text-red-500 text-xs">{errors?.message}</p>
+                                </div>
+                                {errors && (
+                                    <p className="mt-2 text-red-500 text-xs">{errors?.message}</p>
+                                )}
+                            </>
+                        ) : (
+                            <div className="flex items-center justify-center py-5">
+                                <p className="text-zinc-500 text-sm">Comments are disabled</p>
+                            </div>
                         )}
                     </div>
                 );

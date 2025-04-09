@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { postSchema } from '@/helper/schema/schema';
 import prisma from '@/lib/prisma';
 import { responseStatus } from '@/helper/system-config';
+import { nanoid } from 'nanoid';
+import slugify from 'slugify';
 
 export async function POST(req: Request) {
     try {
@@ -13,13 +15,10 @@ export async function POST(req: Request) {
             meta: JSON.parse(body.meta),
         });
 
-        const existingPost = await prisma.post.findUnique({
-            where: { slug: validatedData.slug }
-        });
-
-        if (existingPost) {
-            return NextResponse.json({ status: responseStatus.warning, message: 'Slug already exists. Please use a different one.' }, { status: 400 });
-        }
+        // Buat slug dari title dan tambahkan ID unik
+        const baseSlug = slugify(validatedData.title, { lower: true, strict: true });
+        const uniqueId = nanoid(12);
+        const finalSlug = `${baseSlug}-${uniqueId}`;
 
         const categoryLinks = await Promise.all(
             validatedData.categories.map(async (name: string) => {
@@ -37,25 +36,46 @@ export async function POST(req: Request) {
             data: {
                 title: validatedData.title,
                 content: validatedData.content,
-                excerpt: validatedData.excerpt,
-                slug: validatedData.slug,
+                description: validatedData.description,
+                slug: finalSlug, // Slug diambil dari server
                 status: validatedData.status,
                 categories: {
                     create: categoryLinks,
                 },
                 tags: validatedData.tags,
-                // authorId: validatedData.authorId,
                 author: {
                     connect: { id: validatedData.authorId },
                 },
-                featuredImage: validatedData.featuredImage,
+                image: validatedData.image,
                 altText: validatedData.altText,
                 commentStatus: validatedData.commentStatus,
-                meta: validatedData.meta,
+                meta: {
+                    create: validatedData.meta,
+                },
             },
             include: {
-                categories: { include: { category: true } },
-                author: true,
+                categories: {
+                    include: {
+                        category: {
+                            select: {
+                                name: true,
+                            }
+                        }
+                    }
+                },
+                author: {
+                    select: {
+                        name: true,
+                    }
+                },
+                meta: {
+                    select: {
+                        title: true,
+                        description: true,
+                        keywords: true,
+                        image: true,
+                    }
+                }
             },
         });
 
