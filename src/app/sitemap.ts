@@ -8,6 +8,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Ambil semua post dengan kategori
     const posts = await prisma.post.findMany({
+        where: {
+            status: "PUBLISH",
+        },
         select: {
             slug: true,
             categories: {

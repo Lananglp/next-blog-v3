@@ -113,7 +113,7 @@ const PostComment = ({ post, user, isLogin, totalComments }: { post: PostType, u
             <div className='relative'>
                 <Separator />
                 {/* <div style={{ height: `calc(65vh - ${textareaHeight}px)` }} className="overflow-y-auto space-y-4 p-4"> */}
-                <div style={{ height: `calc(100svh - ${textareaHeight}px - 11rem)` }} className="overflow-y-auto space-y-4 p-4">
+                <div style={{ height: `calc(${post.commentStatus === 'OPEN' ? '100svh' : '92vh'} - ${textareaHeight}px - 11rem)` }} className="overflow-y-auto space-y-4 p-4">
                     {!loading ?
                         comments && comments.length > 0 ?
                             comments.map((comment, index) => {

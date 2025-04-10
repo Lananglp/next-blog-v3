@@ -5,6 +5,7 @@ import { toggleLikePost } from "@/app/api/function/posts";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { FaHeart, FaRegHeart } from "react-icons/fa6";
+import { LoginModal } from "@/components/modal-login";
 
 interface PostLikeProps {
     postId: string;
@@ -54,12 +55,23 @@ const PostLikeButton: React.FC<PostLikeProps> = ({ postId, userId, isLikedInitia
 
     if (!mount || isLiked === null) return null; // Cegah rendering saat state masih kosong
 
-    return (
-        <Button type="button" onClick={handleLike} disabled={isLoading} variant={'editorBlockBar'}>
-            {isLiked ? <FaHeart className='h-6 w-6 text-red-500' /> : <FaRegHeart className="h-6 w-6" />}
-            {totalLikes} likes
-        </Button>
-    );
+    if (userId) {
+        return (
+            <Button type="button" onClick={handleLike} disabled={isLoading} variant={'editorBlockBar'}>
+                {isLiked ? <FaHeart className='h-6 w-6 text-red-500' /> : <FaRegHeart className="h-6 w-6" />}
+                {totalLikes} likes
+            </Button>
+        );   
+    } else {
+        return (
+            <LoginModal>
+                <Button type="button" disabled={isLoading} variant={'editorBlockBar'}>
+                    {isLiked ? <FaHeart className='h-6 w-6 text-red-500' /> : <FaRegHeart className="h-6 w-6" />}
+                    {totalLikes} likes
+                </Button>
+            </LoginModal>
+        );
+    }
 };
 
 export default PostLikeButton;

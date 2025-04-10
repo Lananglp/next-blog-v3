@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import CategoryShow from "./category-show";
 import { CategoriesType } from "@/types/category-type";
+import { Metadata } from "next";
 
 type CategoryWithPostType = {
     id: string;
@@ -22,6 +23,54 @@ type CategoryWithPostType = {
 
 interface CategoryPageProps {
     params: Promise<{ category: string }>;
+}
+
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+    const category = decodeURIComponent((await params).category);
+    const categoryName = category.replace(/-/g, " ");
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://example.com";
+    const appName = process.env.NEXT_PUBLIC_APP_NAME || "";
+
+    const data = await prisma.category.findFirst({
+        where: {
+            name: {
+                equals: categoryName,
+                mode: "insensitive",
+            },
+        },
+    });
+
+    if (!data) {
+        return {
+            title: "Category Not Found",
+            description: "The requested category does not exist.",
+        };
+    }
+
+    return {
+        title: `Category: ${data.name}`,
+        description: `Explore posts in the ${data.name} category`,
+        keywords: data.name,
+        applicationName: appName,
+        robots: {
+            index: true,
+            follow: true,
+            nocache: true,
+        },
+        openGraph: {
+            title: `Category: ${data.name}`,
+            description: `Explore posts in the ${data.name} category`,
+            type: "website",
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: `Category: ${data.name}`,
+            description: `Explore posts in the ${data.name} category`,
+        },
+        alternates: {
+            canonical: `${baseUrl}/${category}`,
+        },
+    };
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {

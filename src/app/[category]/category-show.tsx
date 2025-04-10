@@ -1,17 +1,17 @@
 'use client'
 import InputSearch from '@/components/input/input-search'
 import { Pagination } from '@/components/pagination'
+import PostCard, { PostCardSkeleton } from '@/components/post/post-card'
 import Template from '@/components/template-custom'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import { decodeCategory, formatTimeAgo } from '@/helper/helper'
+import { decodeCategory } from '@/helper/helper'
 import { useFetchCategories } from '@/hooks/use-fetch-categories'
 import { useFetchPosts } from '@/hooks/use-fetch-posts'
 import { CategoriesType } from '@/types/category-type'
 import { LinkIcon, SearchIcon, SlidersHorizontalIcon } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useMedia } from 'react-use'
@@ -38,7 +38,6 @@ type Props = {
 }
 
 function CategoryShow({ category }: Props) {
-
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(9);
     const [search, setSearch] = useState('');
@@ -75,40 +74,14 @@ function CategoryShow({ category }: Props) {
                         </div>
                     </div>
                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                        {!loading ? items.length > 0 ? items.map((item, index) => {
+                        {!loading ? items.length > 0 ? items.filter((i) => i.status === 'PUBLISH').map((item, index) => {
                             return (
-                                <div key={index} className='w-full space-y-4'>
-                                    <Link href={decodeCategory(item.categories[0].name, item.slug)}>
-                                        <div>
-                                            <Image priority src={`${item.image}?tr=f-webp`} alt={item.altText || "Featured Image"} width={320} height={180} className='w-full h-full aspect-video rounded-lg object-cover bg-zinc-200 dark:bg-zinc-900' />
-                                        </div>
-                                    </Link>
-                                    <div className='w-full space-y-2'>
-                                        <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-2 font-medium text-black dark:text-white'>{item.title}</Link>
-                                        <Link href={decodeCategory(item.categories[0].name, item.slug)} className='line-clamp-2 text-xs md:text-sm'>{item.description}</Link>
-                                        <Link href={decodeCategory(item.categories[0].name, item.slug)} className='text-xs'><span className='font-semibold text-black dark:text-white'>{item.author.name}</span> &nbsp; | &nbsp; {item.createdAt && formatTimeAgo(item.createdAt)}</Link>
-                                    </div>
-                                </div>
+                                <PostCard key={index} item={item} />
                             )
                         }) : (
                             <p className='text-sm text-zinc-500'>No posts found.</p>
                         ) : (
-                            <>
-                                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((index) => (
-                                    <div key={index} className='w-full flex flex-col gap-4'>
-                                        <div className='w-full aspect-video rounded-lg bg-zinc-200 dark:bg-zinc-900' />
-                                        <div className='space-y-2'>
-                                            <div className='w-full h-4 rounded-lg bg-zinc-200 dark:bg-zinc-900' />
-                                            <div className='w-2/3 h-4 rounded-lg bg-zinc-200 dark:bg-zinc-900' />
-                                        </div>
-                                        <div className='w-full h-9 rounded-lg bg-zinc-200 dark:bg-zinc-900' />
-                                        <div className='flex items-center gap-1'>
-                                            <div className='w-24 h-3.5 rounded-lg bg-zinc-200 dark:bg-zinc-900' />
-                                            <div className='w-36 h-3.5 rounded-lg bg-zinc-200 dark:bg-zinc-900' />
-                                        </div>
-                                    </div>
-                                ))}
-                            </>
+                            <PostCardSkeleton />
                         )}
                     </div>
                     <Pagination className='mt-4' align='start' currentPage={page} totalData={posts?.pagination?.total || 0} dataPerPage={limit} onPageChange={(value) => setPage(value)} />

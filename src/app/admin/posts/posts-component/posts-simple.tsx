@@ -107,8 +107,8 @@ function PostsSimple({
                                         </div>
                                         <div className='flex justify-between items-center gap-3'>
                                             <div className='flex items-center gap-3'>
-                                                <Button type='button' variant={'transparent'} className='p-0 h-5'><MessageCircleMoreIcon />{post._count.comments}</Button>
-                                                <Button type='button' variant={'transparent'} className='p-0 h-5'><HeartIcon />{post._count.likes}</Button>
+                                                <Button type='button' variant={'transparent'} className='p-0 h-5'><MessageCircleMoreIcon />{post?._count?.comments || 0}</Button>
+                                                <Button type='button' variant={'transparent'} className='p-0 h-5'><HeartIcon />{post?._count?.likes || 0}</Button>
                                             </div>
                                             <div className='inline-block'>
                                                 <div className='flex items-center gap-1'>

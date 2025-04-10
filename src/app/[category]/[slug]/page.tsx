@@ -13,6 +13,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     const category = decodeURIComponent((await params).category);
     const slug = (await params).slug;
     const categoryName = category.replace(/-/g, " ");
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://example.com";
+    const appName = process.env.NEXT_PUBLIC_APP_NAME || "";
 
     const post = await prisma.post.findFirst({
         where: {
@@ -55,6 +57,22 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     return {
         title: post.meta?.title || post.title,
         description: post.meta?.description || post.description,
+        keywords: post.meta?.keywords || post.title,
+        applicationName: appName,
+        robots: {
+            index: true,
+            follow: true,
+            nocache: true,
+        },
+        authors: post.author ? [{
+            name: post.author.name,
+            url: `/${category}/${slug}`,
+        }] : [
+            {
+                name: "Blog",
+                url: "",
+            },
+        ],
         openGraph: {
             title: post.meta?.title || post.title,
             description: post.meta?.description || post.description,
@@ -71,7 +89,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
             images: post.meta?.image ? [post.meta?.image] : post.image ? [post.image] : [],
         },
         alternates: {
-            canonical: `/${category}/${slug}`,
+            canonical: `${baseUrl}/${category}/${slug}`,
         },
     };
 }

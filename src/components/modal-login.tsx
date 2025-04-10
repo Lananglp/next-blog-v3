@@ -118,7 +118,7 @@ export function LoginModal({
                 <DialogTrigger asChild onClick={handleToggleOpen}>
                     {children}
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[425px] py-16">
                     <DialogHeader>
                         <DialogTitle className="text-xl text-black dark:text-white">{modalTitle ? modalTitle : 'Get access by logging in'}</DialogTitle>
                         <DialogDescription>
