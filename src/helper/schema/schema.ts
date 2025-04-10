@@ -43,8 +43,15 @@ export type CategoryEditFormType = z.infer<typeof categoryEditSchema>;
 export const userSchema = z.object({
     id: z.string().optional(),
     name: z.string().min(1, "Name is required").max(25, "Name maximum 25 characters"),
+    username: z
+        .string()
+        .min(1, "Username is required")
+        .max(25, "Maximum 25 characters")
+        .regex(/^[a-z0-9._]+$/, {
+            message: "Username can only contain lowercase letters, numbers, dots, and underscores",
+        }),
     email: z.string().min(1, "Email is required").email("Invalid email format"),
-    image: z.string().url("The URL is not valid").optional(),
+    image: z.string().optional(),
     role: z.enum(["ADMIN", "USER"]).default("USER"),
     password: z
         .string()
@@ -65,8 +72,15 @@ export type UserFormType = z.infer<typeof userSchema>;
 export const userEditSchema = z.object({
     id: z.string(),
     name: z.string().min(1, "Name is required").max(25, "Name maximum 25 characters"),
+    username: z
+        .string()
+        .min(1, "Username is required")
+        .max(25, "Maximum 25 characters")
+        .regex(/^[a-z0-9._]+$/, {
+            message: "Username can only contain lowercase letters, numbers, dots, and underscores",
+        }),
     email: z.string().min(1, "Email is required").email("Invalid email format"),
-    image: z.string().url("The URL is not valid").optional(),
+    image: z.string().optional(),
     role: z.enum(["ADMIN", "USER"]).default("USER"),
     password: z.string().optional(),
     imageFile: z.instanceof(File).optional(),

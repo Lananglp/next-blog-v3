@@ -30,6 +30,7 @@ function UserCreate({ reload, onSuccess, disabled }: { reload: () => void, onSuc
         resolver: zodResolver(userSchema),
         defaultValues: {
             name: '',
+            username: '',
             email: '',
             password: '',
             confirmPassword: '',
@@ -91,6 +92,7 @@ function UserCreate({ reload, onSuccess, disabled }: { reload: () => void, onSuc
         try {
             const formData = new FormData();
             formData.append('name', data.name);
+            formData.append('username', data.username);
             formData.append('email', data.email);
             formData.append('password', data.password);
             formData.append('confirmPassword', data.confirmPassword);
@@ -140,7 +142,7 @@ function UserCreate({ reload, onSuccess, disabled }: { reload: () => void, onSuc
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className='flex flex-col md:flex-row gap-4'>
-                        <div className='w-full md:max-w-64'>
+                        <div className='w-full md:max-w-64 space-y-4'>
                             <div className='flex justify-center items-center'>
                                 <div {...getRootProps()} className='relative bg-zinc-100 dark:bg-zinc-900 border-2 border-dashed border-zinc-200 dark:border-zinc-700 text-zinc-500 hover:text-zinc-400 rounded-full w-48 h-48 p-6 flex justify-center items-center cursor-pointer'>
                                     <input {...getInputProps()} />
@@ -151,6 +153,26 @@ function UserCreate({ reload, onSuccess, disabled }: { reload: () => void, onSuc
                                     {image && <Image src={image} alt="Preview" width={48} height={48} className='absolute inset-0 h-full w-full object-cover rounded-full bg-zinc-100 dark:bg-zinc-900' />}
                                     {image && <div className='absolute -bottom-2 -end-2 bg-zinc-100 dark:bg-zinc-900 border border-template rounded-full p-2'><PenIcon className='h-4 w-4' /></div>}
                                 </div>
+                            </div>
+                            <div>
+                                <Label htmlFor="username" variant={'primary'}>Username</Label>
+                                <Input
+                                    id="username"
+                                    placeholder="username"
+                                    type="text"
+                                    {...register("username", {
+                                        onChange: (e) => {
+                                            // Normalisasi: huruf kecil, spasi jadi '_', karakter selain a-z, 0-9, _ dan . dihapus
+                                            const cleaned = e.target.value
+                                                .toLowerCase()
+                                                .replace(/\s+/g, "_")
+                                                .replace(/[^a-z0-9._]/g, "");
+                                            e.target.value = cleaned;
+                                        }
+                                    })}
+                                    className={`${errors.username ? "ring-1 ring-red-500" : ""}`}
+                                />
+                                {errors.username && <span className='text-red-500 text-xs mb-2'>{errors.username.message}</span>}
                             </div>
                             <Controller
                                 control={control}

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Loader, TrashIcon, XIcon } from 'lucide-react';
 import { Pagination } from '@/components/pagination';
 import { Checkbox } from '@/components/ui/checkbox';
-import { formatDateTime } from '@/helper/helper';
+import { formatDateTime, getCooldownRemainingNumber, getCooldownRemainingToString } from '@/helper/helper';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { AxiosError } from 'axios';
 import { responseStatus } from '@/helper/system-config';
@@ -176,8 +176,13 @@ function Users({ pageTitle }: { pageTitle: string }) {
                                     </th>
                                     <th className='w-[0%] px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-center'>No</th>
                                     <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Name</th>
+                                    <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Username</th>
+                                    <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Username Cooldown</th>
                                     <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Email</th>
                                     <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Role</th>
+                                    <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Total Posts</th>
+                                    <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Total Followers</th>
+                                    <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Total Following</th>
                                     <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Created At</th>
                                     <th className='px-4 py-2 border-b border-template text-zinc-500 dark:text-zinc-400 text-sm font-medium text-nowrap text-start'>Updated At</th>
                                 </tr>
@@ -212,21 +217,26 @@ function Users({ pageTitle }: { pageTitle: string }) {
                                                             {item.name}
                                                         </div>
                                                     </td>
+                                                    <td className='p-4 border-b border-template text-start'>{item.username}</td>
+                                                    <td className='p-4 border-b border-template text-center'>{item.usernameChangedAt ? getCooldownRemainingNumber(item.usernameChangedAt) > 0 ? getCooldownRemainingToString(item.usernameChangedAt, 14) : <span className='text-zinc-500'>none</span> : <span className='text-zinc-500'>none</span>}</td>
                                                     <td className='p-4 border-b border-template text-start'>{item.email}</td>
                                                     <td className='p-4 border-b border-template text-start capitalize font-medium text-zinc-500'>{item.role === 'ADMIN' ? <span className='text-black dark:text-white'>{item.role}</span> : item.role}</td>
+                                                    <td className='p-4 border-b border-template text-center'>{item.totalPosts || 0}</td>
+                                                    <td className='p-4 border-b border-template text-center'>{item.totalFollowers || 0}</td>
+                                                    <td className='p-4 border-b border-template text-center'>{item.totalFollowing || 0}</td>
                                                     <td className='p-4 border-b border-template text-start text-nowrap text-sm text-zinc-500'>{item?.createdAt ? formatDateTime(item?.createdAt.toString()) : ''}</td>
-                                                    <td className='p-4 border-b border-template text-start text-nowrap text-sm text-zinc-500'>{item?.updatedAt !== item?.createdAt ? formatDateTime(item?.updatedAt.toString()) : '-'}</td>
+                                                    <td className='p-4 border-b border-template text-start text-nowrap text-sm text-zinc-500'>{item?.updatedAt ? item?.updatedAt !== item?.createdAt ? formatDateTime(item?.updatedAt.toString()) : '-' : '-'}</td>
                                                 </tr>
                                             )
                                         }) : (
                                             <tr>
-                                                <td colSpan={7} className='p-4 border-b border-template text-center text-sm font-medium text-zinc-500 dark:text-zinc-400'>
+                                                <td colSpan={12} className='p-4 border-b border-template text-center text-sm font-medium text-zinc-500 dark:text-zinc-400'>
                                                     No data found
                                                 </td>
                                             </tr>
                                         ) : (
                                         <tr>
-                                            <td colSpan={7} className='p-4 animate-pulse bg-zinc-200/50 dark:bg-zinc-900/50 border-b border-template text-center text-sm font-medium text-zinc-500 dark:text-zinc-400'>
+                                            <td colSpan={12} className='p-4 animate-pulse bg-zinc-200/50 dark:bg-zinc-900/50 border-b border-template text-center text-sm font-medium text-zinc-500 dark:text-zinc-400'>
                                                 <Loader className='inline h-4 w-4 mb-0.5 me-1 animate-spin' />Loading...
                                             </td>
                                         </tr>

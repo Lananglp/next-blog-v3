@@ -15,6 +15,7 @@ datasource db {
 
 model User {
   id                String        @id @default(uuid())
+  username          String        @unique
   email             String        @unique
   name              String
   password          String
@@ -32,6 +33,7 @@ model User {
   // Relasi untuk following (pengguna yang diikuti oleh user ini)
   following         Follow[]      @relation("Following")
   receivedReplies   Comment[]     @relation("ReplyToUser")
+  usernameChangedAt DateTime? // nullable, default null
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
 }

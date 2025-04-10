@@ -26,6 +26,7 @@ import { Separator } from "./ui/separator"
 
 type RegisterFormType = {
     name: string
+    username: string
     email: string
     password: string
     confirmPassword: string
@@ -52,13 +53,14 @@ export function RegisterForm({
         setErrorForm(null);
 
         if (data.password !== data.confirmPassword) {
-            setError("confirmPassword", { message: "Password tidak sama" });
+            setError("confirmPassword", { message: "Passwords do not match" });
             setLoading(false);
             return;
         }
 
         const formdata = new FormData();
         formdata.append("name", data.name);
+        formdata.append("username", data.username);
         formdata.append("email", data.email);
         formdata.append("password", data.password);
         formdata.append("confirmPassword", data.confirmPassword);
@@ -106,6 +108,30 @@ export function RegisterForm({
                             {errors.name && <span className='text-red-500 text-xs mb-2'>{errors.name.message}</span>}
                         </div>
                         <div>
+                            <Label htmlFor="username" variant={'primary'}>Username</Label>
+                            <Input
+                                id="username"
+                                placeholder="username"
+                                type="text"
+                                {...register("username", {
+                                    onChange: (e) => {
+                                        // Normalisasi: huruf kecil, spasi jadi '_', karakter selain a-z, 0-9, _ dan . dihapus
+                                        const cleaned = e.target.value
+                                            .toLowerCase()
+                                            .replace(/\s+/g, "_")
+                                            .replace(/[^a-z0-9._]/g, "");
+                                        e.target.value = cleaned;
+                                    }
+                                })}
+                                className={`${errors.username ? "ring-1 ring-red-500" : ""}`}
+                            />
+                            {errors.username && (
+                                <span className="text-red-500 text-xs mb-2">
+                                    {errors.username.message}
+                                </span>
+                            )}
+                        </div>
+                        <div>
                             <Label htmlFor="email" variant={'primary'}>Email</Label>
                             <Input {...register("email")} className={`${errors.email ? "ring-1 ring-red-500" : ""}`} id="email" type="email" placeholder="Email" />
                             {errors.email && <span className='text-red-500 text-xs mb-2'>{errors.email.message}</span>}
@@ -140,57 +166,5 @@ export function RegisterForm({
                 </form>
             </div>
         </div>
-        // <div className={cn("flex flex-col gap-6", className)} {...props}>
-        //     <Card>
-        //         <CardHeader>
-        //             <CardTitle className="text-2xl">Register</CardTitle>
-        //             <CardDescription>
-        //                 Create your account to log in
-        //             </CardDescription>
-        //         </CardHeader>
-        //         <CardContent>
-        //             <form onSubmit={handleSubmit(onSubmit)}>
-        //                 <div className="flex flex-col gap-6">
-        //                     <div className="grid gap-2">
-        //                         <Label htmlFor="name">Name</Label>
-        //                         <Input {...register("name")} className={`${errors.name ? "ring-1 ring-red-500" : ""}`} id="name" type="text" placeholder="Name" />
-        //                         {errors.name && <span className='text-red-500 text-xs mb-2'>{errors.name.message}</span>}
-        //                     </div>
-        //                     <div className="grid gap-2">
-        //                         <Label htmlFor="email">Email</Label>
-        //                         <Input {...register("email")} className={`${errors.email ? "ring-1 ring-red-500" : ""}`} id="email" type="email" placeholder="Email" />
-        //                         {errors.email && <span className='text-red-500 text-xs mb-2'>{errors.email.message}</span>}
-        //                     </div>
-        //                     <div className="grid gap-2">
-        //                         <Label htmlFor="password">Password</Label>
-        //                         <div className="relative">
-        //                             <Input autoComplete="off" {...register("password")} className={`${errors.password ? "ring-1 ring-red-500" : ""}`} id="password" type={showPassword ? "text" : "password"} placeholder="Password" />
-        //                             <button onClick={() => setShowPassword(!showPassword)} className='absolute top-1/2 right-2 -translate-y-1/2 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-800 rounded p-1.5' type="button">{showPassword ? <PiEyeBold className='w-5 h-5' /> : <PiEyeClosedBold className='w-5 h-5' />}</button>
-        //                         </div>
-        //                         {errors.password && <span className='text-red-500 text-xs mb-2'>{errors.password.message}</span>}
-        //                         <PasswordIndicator password={password} />
-        //                     </div>
-        //                     <div className="grid gap-2">
-        //                         <Label htmlFor="confirmPassword">Confirm Password</Label>
-        //                         <div className="relative">
-        //                             <Input autoComplete="off" {...register("confirmPassword")} className={`${errors.confirmPassword ? "ring-1 ring-red-500" : ""}`} id="confirmPassword" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm Password" />
-        //                             <button onClick={() => setShowConfirmPassword(!showConfirmPassword)} className='absolute top-1/2 right-2 -translate-y-1/2 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-800 rounded p-1.5' type="button">{showConfirmPassword ? <PiEyeBold className='w-5 h-5' /> : <PiEyeClosedBold className='w-5 h-5' />}</button>
-        //                         </div>
-        //                         {errors.confirmPassword && <span className='text-red-500 text-xs mb-2'>{errors.confirmPassword.message}</span>}
-        //                     </div>
-        //                     <Button disabled={loading} type="submit" className="w-full">
-        //                         {loading && <LoaderCircle className="animate-spin" />}Register
-        //                     </Button>
-        //                 </div>
-        //                 <div className="mt-4 text-center text-sm">
-        //                     Already have an account?{" "}
-        //                     <Link href="/login" className="underline underline-offset-4">
-        //                         Login now
-        //                     </Link>
-        //                 </div>
-        //             </form>
-        //         </CardContent>
-        //     </Card>
-        // </div>
     )
 }

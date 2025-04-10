@@ -1,5 +1,5 @@
 'use client'
-import { patchUser } from '@/app/api/function/users';
+import { patchUser, patchUserProfile } from '@/app/api/function/users';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { setSession } from '@/context/sessionSlice';
 import { setTitle } from '@/context/titleSlice';
+import { getCooldownRemainingNumber, getCooldownRemainingToString } from '@/helper/helper';
 import { UserEditFormType, userEditSchema } from '@/helper/schema/schema';
 import { responseStatus } from '@/helper/system-config';
 import { useToast } from '@/hooks/use-toast';
@@ -49,6 +50,7 @@ function Profile({ pageTitle }: Props) {
         defaultValues: {
             id: user.id,
             name: user.name,
+            username: user.username,
             email: user.email,
             image: user.image,
             role: user.role as 'ADMIN' || 'USER',
@@ -62,6 +64,7 @@ function Profile({ pageTitle }: Props) {
         if (isLogin) {
             setValue('id', user.id);
             setValue('name', user.name);
+            setValue('username', user.username);
             setValue('email', user.email);
             setValue('image', user.image);
             setValue('role', user.role as 'ADMIN' || 'USER');
@@ -85,6 +88,7 @@ function Profile({ pageTitle }: Props) {
     });
 
     const image = watch('image');
+    const role = watch('role');
 
     const onSubmit: SubmitHandler<UserEditFormType> = async (data, event) => {
         event?.preventDefault();
@@ -94,12 +98,13 @@ function Profile({ pageTitle }: Props) {
             const formData = new FormData();
             formData.append('id', data.id);
             formData.append('name', data.name);
+            formData.append('username', data.username);
             formData.append('email', data.email);
             formData.append('role', data.role);
             formData.append('password', data.password || '');
             if (data.imageFile) formData.append('imageFile', data.imageFile);
 
-            const res = await patchUser(formData);
+            const res = await patchUserProfile(formData);
             if (res.data?.status) {
                 dispatch(setSession({
                     ...user, // Data lama tetap ada
@@ -134,8 +139,8 @@ function Profile({ pageTitle }: Props) {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className='max-w-xl flex flex-col md:flex-row gap-4'>
-            <div className='w-full md:max-w-64'>
+        <form onSubmit={handleSubmit(onSubmit)} className='max-w-3xl flex flex-col md:flex-row gap-4'>
+            <div className='w-full md:max-w-64 space-y-4'>
                 <div className='flex justify-center items-center'>
                     {!isLoading ? (
                         <div {...getRootProps()} className='relative bg-zinc-100 dark:bg-zinc-900 border-2 border-dashed border-zinc-200 dark:border-zinc-700 text-zinc-500 hover:text-zinc-400 rounded-full w-48 h-48 p-6 flex justify-center items-center cursor-pointer'>
@@ -151,43 +156,72 @@ function Profile({ pageTitle }: Props) {
                         <Skeleton className='w-48 h-48 rounded-full' />
                     )}
                 </div>
-                <Controller
-                    control={control}
-                    name="role"
-                    render={({ field }) => {
-
-                        const handleChange = (e: string) => {
-                            field.onChange(e);
-                        }
-
-                        return (
-                            <div className='mt-4'>
-                                {!isLoading ?
-                                    field.value === 'ADMIN' ? (
-                                        <div className='space-y-2'>
-                                            <h6 className='text-sm font-medium text-black dark:text-white'>You are an Admin</h6>
-                                            <p className='text-xs'>The admin role has full access to the admin menu, can create, edit, and delete blog posts, manage comments, and moderate user interactions.</p>
-                                        </div>
-                                    ) : (
-                                        <div className='space-y-2'>
-                                            <h6 className='text-sm font-medium text-black dark:text-white'>You are a User</h6>
-                                            <p className='text-xs'>The user role cannot access the admin menu, does not have permission to create blogs, and can only view posts, comments, and give likes.</p>
-                                        </div>
-                                ) : (
-                                    <div className='space-y-2'>
-                                        <Skeleton className='w-32 h-7' />
-                                        <Skeleton className='w-56 h-4' />
-                                        <Skeleton className='w-48 h-4' />
-                                        <Skeleton className='w-36 h-4' />
-                                    </div>
-                                )
-                            }
+                {!isLoading ? (
+                    <div>
+                        <Label htmlFor="username" variant={'primary'}>Username</Label>
+                        <Input
+                            id="username"
+                            placeholder="username"
+                            type="text"
+                            disabled={getCooldownRemainingNumber(user.usernameChangedAt) > 0 && true || false}
+                            {...register("username", {
+                                onChange: (e) => {
+                                    // Normalisasi: huruf kecil, spasi jadi '_', karakter selain a-z, 0-9, _ dan . dihapus
+                                    const cleaned = e.target.value
+                                        .toLowerCase()
+                                        .replace(/\s+/g, "_")
+                                        .replace(/[^a-z0-9._]/g, "");
+                                    e.target.value = cleaned;
+                                }
+                            })}
+                            className={`${errors.username ? "ring-1 ring-red-500" : ""}`}
+                        />
+                        {errors.username && <span className='text-red-500 text-xs mb-2'>{errors.username.message}</span>}
+                        {getCooldownRemainingNumber(user.usernameChangedAt) > 0 && <span className='text-xs mb-2'>You can change your username in {user.usernameChangedAt && getCooldownRemainingToString(user.usernameChangedAt, 14) || ""}</span>}
+                    </div>
+                ) : (
+                    <div>
+                        <Label variant={'primary'}>Username</Label>
+                        <Skeleton className='w-full h-9' />
+                    </div>
+                )}
+                <div>
+                    {!isLoading ?
+                        role === 'ADMIN' ? (
+                            <div className='space-y-2'>
+                                <h6 className='text-sm font-medium text-black dark:text-white'>You are an Admin</h6>
+                                <p className='text-xs'>The admin role has full access to the admin menu, can create, edit, and delete blog posts, manage comments, and moderate user interactions.</p>
                             </div>
-                        )
-                    }}
-                />
+                        ) : (
+                            <div className='space-y-2'>
+                                <h6 className='text-sm font-medium text-black dark:text-white'>You are a User</h6>
+                                <p className='text-xs'>The user role cannot access the admin menu, does not have permission to create blogs, and can only view posts, comments, and give likes.</p>
+                            </div>
+                        ) : (
+                            <div className='space-y-2'>
+                                <Skeleton className='w-32 h-7' />
+                                <Skeleton className='w-56 h-4' />
+                                <Skeleton className='w-48 h-4' />
+                                <Skeleton className='w-36 h-4' />
+                            </div>
+                        )}
+                </div>
             </div>
             <div className="w-full flex flex-col gap-4">
+                <div className='grid grid-cols-3 gap-2'>
+                    <div className='bg-zinc-100 dark:bg-zinc-900 border border-template rounded-lg flex flex-col xl:flex-row justify-center items-center gap-1 p-4'>
+                        <p className='text-black dark:text-white'>{user.totalPosts}</p>
+                        <p>Posts</p>
+                    </div>
+                    <div className='bg-zinc-100 dark:bg-zinc-900 border border-template rounded-lg flex flex-col xl:flex-row justify-center items-center gap-1 p-4'>
+                        <p className='text-black dark:text-white'>987{user.totalFollowers}</p>
+                        <p>Followers</p>
+                    </div>
+                    <div className='bg-zinc-100 dark:bg-zinc-900 border border-template rounded-lg flex flex-col xl:flex-row justify-center items-center gap-1 p-4'>
+                        <p className='text-black dark:text-white'>{user.totalFollowing}</p>
+                        <p>Following</p>
+                    </div>
+                </div>
                 {!isLoading ? (
                     <div>
                         <Label htmlFor="name" variant={'primary'}>Name</Label>

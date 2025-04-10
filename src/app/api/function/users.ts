@@ -31,6 +31,15 @@ export const patchUser = async (data: FormData): Promise<AxiosResponse<FetchingT
     });
 };
 
+export const patchUserProfile = async (data: FormData): Promise<AxiosResponse<FetchingType>> => {
+    return await api.put<FetchingType>('/api/profile/edit', data, {
+        withCredentials: true,
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+};
+
 export const deleteUsers = async (ids: string[]): Promise<AxiosResponse<FetchingType>> => {
     return await api.delete<FetchingType>(`/api/users/delete`, {
         data: { ids },

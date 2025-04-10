@@ -38,7 +38,7 @@ const data = {
   appName: {
     name: process.env.NEXT_PUBLIC_APP_NAME as string,
     logo: GalleryVerticalEnd,
-    description: "Version 0.1.0",
+    description: `Version ${process.env.NEXT_PUBLIC_APP_VERSION as string}`,
   },
   navMain: [
     {

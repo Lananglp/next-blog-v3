@@ -13,8 +13,13 @@ export async function POST(request: Request) {
         const body = await request.json();
         const data = loginSchema.parse(body);
 
-        const user = await prisma.user.findUnique({
-            where: { email: data.email },
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { email: data.credential },
+                    { username: data.credential }
+                ]
+            }
         });
 
         if (!user) {

@@ -1,5 +1,6 @@
-export interface UserType {
+export interface UserType<T = undefined> {
   id: string;
+  username: string;
   email: string;
   name: string;
   image?: string;
@@ -9,12 +10,15 @@ export interface UserType {
   totalPosts: number;
   totalFollowers: number;
   totalFollowing: number;
-  createdAt: string;
-  updatedAt: string;
+  profile?: T;
+  usernameChangedAt: Date | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
 }
 
 export const initialUser: UserType = {
   id: "",
+  username: "",
   email: "",
   name: "",
   image: "",
@@ -24,35 +28,23 @@ export const initialUser: UserType = {
   totalPosts: 0,
   totalFollowers: 0,
   totalFollowing: 0,
-  createdAt: "",
-  updatedAt: "",
+  usernameChangedAt: null,
+  createdAt: null,
+  updatedAt: null,
 }
 
-// export interface UserType {
-//   id: string;
-//   email: string;
-//   name: string;
-//   image?: string;
-//   role: string;
-//   posts?: {
-//     id: string;
-//   }[];
-//   profile?: {
-//     id: string;
-//   };
-//   createdAt: string;
-//   updatedAt: string;
-// }
+export interface UserProfileType {
+  bio: string | null;
+  phone_1: string | null;
+  phone_2: string | null;
+  url_1: string | null;
+  url_2: string | null;
+}
 
-// export type FormUserType = {
-//     userId: string;
-//     name: string;
-//     email: string;
-//     phone: string;
-//     address: string;
-//     placeOfBirth: string;
-//     dateOfBirth: string;
-//     picture?: File | null;
-//     password: string;
-//     confirmPassword: string;
-// }
+export const initialUserProfile: UserProfileType = {
+  bio: "",
+  phone_1: "",
+  phone_2: "",
+  url_1: "",
+  url_2: "",
+}

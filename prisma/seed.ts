@@ -1,25 +1,30 @@
+import { initAdminUser } from "@/helper/system-config";
 import prisma from "@/lib/prisma";
 import { UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 async function main() {
-  const passwordHash = await bcrypt.hash("User1234_", 10); // Hash password dummy
+  const passwordHash = await bcrypt.hash(initAdminUser.password, 10); // Hash password dummy
 
   // Cek apakah user sudah ada
   const existingUser = await prisma.user.findUnique({
-    where: { email: "admin@admin.com" },
+    where: { 
+      email: initAdminUser.email,
+      username: initAdminUser.username,
+    },
   });
 
   if (!existingUser) {
     await prisma.user.create({
       data: {
-        name: "Admin User",
-        email: "admin@admin.com",
+        name: initAdminUser.name,
+        username: initAdminUser.username,
+        email: initAdminUser.email,
         password: passwordHash,
         role: UserRole.ADMIN,
         profile: {
           create: {
-            bio: "Welcome to my blog!",
+            bio: initAdminUser.bio,
           }
         }
       },

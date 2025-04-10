@@ -1,24 +1,22 @@
 'use client'
-import { postCategory } from '@/app/api/function/categories';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
-import { Loader, PenLine, SendIcon, Plus, Trash2, ImageIcon, PenIcon, EditIcon, KeyIcon, CheckIcon } from 'lucide-react';
+import { Loader, SendIcon, ImageIcon, PenIcon, EditIcon, KeyIcon, CheckIcon } from 'lucide-react';
 import React, { useState } from 'react'
-import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { responseStatus } from '@/helper/system-config';
-import { CategoryCreateFormType, UserEditFormType, userEditSchema, UserFormType, userSchema } from '@/helper/schema/schema';
-import { patchUser, postUser } from '@/app/api/function/users';
-import PasswordIndicator from '@/components/password-indicator';
-import { PiEyeBold, PiEyeClosedBold } from 'react-icons/pi';
+import { UserEditFormType, userEditSchema } from '@/helper/schema/schema';
+import { patchUser } from '@/app/api/function/users';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import { UserType } from '@/types/userType';
+import { getCooldownRemainingNumber, getCooldownRemainingToString } from '@/helper/helper';
 
 function UserEdit({ item, reload, onSuccess, disabled }: { item: UserType, reload: () => void, onSuccess?: () => void, disabled?: boolean }) {
     const [modal, setModal] = useState<boolean>(false);
@@ -30,11 +28,15 @@ function UserEdit({ item, reload, onSuccess, disabled }: { item: UserType, reloa
         resolver: zodResolver(userEditSchema),
         defaultValues: {
             name: '',
+            username: '',
             email: '',
+            image: '',
             role: 'USER',
             imageFile: undefined,
         }
     });
+
+    // console.log(errors);
 
     const onDrop = (acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
@@ -55,6 +57,7 @@ function UserEdit({ item, reload, onSuccess, disabled }: { item: UserType, reloa
         setModal(true);
         setValue("id", item.id || '');
         setValue("name", item.name || '');
+        setValue("username", item.username || '');
         setValue("email", item.email || '');
         setValue("role", item.role as 'ADMIN' || 'USER');
         setValue("image", item.image ? item.image : '');
@@ -87,6 +90,7 @@ function UserEdit({ item, reload, onSuccess, disabled }: { item: UserType, reloa
             const formData = new FormData();
             formData.append('id', data.id);
             formData.append('name', data.name);
+            formData.append('username', data.username || '');
             formData.append('email', data.email);
             formData.append('role', data.role);
             formData.append('password', data.password || '');
@@ -141,7 +145,7 @@ function UserEdit({ item, reload, onSuccess, disabled }: { item: UserType, reloa
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className='flex flex-col md:flex-row gap-4'>
-                        <div className='w-full md:max-w-64'>
+                        <div className='w-full md:max-w-64 space-y-4'>
                             <div className='flex justify-center items-center'>
                                 <div {...getRootProps()} className='relative bg-zinc-100 dark:bg-zinc-900 border-2 border-dashed border-zinc-200 dark:border-zinc-700 text-zinc-500 hover:text-zinc-400 rounded-full w-48 h-48 p-6 flex justify-center items-center cursor-pointer'>
                                     <input {...getInputProps()} />
@@ -152,6 +156,28 @@ function UserEdit({ item, reload, onSuccess, disabled }: { item: UserType, reloa
                                     {image && <Image src={image} alt="Preview" width={192} height={192} className='absolute inset-0 h-full w-full object-cover rounded-full bg-zinc-100 dark:bg-zinc-900' />}
                                     {image && <div className='absolute -bottom-2 -end-2 bg-zinc-100 dark:bg-zinc-900 border border-template rounded-full p-2'><PenIcon className='h-4 w-4' /></div>}
                                 </div>
+                            </div>
+                            <div>
+                                <Label htmlFor="username" variant={'primary'}>Username</Label>
+                                <Input
+                                    id="username"
+                                    placeholder="username"
+                                    type="text"
+                                    disabled={getCooldownRemainingNumber(item.usernameChangedAt) > 0 && true || false}
+                                    {...register("username", {
+                                        onChange: (e) => {
+                                            // Normalisasi: huruf kecil, spasi jadi '_', karakter selain a-z, 0-9, _ dan . dihapus
+                                            const cleaned = e.target.value
+                                                .toLowerCase()
+                                                .replace(/\s+/g, "_")
+                                                .replace(/[^a-z0-9._]/g, "");
+                                            e.target.value = cleaned;
+                                        }
+                                    })}
+                                    className={`${errors.username ? "ring-1 ring-red-500" : ""}`}
+                                />
+                                {errors.username && <span className='text-red-500 text-xs mb-2'>{errors.username.message}</span>}
+                                {getCooldownRemainingNumber(item.usernameChangedAt) > 0 && <span className='text-xs mb-2'>You can change your username in {item.usernameChangedAt && getCooldownRemainingToString(item.usernameChangedAt, 14) || ""}</span>}
                             </div>
                             <Controller
                                 control={control}

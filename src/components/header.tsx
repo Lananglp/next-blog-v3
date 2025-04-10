@@ -169,7 +169,7 @@ function Header() {
                                 ) : (
                                     <>
                                         <Button onClick={() => navigate.push('/login')} variant={'editorBlockBar'} size={'sm'}>Sign In</Button>
-                                        <Button onClick={() => navigate.push('/login')} variant={'submit'} size={'sm'}>Sign Up</Button>
+                                        <Button onClick={() => navigate.push('/register')} variant={'submit'} size={'sm'}>Sign Up</Button>
                                     </>
                                 ) : (
                                     <div className="flex items-center gap-2">

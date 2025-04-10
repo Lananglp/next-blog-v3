@@ -53,3 +53,25 @@ export const decodeCategory = (category: string, slug?: string) => {
     const origin = process.env.NEXT_PUBLIC_API_URL;
     return `${origin}/${category.split(' ').join('-').toLowerCase()}${slug ? `/${slug}` : ''}`
 }
+
+export const getCooldownRemainingToString = (usernameChangedAt: string | Date, cooldown: number) => {
+    const COOLDOWN_DAYS = cooldown || 14;
+    const changedDate = new Date(usernameChangedAt);
+    const now = new Date();
+    const diffMs = now.getTime() - changedDate.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    const remaining = COOLDOWN_DAYS - diffDays;
+
+    if (remaining <= 0) return "0 days";
+    return `${remaining} days`;
+}
+
+export const getCooldownRemainingNumber = (changedAt: string | Date | null): number => {
+    if (!changedAt) return 0;
+    const COOLDOWN_DAYS = 14;
+    const now = new Date();
+    const diffMs = now.getTime() - new Date(changedAt).getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    return COOLDOWN_DAYS - diffDays;
+}

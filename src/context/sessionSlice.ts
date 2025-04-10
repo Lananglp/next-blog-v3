@@ -13,6 +13,7 @@ const sessionSlice = createSlice({
     reducers: {
         setSession: (state, action: PayloadAction<UserType>) => {
             state.user.id = action.payload.id;
+            state.user.username = action.payload.username;
             state.user.name = action.payload.name;
             state.user.email = action.payload.email;
             state.user.image = action.payload.image;
@@ -22,6 +23,7 @@ const sessionSlice = createSlice({
             state.user.totalPosts = action.payload.totalPosts;
             state.user.totalFollowers = action.payload.totalFollowers;
             state.user.totalFollowing = action.payload.totalFollowing;
+            state.user.usernameChangedAt = action.payload.usernameChangedAt;
             state.user.createdAt = action.payload.createdAt;
             state.user.updatedAt = action.payload.updatedAt;
             // Periksa apakah account ada

@@ -13,6 +13,6 @@ import * as z from 'zod'
 //         .regex(/[\W_]/, "Password harus mengandung karakter spesial"),
 // });
 export const loginSchema = z.object({
-    email: z.string().min(1, "Email wajib diisi").email("Format email tidak valid"),
-    password: z.string().min(1, "Password wajib diisi"),
+    credential: z.string().min(3, "Username or Email is required"),
+    password: z.string().min(1, "Password is required"),
 });

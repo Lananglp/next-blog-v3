@@ -10,16 +10,26 @@ export async function POST(request: Request) {
         const data = registerSchema.parse(body);
 
         // Cek apakah email sudah terdaftar
-        const existingUser = await prisma.user.findUnique({
+        const existingEmail = await prisma.user.findUnique({
             where: { email: data.email },
         });
 
-        if (data.password !== data.confirmPassword) {
-            return NextResponse.json({ message: "Password and confirm password do not match" }, { status: 400 });
+        if (existingEmail) {
+            return NextResponse.json({ message: "Email already registered" }, { status: 400 });
         }
 
-        if (existingUser) {
-            return NextResponse.json({ message: "Email already registered" }, { status: 400 });
+        // Cek apakah username sudah digunakan
+        const existingUsername = await prisma.user.findUnique({
+            where: { username: data.username },
+        });
+
+        if (existingUsername) {
+            return NextResponse.json({ message: "Username already taken" }, { status: 400 });
+        }
+
+        // Cek apakah password sama dengan confirm password
+        if (data.password !== data.confirmPassword) {
+            return NextResponse.json({ message: "Password and confirm password do not match" }, { status: 400 });
         }
 
         // Hash password
@@ -30,16 +40,22 @@ export async function POST(request: Request) {
             data: {
                 name: data.name,
                 email: data.email,
+                username: data.username,
                 password: hashedPassword,
+                usernameChangedAt: new Date(),
             },
         });
 
-        return NextResponse.json({ message: "User created successfully", userId: user.id }, { status: 201 });
+        return NextResponse.json({
+            message: "User created successfully",
+            userId: user.id,
+            username: user.username,
+        }, { status: 201 });
 
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === "P2002") {
-                return NextResponse.json({ message: "Email already in use" }, { status: 400 });
+                return NextResponse.json({ message: "Unique constraint failed (username/email already in use)" }, { status: 400 });
             }
         }
         console.error("Register error:", error);
