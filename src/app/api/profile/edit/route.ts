@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
-import { userEditSchema } from "@/helper/schema/schema";
+import { userProfileSchema } from "@/helper/schema/schema";
 import { imagekit } from "@/lib/imagekit";
 import { responseStatus } from "@/helper/system-config";
 import { getCooldownRemainingNumber } from "@/helper/helper";
@@ -11,9 +11,9 @@ export async function PUT(request: Request) {
     try {
         const formData = await request.formData();
         const rawData = Object.fromEntries(formData.entries());
-        const parsedData = userEditSchema.parse(rawData);
+        const parsedData = userProfileSchema.parse(rawData);
 
-        if (!parsedData || !parsedData.id) {
+        if (!parsedData?.id) {
             return NextResponse.json({ status: responseStatus.warning, message: "Invalid user data" }, { status: 400 });
         }
 
@@ -25,7 +25,7 @@ export async function PUT(request: Request) {
             return NextResponse.json({ status: responseStatus.warning, message: "User not found" }, { status: 404 });
         }
 
-        // 🔒 Pengecekan jika username diubah
+        // Username logic
         if (parsedData.username && parsedData.username !== existingUser.username) {
             const cooldown = getCooldownRemainingNumber(existingUser.usernameChangedAt);
 
@@ -36,7 +36,6 @@ export async function PUT(request: Request) {
                 }, { status: 400 });
             }
 
-            // Cek apakah username sudah dipakai user lain
             const usernameTaken = await prisma.user.findFirst({
                 where: {
                     username: parsedData.username,
@@ -49,8 +48,9 @@ export async function PUT(request: Request) {
             }
         }
 
+        // Handle image upload
         let imageUrl = existingUser.image;
-        let imagekitFileId = null;
+        let imagekitFileId = existingUser.imageId || null;
         let isImagekit = false;
 
         if (imageFile) {
@@ -73,12 +73,17 @@ export async function PUT(request: Request) {
                 folder: "/users",
             });
 
-            imageUrl = uploadedImage.url;
+            imageUrl = `${uploadedImage.url}?tr=f-webp`;
             imagekitFileId = uploadedImage.fileId;
             isImagekit = true;
         }
 
-        const updateData: any = {
+        // Handle password & confirmPassword
+        if (parsedData.password && parsedData.confirmPassword !== parsedData.password) {
+            return NextResponse.json({ status: responseStatus.warning, message: "Passwords do not match" }, { status: 400 });
+        }
+
+        const updateData: Prisma.UserUpdateInput = {
             name: parsedData.name,
             email: parsedData.email,
             username: parsedData.username || existingUser.username,
@@ -86,13 +91,21 @@ export async function PUT(request: Request) {
             imageId: imagekitFileId,
             imageProvider: isImagekit ? "DEFAULT" : existingUser.imageProvider,
             role: parsedData.role,
+            profile: {
+                update: {
+                    bio: parsedData.bio,
+                    phone_1: parsedData.phone_1,
+                    phone_2: parsedData.phone_2,
+                    url_1: parsedData.url_1,
+                    url_2: parsedData.url_2,
+                },
+            },
         };
 
         if (parsedData.password) {
             updateData.password = bcrypt.hashSync(parsedData.password, 10);
         }
 
-        // Set usernameChangedAt jika username diubah
         if (parsedData.username && parsedData.username !== existingUser.username) {
             updateData.usernameChangedAt = new Date();
         }
@@ -102,7 +115,13 @@ export async function PUT(request: Request) {
             data: updateData,
         });
 
-        return NextResponse.json({ item: updateData, status: responseStatus.success, message: "User updated successfully", userId: updatedUser.id }, { status: 200 });
+        return NextResponse.json({
+            item: updatedUser,
+            status: responseStatus.success,
+            message: "User updated successfully",
+            userId: updatedUser.id,
+        }, { status: 200 });
+
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === "P2002") {
@@ -112,4 +131,4 @@ export async function PUT(request: Request) {
         console.error("Update error:", error);
         return NextResponse.json({ status: responseStatus.error, message: "Internal server error" }, { status: 500 });
     }
-}
+}  

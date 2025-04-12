@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 function Page() {
     return (
-        <div><Profile pageTitle={pageTitle} /></div>
+        <div><Profile /></div>
     )
 }
 

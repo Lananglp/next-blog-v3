@@ -122,7 +122,7 @@ export default function InputCategory({ value, placeholder, errors, control, nam
 
                 return (
                     <div>
-                        <Label className="inline-block mb-2">{required && <span className="text-red-500">*</span>}&nbsp;{label} :</Label>
+                        <Label className="inline-block mb-2">{required && <span className="text-red-500">*</span>}&nbsp;{label}</Label>
                         <div className={`w-full border ${errors ? "border-red-500" : "border-zinc-300 dark:border-zinc-800"} rounded-lg p-1`}>
                             <div className="flex items-center flex-wrap gap-1">
                                 {value && value.map((category, index) => (

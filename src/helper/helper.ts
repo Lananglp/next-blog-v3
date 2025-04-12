@@ -16,6 +16,28 @@ export const generateUniqueUrl = (url: string) => {
     return url;
 };
 
+export const validateWebsiteURL = async (url: string, toast: any) => {
+    try {
+        const response = await fetch(url, { method: "HEAD" });
+
+        if (response.status === 404) {
+            toast({
+                title: 'Website Not Found',
+                description: 'The website URL you entered was not found.',
+            });
+            return false;
+        }
+
+        return response.ok;
+    } catch (error) {
+        toast({
+            title: 'Invalid URL',
+            description: 'Please enter a valid website URL.',
+        });
+        return false;
+    }
+};
+
 export const validateImageURL = async (url: string, toast: any ) => {
     try {
         const response = await fetch(url, { method: "HEAD" });

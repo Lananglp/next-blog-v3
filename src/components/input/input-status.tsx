@@ -16,7 +16,7 @@ function InputStatus({ control, name, errors }: { control: any; name: string, er
 
             return (
                 <div>
-                    <Label htmlFor="status" className="inline-block mb-2">Post Status :</Label>
+                    <Label htmlFor="status" className="inline-block mb-2">Post Status</Label>
                     <div>
                         <div className="relative inline-block w-32">
                             <Select {...field} onValueChange={handleChange}>

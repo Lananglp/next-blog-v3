@@ -89,6 +89,39 @@ export const userEditSchema = z.object({
 export type UserEditFormType = z.infer<typeof userEditSchema>;
 export type UserFormTypeWithoutFile = Omit<UserFormType, 'imageFile'>;
 
+// ============================= User create & edit =============================
+export const userProfileSchema = z.object({
+    id: z.string(),
+    name: z.string().min(1, "Name is required").max(25, "Name maximum 25 characters"),
+    username: z
+        .string()
+        .min(1, "Username is required")
+        .max(25, "Maximum 25 characters")
+        .regex(/^[a-z0-9._]+$/, {
+            message: "Username can only contain lowercase letters, numbers, dots, and underscores",
+        }),
+    email: z.string().min(1, "Email is required").email("Invalid email format"),
+    image: z.string().optional(),
+    bio: z.string().max(100, "bio maximum 100 characters").optional(),
+    phone_1: z.string().optional(),
+    phone_2: z.string().optional(),
+    url_1: z.preprocess(
+        (val) => (val === "" ? undefined : val),
+        z.string().url("The URL is not valid").optional()
+    ),
+    url_2: z.preprocess(
+        (val) => (val === "" ? undefined : val),
+        z.string().url("The URL is not valid").optional()
+    ),
+    role: z.enum(["ADMIN", "USER"]).default("USER"),
+    password: z.string().optional(),
+    confirmPassword: z.string().optional(),
+    imageFile: z.instanceof(File).optional(),
+});
+
+export type UserProfileFormType = z.infer<typeof userProfileSchema>;
+export type UserProfileFormTypeWithoutFile = Omit<UserFormType, 'imageFile'>;
+
 // ============================= Comment create & edit =============================
 const BaseCommentSchema = z.object({
     id: z.string().uuid(),

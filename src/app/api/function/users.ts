@@ -1,6 +1,6 @@
 import api, { FetchingType } from "@/lib/axios";
 import { GetResponseType } from "@/types/fetch-type";
-import { UserType } from "@/types/userType";
+import { UserProfileType, UserType } from "@/types/userType";
 import { AxiosResponse } from "axios";
 
 export const getUsers = async (id?: string, page?: number, limit?: number, search?: string): Promise<AxiosResponse<GetResponseType<UserType[]>>> => {
@@ -11,6 +11,14 @@ export const getUsers = async (id?: string, page?: number, limit?: number, searc
     if (search) params.append("search", search);
 
     return await api.get<GetResponseType<UserType[]>>(`/api/users?${params.toString()}`, { withCredentials: true });
+};
+
+export const findUser = async (id?: string, username?: string): Promise<AxiosResponse<GetResponseType<UserType<UserProfileType>>>> => {
+    const params = new URLSearchParams();
+    if (id) params.append("id", id);
+    if (username) params.append("username", username);
+
+    return await api.get<GetResponseType<UserType<UserProfileType>>>(`/api/users?${params.toString()}`, { withCredentials: true });
 };
 
 export const postUser = async (data: FormData): Promise<AxiosResponse<FetchingType>> => {

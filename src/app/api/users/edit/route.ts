@@ -73,7 +73,7 @@ export async function PUT(request: Request) {
                 folder: "/users",
             });
 
-            imageUrl = uploadedImage.url;
+            imageUrl = `${uploadedImage.url}?tr=f-webp`;
             imagekitFileId = uploadedImage.fileId;
             isImagekit = true;
         }

@@ -50,7 +50,7 @@ function InputSlug({ value, placeholder, title, errors, control, name }: InputSl
                 return (
                     <div>
                         <div className="flex flex-wrap justify-between items-end mb-2">
-                            <Label htmlFor="slug"><span className="text-red-500">*</span>&nbsp;Post Slug :</Label>
+                            <Label htmlFor="slug"><span className="text-red-500">*</span>&nbsp;Post Slug</Label>
                             <Button
                                 type="button"
                                 title="Generate slug from title"

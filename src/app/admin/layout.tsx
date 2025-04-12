@@ -20,6 +20,7 @@ import {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
 
+    const year = new Date().getFullYear();
     const appName = process.env.NEXT_PUBLIC_APP_NAME
 
     return (
@@ -44,6 +45,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         {children}
                     </div>
                 </div>
+                <footer className='px-4 py-2'>
+                    <div className='text-xs text-zinc-500'>Copyright &copy; {year} {appName}. All Rights Reserved.</div>
+                </footer>
             </SidebarInset>
         </SidebarProvider>
     )

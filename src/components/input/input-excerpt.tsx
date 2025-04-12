@@ -52,7 +52,7 @@ export default function InputExcerpt({ value, content, placeholder, errors, cont
                 return (
                     <div>
                         <div className="flex flex-wrap justify-between items-end mb-2">
-                            <Label htmlFor={label} className="inline-block">{required && <span className="text-red-500">*</span>}&nbsp;{label} :</Label>
+                            <Label htmlFor={label} className="inline-block">{required && <span className="text-red-500">*</span>}&nbsp;{label}</Label>
                             <Button
                                 type="button"
                                 title="get summary from content field"

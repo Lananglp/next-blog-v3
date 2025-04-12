@@ -50,7 +50,7 @@ export default function InputTag({ label, value, placeholder="Enter tags...", cl
 
                 return (
                     <div>
-                        <Label className="inline-block mb-2">{required && <span className="text-red-500">*</span>}&nbsp;{label} :</Label>
+                        <Label className="inline-block mb-2">{required && <span className="text-red-500">*</span>}&nbsp;{label}</Label>
                         <div onClick={handleFocus} className={`w-full flex items-center flex-wrap gap-1 border ${errors ? "border-red-500" : "border-zinc-300 dark:border-zinc-800"} rounded-lg p-1`}>
                             {value && value.map((tag, index) => (
                                 <span key={index} className="flex items-center bg-zinc-200 dark:bg-zinc-900 rounded text-sm ps-2.5 pe-0.5 py-0.5">

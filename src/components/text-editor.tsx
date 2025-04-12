@@ -200,7 +200,7 @@ function EditorLayout({ errors, field }: EditorLayoutProps) {
 
     return (
         <div>
-            <Label htmlFor="content" className="inline-block mb-2"><span className="text-red-500">*</span>&nbsp;Post Content :</Label>
+            <Label htmlFor="content" className="inline-block mb-2"><span className="text-red-500">*</span>&nbsp;Post Content</Label>
             {!editor ? <EditorLoading /> : (
                 <div className={`border ${errors ? 'border-red-500' : 'border-template'} rounded-lg pt-[1px]`}>
                     {/* <EditorBubbleMenu editor={editor} />

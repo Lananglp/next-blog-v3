@@ -66,7 +66,7 @@ export default function InputTitle({
 
                 return (
                     <div>
-                        <Label htmlFor={label} className="inline-block mb-2">{required && <span className="text-red-500">*</span>}&nbsp;{label} :</Label>
+                        <Label htmlFor={label} className="inline-block mb-2">{required && <span className="text-red-500">*</span>}&nbsp;{label}</Label>
                         <div className="relative">
                             <Textarea
                                 {...field}

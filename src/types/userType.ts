@@ -48,3 +48,27 @@ export const initialUserProfile: UserProfileType = {
   url_1: "",
   url_2: "",
 }
+
+export const initialUserWithProfile: UserType<UserProfileType> = {
+  id: "",
+  username: "",
+  email: "",
+  name: "",
+  image: "",
+  imageId: "",
+  imageProvider: "DEFAULT",
+  role: "",
+  totalPosts: 0,
+  totalFollowers: 0,
+  totalFollowing: 0,
+  usernameChangedAt: null,
+  createdAt: null,
+  updatedAt: null,
+  profile: {
+    bio: "",
+    phone_1: "",
+    phone_2: "",
+    url_1: "",
+    url_2: "",
+  }
+}

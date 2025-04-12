@@ -43,7 +43,15 @@ export async function GET(req: Request) {
             skip: page && limit ? (page - 1) * limit : undefined,
             take: limit,
             orderBy: { createdAt: 'desc' },
-            include: { posts: true },
+            include: {
+                posts: true,
+                profile: {
+                    omit: {
+                        id: true,
+                        userId: true,
+                    }
+                },
+            },
         });
 
         return NextResponse.json({

@@ -3,6 +3,8 @@ import ProfileShow from './profile-show'
 import prisma from '@/lib/prisma'
 import { initialUser, initialUserProfile, UserProfileType, UserType } from '@/types/userType'
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import NotFoundCustom from '@/components/page/not-found-custom';
 
 interface PageProps {
     params: Promise<{ username: string }>;
@@ -60,8 +62,13 @@ export default async function Page({ params }: PageProps) {
     }
 
     if (!user) {
-        return <div>User not found</div>
+        return (
+            <NotFoundCustom
+                title='User Not Found'
+                description='The requested user does not exist.'
+            />
+        )
     }
 
-    return <ProfileShow user={formattedUser} />
+    return <ProfileShow item={formattedUser} />
 }
