@@ -1,8 +1,10 @@
 'use client'
 import { usePageTitle } from '@/hooks/use-page-title';
+import { RootState } from '@/lib/redux';
 import { ActivityIcon, CloudyIcon, HashIcon, ImagesIcon, PencilRulerIcon, UsersRoundIcon } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react'
+import { useSelector } from 'react-redux';
 
 type Props = {
     pageTitle: string;
@@ -11,6 +13,7 @@ type Props = {
 function Dashboard({ pageTitle }: Props) {
 
     usePageTitle(pageTitle);
+    const { isLoading, isLogin, user } = useSelector((state: RootState) => state.session);
 
     return (
         <div>
@@ -51,7 +54,7 @@ function Dashboard({ pageTitle }: Props) {
                         <p className='text-sm'>19332 Images</p>
                     </div>
                 </Link>
-                <Link href={'/admin/profile'} className='w-full px-3 py-2 md:py-2 flex items-center gap-3 hover:bg-zinc-200 hover:dark:bg-zinc-900 rounded-lg'>
+                <Link href={`/admin/profile/${user?.username}`} className='w-full px-3 py-2 md:py-2 flex items-center gap-3 hover:bg-zinc-200 hover:dark:bg-zinc-900 rounded-lg'>
                     <div className='inline-block bg-white dark:bg-zinc-900 border border-template rounded-full p-2'>
                         <ImagesIcon />
                     </div>

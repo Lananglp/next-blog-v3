@@ -11,17 +11,22 @@ import { useToast } from '@/hooks/use-toast';
 import { UserProfileType, UserType } from '@/types/userType'
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
-import { ImageIcon, Loader, PenIcon, SendIcon } from 'lucide-react';
+import { ImageIcon, ImageOffIcon, LinkIcon, Loader, LoaderCircleIcon, PenIcon, PlusIcon, SendIcon, UserRound } from 'lucide-react';
 import Image from 'next/image';
 import React, { useState } from 'react'
 import { useDropzone } from 'react-dropzone';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import InputTitle from '@/components/input/input-title';
 import PasswordIndicator from '@/components/password-indicator';
 import { PiEyeBold, PiEyeClosedBold } from 'react-icons/pi';
+import { RootState } from '@/lib/redux';
+import Link from 'next/link';
+import Template from '@/components/template-custom';
+import FollowButton from '@/app/[category]/[slug]/follow-button';
+import { LoginModal } from '@/components/modal-login';
 
 interface ProfileShowProps {
     item: UserType<UserProfileType>;
@@ -32,6 +37,7 @@ function ProfileShow({ item }: ProfileShowProps) {
     usePageTitle(`Profile ${item.username}`);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState<boolean>(false);
+    const { isLoading, isLogin, user } = useSelector((state: RootState) => state.session);
     const { register, handleSubmit, control, watch, setValue, formState: { errors }, setError } = useForm<UserProfileFormType>({
         resolver: zodResolver(userProfileSchema),
         defaultValues: {
@@ -134,11 +140,17 @@ function ProfileShow({ item }: ProfileShowProps) {
         }
     };
 
-    if (!item) return null;
+    const isYourProfile: boolean = item.username === user.username;
+
+    if (!item && isLoading) return null;
+
+    if (!isYourProfile) {
+        return <ProfileShowNotEditable item={item} isLogin={isLogin} isLoading={isLoading} user={user} />;
+    }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className='max-w-3xl flex flex-col md:flex-row gap-4'>
-            <div className='w-full md:max-w-72 space-y-4 border border-template rounded-lg px-4 pt-8 pb-4'>
+            <div className="w-full md:max-w-72 space-y-4 border border-template rounded-lg px-4 pt-8 pb-4">
                 <div className='flex justify-center items-center'>
                     <div {...getRootProps()} className='relative bg-white dark:bg-zinc-950 border-2 border-dashed border-zinc-200 dark:border-zinc-700 text-zinc-500 hover:text-zinc-400 rounded-full w-48 h-48 p-6 flex justify-center items-center cursor-pointer'>
                         <input {...getInputProps()} />
@@ -198,7 +210,7 @@ function ProfileShow({ item }: ProfileShowProps) {
                     </div>
                     <div className='border border-template rounded-lg gap-1 px-4 py-2'>
                         <p className='text-sm'>Followers</p>
-                        <p className='text-black dark:text-white'>987{item.totalFollowers}</p>
+                        <p className='text-black dark:text-white'>{item.totalFollowers}</p>
                     </div>
                     <div className='border border-template rounded-lg gap-1 px-4 py-2'>
                         <p className='text-sm'>Following</p>
@@ -325,5 +337,119 @@ function ProfileShow({ item }: ProfileShowProps) {
         </form>
     )
 }
+
+const UserImage = ({ url }: { url: any }) => {
+
+    const [valid, setValid] = useState(true);
+
+    if (!url) {
+        return (
+            <div className='relative aspect-video object-cover bg-zinc-200/50 dark:bg-zinc-900/50 text-zinc-500 rounded border border-template' >
+                <ImageOffIcon className='absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-5 w-5' />
+            </div>
+        );
+    }
+
+    return (
+        <div>
+            {valid ? (
+                <Image src={url} width={72} height={36} onError={() => setValid(false)} alt="thumbnail" className='aspect-video w-full h-full object-cover rounded border border-template' />
+            ) : (
+                <div className='relative aspect-video object-cover bg-zinc-200/50 dark:bg-zinc-900/50 text-zinc-500 rounded border border-template' >
+                    <ImageOffIcon className='absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-5 w-5' />
+                </div>
+            )}
+        </div>
+    );
+};
+
+interface ProfileShowNotEditableProps {
+    item: UserType<UserProfileType>;
+    isLogin: boolean;
+    isLoading: boolean;
+    user: UserType;
+}
+
+const ProfileShowNotEditable = ({ item, isLogin, isLoading, user }: ProfileShowNotEditableProps) => {
+
+    const appName = process.env.NEXT_PUBLIC_APP_NAME || "My App";
+
+    return (
+        <div className='max-w-3xl flex flex-col md:flex-row gap-4'>
+            <div className="w-full md:max-w-72 space-y-4 border border-template rounded-lg px-4 pt-8 pb-4">
+                <div className='flex justify-center items-center'>
+                    {/* <UserImage url={item.image} /> */}
+                    {/* <div className='relative bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 text-zinc-500 hover:text-zinc-400 rounded-full w-48 h-48 p-6 flex justify-center items-center cursor-pointer'>
+                        <div className='relative aspect-video object-cover bg-zinc-200/50 dark:bg-zinc-900/50 text-zinc-500 rounded border border-template' >
+                            <UserRound className='absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-12 w-12' />
+                        </div>
+                        {item.image && <Image priority src={item.image} alt="Preview" width={92} height={92} className='absolute inset-0 h-full w-full object-cover rounded-full bg-white dark:bg-zinc-950' />}
+                    </div> */}
+                    <div className='relative bg-zinc-100 dark:bg-zinc-900 border border-template text-zinc-500 hover:text-zinc-400 rounded-full w-48 h-48 p-6 flex justify-center items-center cursor-pointer'>
+                        <div className='relative aspect-video object-cover bg-zinc-200/50 dark:bg-zinc-900/50 text-zinc-500 rounded border border-template' >
+                            <UserRound className='absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-12 w-12' />
+                        </div>
+                        {item.image && <Image priority src={item.image} alt="Preview" width={92} height={92} className='absolute inset-0 h-full w-full object-cover rounded-full bg-white dark:bg-zinc-950' />}
+                    </div>
+                </div>
+                {!isLoading ? isLogin ? (
+                    <FollowButton className='w-full' followerId={user.id} followedId={item.id} />
+                ) : (
+                    <LoginModal>
+                        <Button variant={'primary'} size={'sm'} className='w-full'><PlusIcon />Follow</Button>
+                    </LoginModal>
+                ) : (
+                    <Button type='button' variant={'editorBlockBar'} size={'sm'} className='w-full'><LoaderCircleIcon className='animate-spin' />Loading...</Button>
+                )}
+                {/* <div>
+                    {item.role === 'ADMIN' ? (
+                        <div className='bg-zinc-100 dark:bg-zinc-900 border border-template text-white rounded-md text-center px-4 py-2'>
+                            Author on {appName}
+                        </div>
+                    ) : (
+                        <div className='bg-zinc-100 dark:bg-zinc-900 border border-template rounded-md text-center px-4 py-2'>
+                            User on {appName}
+                        </div>
+                    )}
+                </div> */}
+            </div>
+            <div className="w-full flex flex-col gap-4">
+                <div className='grid grid-cols-3 gap-2'>
+                    <div className='border border-template rounded-lg gap-1 px-4 py-2'>
+                        <p className='text-sm'>Posts</p>
+                        <p className='text-black dark:text-white'>{item.totalPosts}</p>
+                    </div>
+                    <div className='border border-template rounded-lg gap-1 px-4 py-2'>
+                        <p className='text-sm'>Followers</p>
+                        <p className='text-black dark:text-white'>{item.totalFollowers}</p>
+                    </div>
+                    <div className='border border-template rounded-lg gap-1 px-4 py-2'>
+                        <p className='text-sm'>Following</p>
+                        <p className='text-black dark:text-white'>{item.totalFollowing}</p>
+                    </div>
+                </div>
+                <div className='border border-template rounded-lg p-4 space-y-4'>
+                    <div>
+                        <h2 className='text-xl text-black dark:text-white'>{item.name}</h2>
+                        <p>@{item.username}</p>
+                    </div>
+                    <div>
+                        {item.profile?.bio ? (
+                            <p className='text-sm'>{item.profile?.bio}</p>
+                        ) : (
+                            <p className='text-sm text-zinc-500'>{'No bio yet.'}</p>
+                        )}
+                    </div>
+                    {(item.profile?.url_1 || item.profile?.url_2) && (
+                        <div>
+                            {item.profile?.url_1 && <Link target='_blank' href={item.profile?.url_1} className='text-sm hover:text-black hover:dark:text-white hover:underline'><LinkIcon className='inline h-4 w-4 mb-0.5 me-2' />{item.profile?.url_1}</Link>}
+                            {item.profile?.url_2 && <Link target='_blank' href={item.profile?.url_2} className='text-sm hover:text-black hover:dark:text-white hover:underline'><LinkIcon className='inline h-4 w-4 mb-0.5 me-2' />{item.profile?.url_2}</Link>}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    )
+};
 
 export default ProfileShow;

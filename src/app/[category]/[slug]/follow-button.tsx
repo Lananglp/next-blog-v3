@@ -10,12 +10,13 @@ import { useSelector } from "react-redux";
 type Props = {
     followerId: string;
     followedId: string;
+    className?: string;
 }
 
-const FollowButton = ({ followerId, followedId }: Props) => {
+const FollowButton = ({ followerId, followedId, className }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [follow, setFollow] = useState(false);
-    const { isFollowing, reload } = useCheckFollowStatus({ followerId, followedId });
+    const { isFollowing, reload, loading } = useCheckFollowStatus({ followerId, followedId });
 
     useEffect(() => {
         setFollow(isFollowing);
@@ -54,12 +55,13 @@ const FollowButton = ({ followerId, followedId }: Props) => {
     return (
         <Button
             onClick={follow ? handleUnfollow : handleFollow}
-            disabled={isLoading}
+            disabled={isLoading && loading}
             variant={follow ? 'submit' : 'primary'}
             size={'sm'}
+            className={className}
         >
-            {!isLoading ? follow ? <CheckIcon /> : <PlusIcon /> : <LoaderCircle className="animate-spin" />}
-            {!isLoading ? follow ? "Following" : "Follow" : "Loading..."}
+            {!isLoading && !loading ? follow ? <CheckIcon /> : <PlusIcon /> : <LoaderCircle className="animate-spin" />}
+            {!isLoading && !loading ? follow ? "Following" : "Follow" : "Loading..."}
         </Button>
     );
 };

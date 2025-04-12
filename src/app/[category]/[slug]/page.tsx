@@ -41,6 +41,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
             author: {
                 select: {
                     name: true,
+                    username: true,
                 },
             },
             meta: true,
@@ -66,7 +67,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
         },
         authors: post.author ? [{
             name: post.author.name,
-            url: `/${category}/${slug}`,
+            url: `${baseUrl}/profile/${post.author.username}`,
         }] : [
             {
                 name: "Blog",
