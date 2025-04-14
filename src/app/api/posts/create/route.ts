@@ -15,29 +15,32 @@ export async function POST(req: Request) {
             meta: JSON.parse(body.meta),
         });
 
-        // Buat slug dari title dan tambahkan ID unik
+        // Buat slug dari title
         const baseSlug = slugify(validatedData.title, { lower: true, strict: true });
         const uniqueId = nanoid(12);
         const finalSlug = `${baseSlug}-${uniqueId}`;
 
-        const categoryLinks = await Promise.all(
-            validatedData.categories.map(async (name: string) => {
-                const category = await prisma.category.upsert({
-                    where: { name },
-                    update: {},
-                    create: { name },
-                });
-
-                return { categoryId: category.id };
+        // Upsert semua kategori dulu dalam 1 transaction
+        const categoryOps = validatedData.categories.map((name: string) =>
+            prisma.category.upsert({
+                where: { name },
+                update: {},
+                create: { name },
             })
         );
 
+        const categories = await prisma.$transaction(categoryOps);
+        const categoryLinks = categories.map((cat) => ({
+            categoryId: cat.id,
+        }));
+
+        // Buat post + meta dalam 1 step
         const newPost = await prisma.post.create({
             data: {
                 title: validatedData.title,
                 content: validatedData.content,
                 description: validatedData.description,
-                slug: finalSlug, // Slug diambil dari server
+                slug: finalSlug,
                 status: validatedData.status,
                 categories: {
                     create: categoryLinks,
@@ -57,16 +60,12 @@ export async function POST(req: Request) {
                 categories: {
                     include: {
                         category: {
-                            select: {
-                                name: true,
-                            }
-                        }
-                    }
+                            select: { name: true },
+                        },
+                    },
                 },
                 author: {
-                    select: {
-                        name: true,
-                    }
+                    select: { name: true },
                 },
                 meta: {
                     select: {
@@ -74,13 +73,27 @@ export async function POST(req: Request) {
                         description: true,
                         keywords: true,
                         image: true,
-                    }
-                }
+                    },
+                },
             },
         });
 
-        return NextResponse.json({ data: newPost, status: responseStatus.success, message: 'Post created successfully' }, { status: 201 });
+        return NextResponse.json(
+            {
+                data: newPost,
+                status: responseStatus.success,
+                message: 'Post created successfully',
+            },
+            { status: 201 }
+        );
     } catch (error) {
-        return NextResponse.json({ status: responseStatus.error, message: error || 'Something went wrong' }, { status: 400 });
+        console.error('POST /api/post error:', error);
+        return NextResponse.json(
+            {
+                status: responseStatus.error,
+                message: error instanceof Error ? error.message : 'Something went wrong',
+            },
+            { status: 400 }
+        );
     }
 }

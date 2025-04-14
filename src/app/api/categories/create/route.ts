@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { responseStatus } from "@/helper/system-config";
 import prisma from "@/lib/prisma";
+import type { Category } from "@prisma/client";
 
 export async function POST(req: Request) {
     try {
@@ -9,67 +10,93 @@ export async function POST(req: Request) {
         if (!Array.isArray(categories) || categories.length === 0) {
             return NextResponse.json({
                 status: responseStatus.warning,
-                message: "Categories array is required"
+                message: "Categories array is required",
             }, { status: 400 });
         }
 
-        const results = {
-            success: [] as any[],
-            duplicates: [] as string[],
-        };
+        const validNamePattern = /^[a-zA-Z0-9 _-]+$/;
 
-        // Process each category
-        for (const item of categories) {
-            const { name } = item;
-            if (!name || typeof name !== "string") continue;
+        const validNames: string[] = [];
+        const invalidNames: string[] = [];
 
-            // Normalize category name to lowercase
-            const normalizedCategoryName = name.toLowerCase();
+        for (const cat of categories) {
+            const name = typeof cat.name === "string" ? cat.name.trim() : "";
+            if (name && validNamePattern.test(name)) {
+                validNames.push(name.toLowerCase());
+            } else {
+                invalidNames.push(name);
+            }
+        }
 
-            // Check if category exists (case-insensitive)
-            const existingCategory = await prisma.category.findFirst({
+        if (validNames.length === 0) {
+            return NextResponse.json({
+                status: responseStatus.warning,
+                message: "All category names are invalid or contain unsupported characters.",
+                invalidNames,
+            }, { status: 400 });
+        }
+
+        const existing = await prisma.category.findMany({
+            where: {
+                name: {
+                    in: validNames,
+                    mode: "insensitive",
+                },
+            },
+            select: { name: true },
+        });
+
+        const existingNames = new Set(existing.map(e => e.name.toLowerCase()));
+
+        const toCreate = validNames
+            .filter(name => !existingNames.has(name))
+            .map(name => ({ name }));
+
+        let created: Category[] = [];
+
+        if (toCreate.length > 0) {
+            await prisma.category.createMany({
+                data: toCreate,
+                skipDuplicates: true,
+            });
+
+            created = await prisma.category.findMany({
                 where: {
                     name: {
-                        equals: normalizedCategoryName,
+                        in: toCreate.map(c => c.name),
                         mode: "insensitive",
                     },
                 },
             });
-
-            if (existingCategory) {
-                results.duplicates.push(name);
-                continue;
-            }
-
-            // Create new category
-            const newCategory = await prisma.category.create({
-                data: { name },
-            });
-            results.success.push(newCategory);
         }
 
-        // Prepare response message
-        let message = "";
-        if (results.success.length > 0) {
-            message += `Successfully created ${results.success.length} categories. `;
+        // Buat pesan akhir
+        const messageParts: string[] = [];
+
+        if (created.length > 0) {
+            messageParts.push(`✅ Created ${created.length} categories.`);
         }
-        if (results.duplicates.length > 0) {
-            message += `${results.duplicates.length} categories already exist: ${results.duplicates.join(", ")}`;
+        if (existingNames.size > 0) {
+            messageParts.push(`⚠️ ${existingNames.size} already exist: ${Array.from(existingNames).join(", ")}`);
+        }
+        if (invalidNames.length > 0) {
+            messageParts.push(`❌ ${invalidNames.length} contain invalid characters: ${invalidNames.join(", ")}`);
         }
 
         return NextResponse.json({
-            status: results.success.length > 0 ? responseStatus.success : responseStatus.warning,
-            message: message || "No valid categories provided",
-            categories: results.success
+            status: created.length > 0 ? responseStatus.success : responseStatus.warning,
+            message: messageParts.join(" "),
+            categories: created,
+            invalidNames,
         }, {
-            status: results.success.length > 0 ? 201 : 400
+            status: created.length > 0 ? 201 : 400,
         });
 
     } catch (error) {
         console.error("Failed to create categories:", error);
         return NextResponse.json({
             status: responseStatus.error,
-            message: error
+            message: error instanceof Error ? error.message : "Something went wrong",
         }, { status: 500 });
     }
 }

@@ -17,7 +17,7 @@ import {
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { Skeleton } from "./ui/skeleton";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useMedia, useWindowScroll } from "react-use";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
@@ -37,6 +37,7 @@ function Header() {
     const dispatch = useDispatch();
     const { toast } = useToast();
     const navigate = useRouter();
+    const pathname = usePathname();
     const { y } = useWindowScroll();
     const [scrollYForPadding, setScrollYForPadding] = useState(0);
     const [isScrolled, setIsScrolled] = useState(false);
@@ -97,7 +98,7 @@ function Header() {
         <header className="sticky z-50 top-0">
             <div className="absolute inset-0 pointer-events-none" style={{ opacity: isScrolled ? 0 : 1 }}/>
             {/* <nav className={`relative max-w-screen-2xl mx-auto group rounded-2xl transition duration-500 ${isScrolled && 'backdrop-blur-sm bg-white dark:bg-zinc-900/50 shadow-lg'}`}> */}
-            <nav className={`relative max-w-screen-2xl mx-auto group transition duration-500 backdrop-blur-sm bg-white dark:bg-zinc-950/85 border-b border-template`}>
+            <nav className={`relative max-w-screen-2xl mx-auto group transition duration-500 backdrop-blur-sm ${pathname === '/' ? 'bg-white/25 dark:bg-zinc-950/25' : 'bg-white dark:bg-zinc-950/85'} border-b border-template`}>
                 {/* <div className={`border ${isScrolled ? 'border-zinc-200 dark:border-zinc-900' : 'border-transparent'} rounded-2xl px-2.5 md:px-4 py-2.5`}> */}
                 <div className={`px-2.5 md:px-4 py-2.5`}>
                     {/* <div className={`${isScrolled ? 'opacity-100' : 'opacity-0'} absolute inset-x-0 bottom-0 overflow-hidden rounded-2xl transition duration-500`}>

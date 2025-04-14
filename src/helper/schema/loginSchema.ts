@@ -16,3 +16,5 @@ export const loginSchema = z.object({
     credential: z.string().min(3, "Username or Email is required"),
     password: z.string().min(1, "Password is required"),
 });
+
+export type LoginFormType = z.infer<typeof loginSchema>;

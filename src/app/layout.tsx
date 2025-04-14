@@ -5,8 +5,14 @@ import ReduxProvider from "@/components/redux-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 // import { fontPoppins } from "@/lib/font";
 import AuthProvider from "@/components/auth-check-provider";
-import { Poppins, Turret_Road, Orbitron, Inter, Open_Sans } from "next/font/google";
+import { Poppins, Turret_Road, Orbitron, Inter, Open_Sans, Righteous } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react"
+
+const righteous = Righteous({
+  variable: "--font-righteous",
+  subsets: ["latin"],
+  weight: ["400"],
+});
 
 const inter = Inter({
   variable: "--font-inter",
@@ -49,7 +55,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.className} ${openSans.variable} ${poppins.variable} ${fontTitle.variable} antialiased`}
+        className={`${inter.className} ${openSans.variable} ${poppins.variable} ${fontTitle.variable} ${righteous.variable} antialiased`}
       >
         <Analytics />
         <ReduxProvider>

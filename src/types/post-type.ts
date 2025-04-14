@@ -3,6 +3,7 @@ export type PostType = {
     author: {
         id: string;
         name: string;
+        username: string;
         email: string;
         image: string | null;
         followers: {
@@ -68,6 +69,7 @@ export const initialPost = {
     author: {
         id: "",
         name: "",
+        username: "",
         email: "",
         image: "",
         followers: [],

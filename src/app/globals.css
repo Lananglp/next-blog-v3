@@ -183,6 +183,10 @@ body {
     font-family: var(--font-family-title);
   }
 
+  .font-righteous {
+    font-family: var(--font-righteous);
+  }
+
   .font-poppins {
     font-family: var(--font-poppins);
   }

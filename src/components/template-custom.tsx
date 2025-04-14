@@ -2,6 +2,7 @@ import React from 'react'
 import Header from './header'
 import Footer from './footer'
 import BreadcrumbCustom from './breadcrumb-custom'
+import { Spotlight } from './ui/spotlight'
 
 function Template({ children, container=true, className, gradient }: { children: React.ReactNode, container?: boolean, className?: string, gradient?: boolean }) {
   return (
@@ -13,6 +14,7 @@ function Template({ children, container=true, className, gradient }: { children:
         <div className="fixed inset-0 bg-gradient-to-br from-sky-500/5 from-[0%] via-transparent via-[55%] to-sky-500/5 to-[0%] pointer-events-none">
           <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-tr from-transparent from-[0%] via-transparent via-[65%] to-sky-500/5 to-[0%] pointer-events-none" />
           <div className="absolute inset-0 top-0 bg-gradient-to-br from-sky-500/5 dark:from-sky-500/25 from-[0%] via-transparent via-[65%] to-transparent to-[0%] pointer-events-none" />
+          <Spotlight />
         </div>
       )}
       {/* <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">

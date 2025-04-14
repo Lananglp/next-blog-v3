@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
-import { loginSchema } from "@/helper/schema/loginSchema"
+import { LoginFormType, loginSchema } from "@/helper/schema/loginSchema"
 import { useToast } from "@/hooks/use-toast"
 import { login } from "@/app/api/function/auth"
 import { AxiosError } from "axios"
@@ -19,11 +19,6 @@ import { setSession } from "@/context/sessionSlice"
 import { Separator } from "./ui/separator"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 
-type LoginModalType = {
-    email: string
-    password: string
-}
-
 export function LoginModal({
     children,
     modalTitle,
@@ -32,7 +27,7 @@ export function LoginModal({
     ...props
 }: React.ComponentPropsWithoutRef<"div"> & { modalTitle?: string, modalDescription?: string }) {
 
-    const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<LoginModalType>({
+    const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<LoginFormType>({
         resolver: zodResolver(loginSchema),
     });
     const [modal, setModal] = useState<boolean>(false);
@@ -69,13 +64,13 @@ export function LoginModal({
         dispatch(setSession(data));
     };
 
-    const onSubmit: SubmitHandler<LoginModalType> = async (data, event) => {
+    const onSubmit: SubmitHandler<LoginFormType> = async (data, event) => {
         event?.preventDefault();
         setLoading(true);
         setError(null);
 
         const formdata = new FormData();
-        formdata.append("email", data.email);
+        formdata.append("credential", data.credential);
         formdata.append("password", data.password);
 
         try {
@@ -122,16 +117,16 @@ export function LoginModal({
                     <DialogHeader>
                         <DialogTitle className="text-xl text-black dark:text-white">{modalTitle ? modalTitle : 'Get access by logging in'}</DialogTitle>
                         <DialogDescription>
-                            {modalDescription ? modalDescription : 'You need to log in to follow users or leave a comment.'}
+                            {modalDescription ? modalDescription : 'To gain access, a login action is required.'}
                         </DialogDescription>
                     </DialogHeader>
                     <div>
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="flex flex-col gap-6">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="email">Email</Label>
-                                    <Input {...register("email")} variant={errors.email ? 'danger' : 'primary'} id="email" type="email" placeholder="m@example.com" />
-                                    {errors.email && <span className='text-red-500 text-xs mb-2'>{errors.email.message}</span>}
+                                    <Label htmlFor="credential">Username / Email</Label>
+                                    <Input {...register("credential")} variant={errors.credential ? 'danger' : 'primary'} id="credential" type="text" placeholder="your username or email" />
+                                    {errors.credential && <span className='text-red-500 text-xs mb-2'>{errors.credential.message}</span>}
                                 </div>
                                 <div className="grid gap-2">
                                     <div className="flex items-center">
@@ -144,7 +139,7 @@ export function LoginModal({
                                         </Link>
                                     </div>
                                     <div className="relative">
-                                        <Input autoComplete="off" {...register("password")} variant={errors.email ? 'danger' : 'primary'} id="password" type={showPassword ? "text" : "password"} placeholder="Password" />
+                                        <Input autoComplete="off" {...register("password")} variant={errors.password ? 'danger' : 'primary'} id="password" type={showPassword ? "text" : "password"} placeholder="Password" />
                                         <button onClick={() => setShowPassword(!showPassword)} className='absolute top-1/2 right-2 -translate-y-1/2 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-800 rounded p-1.5' type="button">{showPassword ? <PiEyeBold className='w-5 h-5' /> : <PiEyeClosedBold className='w-5 h-5' />}</button>
                                     </div>
                                     {errors.password && <span className='text-red-500 text-xs mb-2'>{errors.password.message}</span>}

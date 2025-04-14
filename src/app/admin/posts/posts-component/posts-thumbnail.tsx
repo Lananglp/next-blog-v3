@@ -19,7 +19,7 @@ export default function PostsThumbnail({ url }: { url: any }) {
     return (
         <div>
             {valid ? (
-                <Image src={url} width={72} height={36} onError={() => setValid(false)} alt="thumbnail" className='aspect-video w-full h-full object-cover rounded border border-template' />
+                <Image unoptimized src={url} width={72} height={36} onError={() => setValid(false)} alt="thumbnail" className='aspect-video w-full h-full object-cover rounded border border-template' />
             ) : (
                 <div className='relative aspect-video object-cover bg-zinc-200/50 dark:bg-zinc-900/50 text-zinc-500 rounded border border-template' >
                     <ImageOffIcon className='absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-5 w-5' />
